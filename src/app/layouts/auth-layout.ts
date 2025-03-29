@@ -1,51 +1,54 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { AppService } from '../service/app.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './auth-layout.html',
-    standalone: false
+  selector: 'app-auth-layout',
+  standalone: true,
+  imports: [CommonModule, TranslateModule, RouterOutlet],
+  templateUrl: './auth-layout.html',
 })
-export class AuthLayout {
-    store: any;
-    showTopButton = false;
-    constructor(public storeData: Store<any>, private service: AppService) {
-        this.initStore();
-    }
-    headerClass = '';
-    ngOnInit() {
-        this.toggleLoader();
-        window.addEventListener('scroll', () => {
-            if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-                this.showTopButton = true;
-            } else {
-                this.showTopButton = false;
-            }
-        });
-    }
+export class AuthLayout implements OnInit, OnDestroy {
+  store: any;
+  showTopButton = false;
+  headerClass = '';
 
-    toggleLoader() {
-        this.storeData.dispatch({ type: 'toggleMainLoader', payload: true });
-        setTimeout(() => {
-            this.storeData.dispatch({ type: 'toggleMainLoader', payload: false });
-        }, 500);
-    }
+  constructor(public storeData: Store<any>, private service: AppService) {
+    this.initStore();
+  }
 
-    ngOnDestroy() {
-        window.removeEventListener('scroll', () => {});
-    }
+  ngOnInit(): void {
+    this.toggleLoader();
+    window.addEventListener('scroll', this.onScroll);
+  }
 
-    async initStore() {
-        this.storeData
-            .select((d) => d.index)
-            .subscribe((d) => {
-                this.store = d;
-            });
-    }
+  ngOnDestroy(): void {
+    window.removeEventListener('scroll', this.onScroll);
+  }
 
-    goToTop() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-    }
+  private onScroll = (): void => {
+    this.showTopButton =
+      document.body.scrollTop > 50 || document.documentElement.scrollTop > 50;
+  };
+
+  toggleLoader(): void {
+    this.storeData.dispatch({ type: 'toggleMainLoader', payload: true });
+    setTimeout(() => {
+      this.storeData.dispatch({ type: 'toggleMainLoader', payload: false });
+    }, 500);
+  }
+
+  async initStore(): Promise<void> {
+    this.storeData.select((d) => d.index).subscribe((d) => {
+      this.store = d;
+    });
+  }
+
+  goToTop(): void {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
 }

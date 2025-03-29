@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
-    templateUrl: './index.html',
-    standalone: false
+  standalone: true,
+  selector: 'app-index',
+  imports: [CommonModule, TranslateModule],
+  templateUrl: './index.html',
 })
 export class IndexComponent {}

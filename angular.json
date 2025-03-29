@@ -25,7 +25,7 @@
                           "src/polyfills.ts"
                         ],
                         "tsConfig": "tsconfig.app.json",
-                        "assets": ["src/assets", "src/demo-prepare.html"],
+                        "assets": ["src/assets"],
                         "styles": ["src/assets/css/app.css"],
                         "scripts": [],
                         "allowedCommonJsDependencies": [],

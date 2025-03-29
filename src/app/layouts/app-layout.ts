@@ -1,68 +1,79 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
 import { AppService } from '../service/app.service';
-import { Router, NavigationEnd, Event as RouterEvent } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { SidebarComponent } from './sidebar';
+import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './header';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app-layout.html',
-    standalone: false
+  selector: 'app-root-layout',
+  standalone: true,
+  imports: [CommonModule, TranslateModule, SidebarComponent,  RouterOutlet, HeaderComponent],
+  templateUrl: './app-layout.html',
 })
-export class AppLayout {
-    store: any;
-    showTopButton = false;
-    constructor(public translate: TranslateService, public storeData: Store<any>, private service: AppService, private router: Router) {
-        this.initStore();
-    }
-    headerClass = '';
-    ngOnInit() {
-        this.initAnimation();
-        this.toggleLoader();
-        window.addEventListener('scroll', () => {
-            if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-                this.showTopButton = true;
-            } else {
-                this.showTopButton = false;
-            }
-        });
-    }
+export class AppLayout implements OnInit, OnDestroy {
+  store: any;
+  showTopButton = false;
+  headerClass = '';
 
-    ngOnDestroy() {
-        window.removeEventListener('scroll', () => {});
-    }
+  constructor(
+    public translate: TranslateService,
+    public storeData: Store<any>,
+    private service: AppService,
+    private router: Router
+  ) {
+    this.initStore();
+  }
 
-    initAnimation() {
+  ngOnInit(): void {
+    this.initAnimation();
+    this.toggleLoader();
+    window.addEventListener('scroll', this.onScroll);
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('scroll', this.onScroll);
+  }
+
+  private onScroll = (): void => {
+    this.showTopButton =
+      document.body.scrollTop > 50 || document.documentElement.scrollTop > 50;
+  };
+
+  initAnimation(): void {
+    this.service.changeAnimation();
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
         this.service.changeAnimation();
-        this.router.events.subscribe((event) => {
-            if (event instanceof NavigationEnd) {
-                this.service.changeAnimation();
-            }
-        });
+      }
+    });
 
-        const ele: any = document.querySelector('.animation');
-        ele.addEventListener('animationend', () => {
-            this.service.changeAnimation('remove');
-        });
+    const ele: any = document.querySelector('.animation');
+    if (ele) {
+      ele.addEventListener('animationend', () => {
+        this.service.changeAnimation('remove');
+      });
     }
+  }
 
-    toggleLoader() {
-        this.storeData.dispatch({ type: 'toggleMainLoader', payload: true });
-        setTimeout(() => {
-            this.storeData.dispatch({ type: 'toggleMainLoader', payload: false });
-        }, 500);
-    }
+  toggleLoader(): void {
+    this.storeData.dispatch({ type: 'toggleMainLoader', payload: true });
+    setTimeout(() => {
+      this.storeData.dispatch({ type: 'toggleMainLoader', payload: false });
+    }, 500);
+  }
 
-    async initStore() {
-        this.storeData
-            .select((d) => d.index)
-            .subscribe((d) => {
-                this.store = d;
-            });
-    }
+  async initStore(): Promise<void> {
+    this.storeData.select((d) => d.index).subscribe((d) => {
+      this.store = d;
+    });
+  }
 
-    goToTop() {
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-    }
+  goToTop(): void {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
 }
