@@ -1,8 +1,8 @@
 import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 @Component({
-  moduleId: module.id,
-  selector: 'icon-menu-mailbox',
-  template: `
+    moduleId: module.id,
+    selector: 'icon-menu-mailbox',
+    template: `
     <ng-template #template>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" [ngClass]="class">
         <path d="M24 5C24 6.65685 22.6569 8 21 8C19.3431 8 18 6.65685 18 5C18 3.34315 19.3431 2 21 2C22.6569 2 24 3.34315 24 5Z" fill="currentColor" />
@@ -22,6 +22,7 @@ import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
       </svg>
     </ng-template>
   `,
+    standalone: false
 })
 export class IconMenuMailboxComponent {
   @Input() class: any = '';

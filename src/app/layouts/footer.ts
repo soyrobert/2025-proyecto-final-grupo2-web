@@ -4,6 +4,7 @@
     moduleId: module.id,
     selector: 'footer',
     templateUrl: './footer.html',
+    standalone: false
 })
 export class FooterComponent {
     currYear: number = new Date().getFullYear();

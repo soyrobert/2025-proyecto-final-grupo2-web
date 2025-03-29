@@ -6,6 +6,7 @@ import { filter, map, switchMap, tap } from 'rxjs/operators';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
+    standalone: false
 })
 export class AppComponent {
     constructor(

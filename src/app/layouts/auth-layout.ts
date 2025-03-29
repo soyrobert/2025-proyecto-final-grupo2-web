@@ -5,6 +5,7 @@ import { AppService } from '../service/app.service';
 @Component({
     selector: 'app-root',
     templateUrl: './auth-layout.html',
+    standalone: false
 })
 export class AuthLayout {
     store: any;

@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'app-root',
     templateUrl: './app-layout.html',
+    standalone: false
 })
 export class AppLayout {
     store: any;

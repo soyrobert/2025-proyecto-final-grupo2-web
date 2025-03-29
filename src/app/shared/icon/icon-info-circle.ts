@@ -27,6 +27,7 @@ import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
             </svg>
         </ng-template>
     `,
+    standalone: false
 })
 export class IconInfoCircleComponent {
     @Input() fill: boolean = false;

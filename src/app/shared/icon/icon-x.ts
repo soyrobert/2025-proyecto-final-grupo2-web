@@ -21,6 +21,7 @@ import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
             </svg>
         </ng-template>
     `,
+    standalone: false
 })
 export class IconXComponent {
     @Input() class: any = '';

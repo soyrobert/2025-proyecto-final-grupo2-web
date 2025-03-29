@@ -11,6 +11,7 @@ import { toggleAnimation } from 'src/app/shared/animations';
     selector: 'header',
     templateUrl: './header.html',
     animations: [toggleAnimation],
+    standalone: false
 })
 export class HeaderComponent {
     store: any;
