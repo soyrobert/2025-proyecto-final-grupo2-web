@@ -42,3 +42,8 @@ testem.log
 Thumbs.db
 
 /test.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
