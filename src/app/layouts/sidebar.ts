@@ -4,13 +4,25 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { slideDownUp } from '../shared/animations';
-import { IconModule } from 'src/app/shared/icon/icon.module';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { IconCaretsDownComponent } from '../shared/icon/icon-carets-down';
+import { IconMinusComponent } from '../shared/icon/icon-minus';
+import { IconMenuChatComponent } from '../shared/icon/menu/icon-menu-chat';
+import { IconMenuMailboxComponent } from '../shared/icon/menu/icon-menu-mailbox';
+import { IconMenuUsersComponent } from '../shared/icon/menu/icon-menu-users';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, TranslateModule, IconModule, NgScrollbarModule],
+  imports: [CommonModule,
+    TranslateModule,
+    NgScrollbarModule,
+    IconCaretsDownComponent,
+    IconMinusComponent,
+    IconMenuChatComponent,
+    IconMenuMailboxComponent,
+    IconMenuUsersComponent
+  ],
   templateUrl: './sidebar.html',
   animations: [slideDownUp],
 })

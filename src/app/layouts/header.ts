@@ -6,13 +6,26 @@ import { AppService } from '../service/app.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { toggleAnimation } from 'src/app/shared/animations';
-import { IconModule } from 'src/app/shared/icon/icon.module';
+import { IconMenuComponent } from 'src/app/shared/icon/icon-menu';
+import { IconSunComponent } from '../shared/icon/icon-sun';
+import { IconMoonComponent } from '../shared/icon/icon-moon';
+import { IconLaptopComponent } from '../shared/icon/icon-laptop';
+import { IconLogoutComponent } from '../shared/icon/icon-logout';
 import { MenuModule } from 'headlessui-angular';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, TranslateModule, IconModule, MenuModule],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    MenuModule,
+    IconMenuComponent,
+    IconSunComponent,
+    IconMoonComponent,
+    IconLaptopComponent,
+    IconLogoutComponent
+  ],
   templateUrl: './header.html',
   animations: [toggleAnimation],
 })

@@ -1,6 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 @Component({
-    moduleId: module.id,
+    imports: [CommonModule],
+    standalone: true,
     selector: 'icon-user-plus',
     template: `
         <ng-template #template>
@@ -16,7 +18,6 @@ import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
             </svg>
         </ng-template>
     `,
-    standalone: false
 })
 export class IconUserPlusComponent {
     @Input() class: any = '';

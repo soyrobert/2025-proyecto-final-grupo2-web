@@ -1,6 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 @Component({
-    moduleId: module.id,
+    imports: [CommonModule],
+    standalone: true,
     selector: 'icon-user',
     template: `
         <ng-template #template>
@@ -24,7 +26,6 @@ import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
             </svg>
         </ng-template>
     `,
-    standalone: false
 })
 export class IconUserComponent {
     @Input() fill: boolean = false;

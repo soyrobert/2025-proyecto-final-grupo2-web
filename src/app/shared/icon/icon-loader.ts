@@ -1,11 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 @Component({
-    moduleId: module.id,
+    imports: [CommonModule],
+    standalone: true,
     selector: 'icon-loading',
     template: `
         <ng-template #template>
             <svg
-                xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="20"
                 viewBox="0 0 24 24"
@@ -27,7 +28,6 @@ import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
             </svg>
         </ng-template>
     `,
-    standalone: false
 })
 export class IconLoadingComponent {
     @Input() class: any = '';

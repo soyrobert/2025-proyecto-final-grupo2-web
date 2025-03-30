@@ -1,6 +1,8 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 @Component({
-    moduleId: module.id,
+    imports: [CommonModule],
+    standalone: true,
     selector: 'icon-lock-dots',
     template: `
         <ng-template #template>
@@ -58,7 +60,6 @@ import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
             </svg>
         </ng-template>
     `,
-    standalone: false
 })
 export class IconLockDotsComponent {
     @Input() fill: boolean = false;

@@ -1,6 +1,8 @@
+import { CommonModule } from '@angular/common';
 ﻿import { Component, Input, ViewChild, ViewContainerRef } from '@angular/core';
 @Component({
-    moduleId: module.id,
+    imports: [CommonModule],
+    standalone: true,
     selector: 'icon-menu-apps',
     template: `
         <ng-template #template>
@@ -42,7 +44,6 @@
             </svg>
         </ng-template>
     `,
-    standalone: false
 })
 export class IconMenuAppsComponent {
     @Input() class: any = '';
