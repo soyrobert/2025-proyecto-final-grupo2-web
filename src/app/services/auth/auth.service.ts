@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,16 +12,21 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(credentials: { email: string; password: string }) {
-    return this.http.post<{ token: string }>(`${this.API_URL}/login`, credentials).subscribe({
-      next: (response) => {
+  login(email: string, password: string): Promise<boolean> {
+    const credentials = { email, password };
+  
+    return firstValueFrom(
+      this.http.post<{ token: string }>(`${this.API_URL}/login`, credentials)
+    )
+      .then((response) => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
         this.router.navigate(['/']);
-      },
-      error: (err) => {
-        console.error('Login error:', err);
-      },
-    });
+        return true;
+      })
+      .catch((error) => {
+        console.error('Login error:', error);
+        return false;
+      });
   }
 
   logout() {

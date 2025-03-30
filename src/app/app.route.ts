@@ -3,8 +3,7 @@ import { AppLayout } from './layouts/app-layout';
 import { AuthLayout } from './layouts/auth/auth-layout';
 import { LoginPage } from './pages/login/login-page';
 
-// TODO: Importar guards cuando estén listos
-// import { AuthGuard } from './core/guards/auth.guard';
+import { AuthGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -21,7 +20,7 @@ export const routes: Routes = [
   {
     path: '',
     component: AppLayout,
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     children: [
       {
         path: '',
