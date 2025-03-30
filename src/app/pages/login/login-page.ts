@@ -37,6 +37,9 @@ export class LoginPage {
   loading: boolean = false;
   errorMessage: string | null = null;
   submitted: boolean = false;
+  emailTouched = false;
+  passwordTouched = false;
+
 
   constructor(
     public translate: TranslateService,
@@ -50,6 +53,8 @@ export class LoginPage {
 
   async onSubmit() {
     this.submitted = true;
+    this.emailTouched = true;
+    this.passwordTouched = true;
 
     if (!this.email || !this.password) {
       return;
@@ -84,4 +89,13 @@ export class LoginPage {
   trackByLangCode(index: number, item: any) {
     return item.code;
   }
+
+  onEmailBlur() {
+    this.emailTouched = true;
+  }
+  
+  onPasswordBlur() {
+    this.passwordTouched = true;
+  }
+  
 }

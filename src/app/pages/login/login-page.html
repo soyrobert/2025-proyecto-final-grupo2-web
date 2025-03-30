@@ -67,12 +67,13 @@
                               required
                               placeholder="{{ 'plh_ingrese_correo' | translate }}"
                               class="form-input ps-10 placeholder:text-white-dark"
+                              (blur)="onEmailBlur()"
                             />
                             <span class="absolute start-4 top-1/2 -translate-y-1/2">
                               <icon-mail [fill]="true" />
                             </span>
                           </div>
-                          <ng-container *ngIf="submitted">
+                          <ng-container *ngIf="emailTouched">
                             <span *ngIf="email" class="rounded bg-[#1abc9c] py-1 px-2 text-white">Luce bien!</span>
                             <span *ngIf="!email" class="rounded bg-danger py-1 px-2 text-white">Ingrese un email válido</span>
                           </ng-container>
@@ -90,12 +91,13 @@
                               required
                               placeholder="{{ 'plh_ingrese_contraseña' | translate }}"
                               class="form-input ps-10 placeholder:text-white-dark"
+                              (blur)="onPasswordBlur()"
                             />
                             <span class="absolute start-4 top-1/2 -translate-y-1/2">
                               <icon-lock-dots [fill]="true" />
                             </span>
                           </div>
-                          <ng-container *ngIf="submitted">
+                          <ng-container *ngIf="passwordTouched">
                             <span *ngIf="password" class="rounded bg-[#1abc9c] py-1 px-2 text-white">Luce bien!</span>
                             <span *ngIf="!password" class="rounded bg-danger py-1 px-2 text-white">La contraseña es requerida</span>
                           </ng-container>
