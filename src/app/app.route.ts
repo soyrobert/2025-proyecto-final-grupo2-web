@@ -1,23 +1,42 @@
 import { Routes } from '@angular/router';
-import { IndexComponent } from './index';
 import { AppLayout } from './layouts/app-layout';
-import { AuthLayout } from './layouts/auth-layout';
+import { AuthLayout } from './layouts/auth/auth-layout';
+import { LoginPage } from './pages/login/login-page';
+
+// TODO: Importar guards cuando estén listos
+// import { AuthGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
-    path: '',
-    component: AppLayout,
+    path: 'auth',
+    component: AuthLayout,
     children: [
       {
-        path: '',
-        component: IndexComponent,
-        data: { title: 'Vendedores Admin' },
+        path: 'login',
+        component: LoginPage,
+        data: { title: 'Iniciar sesión' },
       },
     ],
   },
   {
     path: '',
-    component: AuthLayout,
-    children: [],
+    component: AppLayout,
+    // canActivate: [AuthGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: '/vendedores',
+        pathMatch: 'full',
+      },
+      {
+        path: 'vendedores',
+        loadComponent: () =>
+          import('./pages/vendedores/home/vendedores-home').then(m => m.VendedoresHome),
+      }
+    ],
+  },
+  {
+    path: '**',
+    redirectTo: '/auth/login',
   },
 ];
