@@ -13,9 +13,11 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgScrollbarModule, provideScrollbarOptions } from 'ngx-scrollbar';
 import { MenuModule } from 'headlessui-angular';
 
-
 import { routes } from './app.route';
 import { AppService } from './service/app.service';
+
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 
 export function HttpLoaderFactory(httpHandler: HttpBackend): TranslateHttpLoader {
   return new TranslateHttpLoader(new HttpClient(httpHandler));
@@ -27,6 +29,9 @@ export function getBaseUrl() {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    ),
     { provide: 'BASE_URL', useFactory: getBaseUrl, deps: [] },
     provideRouter(routes),
     provideAnimations(),

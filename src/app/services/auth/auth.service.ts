@@ -1,44 +1,40 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly TOKEN_KEY = 'auth_token';
-  private readonly API_URL = 'https://reqres.in/api/login';
+  private readonly API_URL = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Promise<boolean> {
-    const credentials = { email, password };
-  
-    return firstValueFrom(
-      this.http.post<{ token: string }>(`${this.API_URL}/login`, credentials)
-    )
-      .then((response) => {
-        localStorage.setItem(this.TOKEN_KEY, response.token);
-        this.router.navigate(['/']);
-        return true;
-      })
-      .catch((error) => {
-        console.error('Login error:', error);
-        return false;
-      });
+  async login(email: string, password: string): Promise<boolean> {
+    try {
+      const res: any = await this.http
+        .post(`${this.API_URL}/auth/login`, { email, password })
+        .toPromise();
+
+      // Guardar el token
+      localStorage.setItem('accessToken', res.accessToken);
+      localStorage.setItem('userRole', res.role);
+      localStorage.setItem('userId', res.userId.toString());
+
+      return true;
+    } catch (err: any) {
+      console.error('Login error:', err);
+      return false;
+    }
   }
 
   logout() {
-    localStorage.removeItem(this.TOKEN_KEY);
-    this.router.navigate(['/auth/login']);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userId');
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem(this.TOKEN_KEY);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return !!localStorage.getItem('accessToken');
   }
 }
