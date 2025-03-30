@@ -54,29 +54,69 @@
                         <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ 'login' | translate }}</h1>
                         <p class="text-base font-bold leading-normal text-white-dark">{{ 'txt_ingrese_contraseña' | translate }}</p>
                     </div>
-                    <form class="space-y-5 dark:text-white" (ngSubmit)="onSubmit()">
-                        <div>
-                            <label for="Email">{{ 'email' | translate }}</label>
-                            <div class="relative text-white-dark">
-                                <input id="Email" type="email" name="email" placeholder="{{ 'plh_ingrese_correo' | translate }}" [(ngModel)]="email" class="form-input ps-10 placeholder:text-white-dark" />
-                                <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                    <icon-mail [fill]="true" />
-                                </span>
-                            </div>
+                    <form class="space-y-5 dark:text-white" (ngSubmit)="onSubmit()" novalidate>
+                        <!-- Campo EMAIL -->
+                        <div [ngClass]="submitted ? !email ? 'has-error' : 'has-success' : ''">
+                          <label for="Email">{{ 'email' | translate }}</label>
+                          <div class="relative text-white-dark">
+                            <input
+                              id="Email"
+                              type="email"
+                              [(ngModel)]="email"
+                              name="email"
+                              required
+                              placeholder="{{ 'plh_ingrese_correo' | translate }}"
+                              class="form-input ps-10 placeholder:text-white-dark"
+                            />
+                            <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                              <icon-mail [fill]="true" />
+                            </span>
+                          </div>
+                          <ng-container *ngIf="submitted">
+                            <span *ngIf="email" class="rounded bg-[#1abc9c] py-1 px-2 text-white">Looks Good!</span>
+                            <span *ngIf="!email" class="rounded bg-danger py-1 px-2 text-white">Ingrese un email válido</span>
+                          </ng-container>
                         </div>
-                        <div>
-                            <label for="Password">{{ 'password' | translate }}</label>
-                            <div class="relative text-white-dark">
-                                <input id="Password" type="password" name="password" placeholder="{{ 'plh_ingrese_contraseña' | translate }}" [(ngModel)]="password" class="form-input ps-10 placeholder:text-white-dark" />
-                                <span class="absolute start-4 top-1/2 -translate-y-1/2">
-                                    <icon-lock-dots [fill]="true" />
-                                </span>
-                            </div>
+                      
+                        <!-- Campo PASSWORD -->
+                        <div [ngClass]="submitted ? !password ? 'has-error' : 'has-success' : ''">
+                          <label for="Password">{{ 'password' | translate }}</label>
+                          <div class="relative text-white-dark">
+                            <input
+                              id="Password"
+                              type="password"
+                              [(ngModel)]="password"
+                              name="password"
+                              required
+                              placeholder="{{ 'plh_ingrese_contraseña' | translate }}"
+                              class="form-input ps-10 placeholder:text-white-dark"
+                            />
+                            <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                              <icon-lock-dots [fill]="true" />
+                            </span>
+                          </div>
+                          <ng-container *ngIf="submitted">
+                            <span *ngIf="password" class="rounded bg-[#1abc9c] py-1 px-2 text-white">Looks Good!</span>
+                            <span *ngIf="!password" class="rounded bg-danger py-1 px-2 text-white">La contraseña es requerida</span>
+                          </ng-container>
                         </div>
-                        <button type="submit" class="btn btn-primary !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                            {{ 'btn_iniciar_sesion' | translate }}
+                      
+                        <!-- BOTÓN SUBMIT -->
+                        <button
+                          type="submit"
+                          class="btn btn-primary !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
+                          [disabled]="loading"
+                        >
+                          {{ 'btn_iniciar_sesion' | translate }}
                         </button>
-                    </form>
+                      
+                        <!-- MENSAJE DE ERROR -->
+                        <div *ngIf="errorMessage" class="mt-4 text-red-500 text-center">
+                          {{ errorMessage }}
+                        </div>
+                      </form>
+                      
+                      
                     <div class="text-center dark:text-white mt-10">
                         {{ 'txt_no_tiene_cuenta' | translate }}
                         <a routerLink="/#" class="uppercase text-primary underline transition hover:text-black dark:hover:text-white">

@@ -25,7 +25,7 @@ import { MenuModule } from 'headlessui-angular';
     IconCaretDownComponent,
     IconMailComponent,
     IconLockDotsComponent,
-    MenuModule
+    MenuModule,
   ],
 })
 export class LoginPage {
@@ -36,6 +36,7 @@ export class LoginPage {
   password: string = '';
   loading: boolean = false;
   errorMessage: string | null = null;
+  submitted: boolean = false;
 
   constructor(
     public translate: TranslateService,
@@ -47,11 +48,13 @@ export class LoginPage {
     this.initStore();
   }
 
-  onSubmit() {
-    this.authService.login(this.email, this.password);
-  }
+  async onSubmit() {
+    this.submitted = true;
 
-  async handleLogin() {
+    if (!this.email || !this.password) {
+      return;
+    }
+
     this.errorMessage = null;
     this.loading = true;
     const success = await this.authService.login(this.email, this.password);
@@ -65,14 +68,12 @@ export class LoginPage {
   }
 
   async initStore() {
-    console.log('initStore');
     this.storeData.select((d) => d.index).subscribe((d) => {
       this.store = d;
     });
   }
 
   changeLanguage(item: any) {
-    console.log('changeLanguage', item);
     this.translate.use(item.code);
     this.appSetting.toggleLanguage(item);
     if (this.store?.rtlClass) {

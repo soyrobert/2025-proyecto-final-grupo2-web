@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
-  private readonly API_URL = 'https://api.com/api/auth';
+  private readonly API_URL = 'https://reqres.in/api/login';
 
   constructor(private http: HttpClient, private router: Router) {}
 
