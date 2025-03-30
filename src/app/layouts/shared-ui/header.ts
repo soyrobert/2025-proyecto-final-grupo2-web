@@ -12,6 +12,7 @@ import { IconMoonComponent } from '../../shared/icon/icon-moon';
 import { IconLaptopComponent } from '../../shared/icon/icon-laptop';
 import { IconLogoutComponent } from '../../shared/icon/icon-logout';
 import { MenuModule } from 'headlessui-angular';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -39,6 +40,7 @@ export class HeaderComponent implements OnInit {
     public router: Router,
     private appSetting: AppService,
     private sanitizer: DomSanitizer,
+    private authService: AuthService,
   ) {
     this.initStore();
   }
@@ -92,5 +94,10 @@ export class HeaderComponent implements OnInit {
       this.storeData.dispatch({ type: 'toggleRTL', payload: 'ltr' });
     }
     window.location.reload();
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 }
