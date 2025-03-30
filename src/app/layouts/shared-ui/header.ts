@@ -2,15 +2,15 @@
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Router, NavigationEnd } from '@angular/router';
-import { AppService } from '../service/app.service';
+import { AppService } from '../../service/app.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { toggleAnimation } from 'src/app/shared/animations';
 import { IconMenuComponent } from 'src/app/shared/icon/icon-menu';
-import { IconSunComponent } from '../shared/icon/icon-sun';
-import { IconMoonComponent } from '../shared/icon/icon-moon';
-import { IconLaptopComponent } from '../shared/icon/icon-laptop';
-import { IconLogoutComponent } from '../shared/icon/icon-logout';
+import { IconSunComponent } from '../../shared/icon/icon-sun';
+import { IconMoonComponent } from '../../shared/icon/icon-moon';
+import { IconLaptopComponent } from '../../shared/icon/icon-laptop';
+import { IconLogoutComponent } from '../../shared/icon/icon-logout';
 import { MenuModule } from 'headlessui-angular';
 
 @Component({

@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { slideDownUp } from '../shared/animations';
+import { slideDownUp } from '../../shared/animations';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { IconCaretsDownComponent } from '../shared/icon/icon-carets-down';
-import { IconMinusComponent } from '../shared/icon/icon-minus';
-import { IconMenuChatComponent } from '../shared/icon/menu/icon-menu-chat';
-import { IconMenuMailboxComponent } from '../shared/icon/menu/icon-menu-mailbox';
-import { IconMenuUsersComponent } from '../shared/icon/menu/icon-menu-users';
+import { IconCaretsDownComponent } from '../../shared/icon/icon-carets-down';
+import { IconMinusComponent } from '../../shared/icon/icon-minus';
+import { IconMenuChatComponent } from '../../shared/icon/menu/icon-menu-chat';
+import { IconMenuMailboxComponent } from '../../shared/icon/menu/icon-menu-mailbox';
+import { IconMenuUsersComponent } from '../../shared/icon/menu/icon-menu-users';
 
 @Component({
   selector: 'app-sidebar',

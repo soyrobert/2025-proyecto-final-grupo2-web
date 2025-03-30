@@ -107,5 +107,7 @@
     "plh_ingrese_contraseña": "Enter your password",
     "txt_no_tiene_cuenta": "Don't you have an account?",
     "btn_registrarse": "Register",
-    "txt_recordar_clave": "Remember your password"
+    "txt_recordar_clave": "Remember your password",
+    "item_vendedores": "Vendors",
+    "user_config": "Configuration"
 }
