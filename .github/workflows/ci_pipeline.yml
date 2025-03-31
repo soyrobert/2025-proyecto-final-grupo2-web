@@ -1,0 +1,27 @@
+name: CI - Angular Build and Test
+
+on:
+  push:
+    branches: [feat/*]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Unit Tests with Coverage
+        run: npm run test:coverage
+
+      - name: Build Angular app
+        run: npm run build -- --configuration=production

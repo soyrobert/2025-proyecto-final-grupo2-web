@@ -1,11 +1,14 @@
-name: Deploy Angular to Cloud Run
+name: CD - Deploy Angular to Cloud Run
 
 on:
-  push:
-    branches: [feat/*]
+  workflow_run:
+    workflows: ["CI - Angular Build and Test"]
+    types:
+      - completed
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     env:
@@ -18,20 +21,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Unit Tests with Coverage
-        run: npm run test:coverage
-
-      - name: Build Angular app
-        run: npm run build -- --configuration=production
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
