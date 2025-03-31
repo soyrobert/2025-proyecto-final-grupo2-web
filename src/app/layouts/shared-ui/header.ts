@@ -2,16 +2,17 @@
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Router, NavigationEnd } from '@angular/router';
-import { AppService } from '../service/app.service';
+import { AppService } from '../../service/app.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { toggleAnimation } from 'src/app/shared/animations';
 import { IconMenuComponent } from 'src/app/shared/icon/icon-menu';
-import { IconSunComponent } from '../shared/icon/icon-sun';
-import { IconMoonComponent } from '../shared/icon/icon-moon';
-import { IconLaptopComponent } from '../shared/icon/icon-laptop';
-import { IconLogoutComponent } from '../shared/icon/icon-logout';
+import { IconSunComponent } from '../../shared/icon/icon-sun';
+import { IconMoonComponent } from '../../shared/icon/icon-moon';
+import { IconLaptopComponent } from '../../shared/icon/icon-laptop';
+import { IconLogoutComponent } from '../../shared/icon/icon-logout';
 import { MenuModule } from 'headlessui-angular';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -39,6 +40,7 @@ export class HeaderComponent implements OnInit {
     public router: Router,
     private appSetting: AppService,
     private sanitizer: DomSanitizer,
+    private authService: AuthService,
   ) {
     this.initStore();
   }
@@ -92,5 +94,10 @@ export class HeaderComponent implements OnInit {
       this.storeData.dispatch({ type: 'toggleRTL', payload: 'ltr' });
     }
     window.location.reload();
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 }

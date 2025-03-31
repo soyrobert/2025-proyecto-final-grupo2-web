@@ -77,5 +77,7 @@
     "plh_ingrese_contraseña": "Ingrese su contraseña",
     "txt_no_tiene_cuenta": "¿No tienes una cuenta?",
     "btn_registrarse": "Registrarse",
-    "txt_recordar_clave": "Recuerde su contraseña"
+    "txt_recordar_clave": "Recuerde su contraseña",
+    "item_vendedores": "Vendedores",
+    "user_config": "Configuración"
 }

@@ -4,9 +4,9 @@ import { Router, NavigationEnd } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
 import { AppService } from '../service/app.service';
-import { SidebarComponent } from './sidebar';
+import { SidebarComponent } from './shared-ui/sidebar';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './header';
+import { HeaderComponent } from './shared-ui/header';
 
 @Component({
   selector: 'app-root-layout',
