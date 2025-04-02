@@ -33,7 +33,17 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 export class HeaderComponent implements OnInit {
   store: any;
   search = false;
+  
 
+  roleMap: Record<string, string> = {
+    'director-ventas': 'Ventas',
+    'encargado-logistica': 'Logística',
+    'director-compras': 'Compras',
+  };
+
+  userEmail: string | null = null;
+  userRoleText: string | null = null;
+  
   constructor(
     public translate: TranslateService,
     public storeData: Store<any>,
@@ -53,6 +63,13 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.setActiveDropdown();
+
+    const role = localStorage.getItem('userRole');
+    const email = localStorage.getItem('userEmail');
+
+    this.userEmail = email;
+    this.userRoleText = role ? this.roleMap[role] || 'Sin rol' : null;
+
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.setActiveDropdown();
