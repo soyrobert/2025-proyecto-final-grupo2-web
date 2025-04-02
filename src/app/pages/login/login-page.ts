@@ -40,7 +40,6 @@ export class LoginPage {
   emailTouched = false;
   passwordTouched = false;
 
-
   constructor(
     public translate: TranslateService,
     public storeData: Store<any>,
@@ -66,7 +65,22 @@ export class LoginPage {
     this.loading = false;
 
     if (success) {
-      this.router.navigate(['/vendedores']);
+      const role = localStorage.getItem('userRole');
+      setTimeout(() => {
+        switch (role) {
+          case 'director-ventas':
+            this.router.navigate(['/vendedores']);
+            break;
+          case 'encargado-logistica':
+            this.router.navigate(['/logistica']);
+            break;
+          case 'director-compras':
+            this.router.navigate(['/proveedores']);
+            break;
+          default:
+            this.router.navigate(['/auth/login']);
+        }
+      });
     } else {
       this.errorMessage = 'Credenciales incorrectas o error de autenticación.';
     }
@@ -93,9 +107,8 @@ export class LoginPage {
   onEmailBlur() {
     this.emailTouched = true;
   }
-  
+
   onPasswordBlur() {
     this.passwordTouched = true;
   }
-  
 }
