@@ -17,40 +17,37 @@
             <ng-scrollbar class="relative !h-[calc(100vh-80px)]" appearance="compact">
                 <ul class="relative space-y-0.5 p-4 py-0 font-semibold">
 
-                    <h2 class="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
-                        <icon-minus class="hidden h-5 w-4 flex-none" />
-                        <span>{{ ('item_vendedores' | translate) || '&nbsp;' }}</span>
-                    </h2>
-
-                    <li class="nav-item">
-                        <ul>
-                            <li class="nav-item">
-                                <a routerLink="/#" class="group" routerLinkActive="active" (click)="toggleMobileMenu()">
-                                    <div class="flex items-center">
-                                        <icon-menu-chat class="shrink-0 group-hover:!text-primary" />
-
-                                        <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark"
-                                            >{{ 'Reportes e informes' | translate }}</span
-                                        >
-                                    </div>
-                                </a>
+                    <!-- Dinamico -->
+                    <ng-container *ngFor="let group of menuGroups">
+                        <h2 class="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
+                          <span>{{ (group.title | translate) || '&nbsp;' }}</span>
+                        </h2>
+                        <li class="nav-item">
+                          <ul>
+                            <li class="nav-item" *ngFor="let item of group.items">
+                              <a [routerLink]="item.path" class="group" routerLinkActive="active" (click)="toggleMobileMenu()">
+                                <div class="flex items-center">
+                                  <ng-container [ngSwitch]="item.icon">
+                                    <icon-chart-square *ngSwitchCase="'icon-chart-square'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-planes-venta *ngSwitchCase="'icon-planes-venta'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-chart-square *ngSwitchCase="'icon-productos'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-chart-square *ngSwitchCase="'icon-proveedores'" class="shrink-0 group-hover:!text-primary" />
+                                    <!-- Agrega más iconos aquí -->
+                                  </ng-container>
+                                  <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                                    {{ item.label | translate }}
+                                  </span>
+                                </div>
+                              </a>
                             </li>
-                            <li class="nav-item">
-                                <a routerLink="/#" class="group" routerLinkActive="active" (click)="toggleMobileMenu()">
-                                    <div class="flex items-center">
-                                        <icon-menu-mailbox class="shrink-0 group-hover:!text-primary" />
+                          </ul>
+                        </li>
+                      </ng-container>
+                    <!-- Fin Dinamico -->
 
-                                        <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark"
-                                            >{{ 'Planes de Venta Vendedores' | translate }}</span
-                                        >
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                    <!-- Estatico -->
 
                     <h2 class="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
-                        <icon-minus class="hidden h-5 w-4 flex-none" />
                         <span>{{ ('user_config' | translate) || '&nbsp;' }}</span>
                     </h2>
 

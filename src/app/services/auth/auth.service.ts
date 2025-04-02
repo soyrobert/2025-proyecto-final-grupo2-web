@@ -17,7 +17,7 @@ export class AuthService {
         .toPromise();
 
       // Guardar sesión
-      this.setSession(res.accessToken, res.role, res.userId);
+      this.setSession(res.accessToken, res.role, res.userId, email);
       return true;
     } catch (err: any) {
       console.error('Login error:', err);
@@ -25,10 +25,11 @@ export class AuthService {
     }
   }
 
-  setSession(token: string, role: string, userId: number): void {
+  setSession(token: string, role: string, userId: number, email: string): void {
     localStorage.setItem('accessToken', token);
     localStorage.setItem('userRole', role);
     localStorage.setItem('userId', userId.toString());
+    localStorage.setItem('userEmail', email);
   }
 
   getRole(): string | null {

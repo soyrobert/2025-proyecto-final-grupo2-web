@@ -109,5 +109,15 @@
     "btn_registrarse": "Register",
     "txt_recordar_clave": "Remember your password",
     "item_vendedores": "Vendors",
-    "user_config": "Configuration"
+    "user_config": "Configuration",
+    "txt_reportes_e_informes": "Reports and reports",
+    "txt_planes_de_venta_vendedores": "Sales plans vendors",
+    "txt_title_proveedores": "Providers",
+    "txt_registro_productos": "Product registration",
+    "txt_registro_proveedores": "Provider registration",
+    "txt_title_proveedores_productos": "Products",
+    "txt_title_logistica_productos": "Products",
+    "txt_logisitica_busqueda_productos": "Product search",
+    "txt_title_logistica_visitas": "Visits",
+    "txt_logistica_planificacion_rutas": "Route planning"
 }

@@ -79,5 +79,15 @@
     "btn_registrarse": "Registrarse",
     "txt_recordar_clave": "Recuerde su contraseña",
     "item_vendedores": "Vendedores",
-    "user_config": "Configuración"
+    "user_config": "Configuración",
+    "txt_reportes_e_informes": "Reportes e Informes",
+    "txt_planes_de_venta_vendedores": "Planes de venta vendedores",
+    "txt_title_proveedores": "Proveedores",
+    "txt_registro_productos": "Registro de productos",
+    "txt_registro_proveedores": "Registro de proveedores",
+    "txt_title_proveedores_productos": "Productos",
+    "txt_title_logistica_productos": "Productos",
+    "txt_logisitica_busqueda_productos": "Búsqueda de productos",
+    "txt_title_logistica_visitas": "Visitas",
+    "txt_logistica_planificacion_rutas": "Planificación de rutas"
 }
