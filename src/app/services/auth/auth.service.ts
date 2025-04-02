@@ -16,16 +16,23 @@ export class AuthService {
         .post(`${this.API_URL}/auth/login`, { email, password })
         .toPromise();
 
-      // Guardar el token
-      localStorage.setItem('accessToken', res.accessToken);
-      localStorage.setItem('userRole', res.role);
-      localStorage.setItem('userId', res.userId.toString());
-
+      // Guardar sesión
+      this.setSession(res.accessToken, res.role, res.userId);
       return true;
     } catch (err: any) {
       console.error('Login error:', err);
       return false;
     }
+  }
+
+  setSession(token: string, role: string, userId: number): void {
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('userRole', role);
+    localStorage.setItem('userId', userId.toString());
+  }
+
+  getRole(): string | null {
+    return localStorage.getItem('userRole');
   }
 
   logout() {

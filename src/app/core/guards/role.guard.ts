@@ -3,10 +3,10 @@ import { inject } from '@angular/core';
 
 export const RoleGuard: CanActivateFn = (route) => {
   const router = inject(Router);
-  const expectedRoles: string[] = route.data?.['roles'] || [];
+  const expectedRole: string = route.data?.['expectedRole'];
   const userRole = localStorage.getItem('userRole');
 
-  if (expectedRoles.includes(userRole || '')) {
+  if (userRole === expectedRole) {
     return true;
   }
 

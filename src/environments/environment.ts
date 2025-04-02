@@ -4,5 +4,5 @@
 
 export const environment = {
     production: false,
-    apiBaseUrl: 'http://localhost:3011/api/v1/seguridad/gestor_usuarios/r',
+    apiBaseUrl: 'http://localhost:3000',
 };
