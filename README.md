@@ -17,7 +17,7 @@ Para gestionar el desarrollo de la plataforma, utilizamos **GitHub** con el mode
 
 ### Estructura de ramas
 - **`main`**: Contiene las versiones estables y listas para producción. Solo se actualiza con versiones etiquetadas.
-- **`feature/*`**: Ramas dedicadas a nuevas funcionalidades. Se crean desde `develop` y se fusionan nuevamente en `develop` cuando están completas.
+- **`feat/*`** o **`feature/*`**: Ramas dedicadas a nuevas funcionalidades. Se crean desde `develop` y se fusionan nuevamente en `develop` cuando están completas.
 - **`hotfix/*`**: Para corregir errores críticos en `main`. Se crean desde `main`, se corrigen y luego se fusionan tanto en `main` como en `develop`.
 - **`release/*`**: Preparación de una nueva versión estable. Se crean desde `develop`, se prueban y se fusionan en `main` cuando están listas.
 - **`docs/*`**: Preparación de una rama con documentación.
