@@ -1,15 +1,16 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { slideDownUp } from '../../shared/animations';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { IconCaretsDownComponent } from '../../shared/icon/icon-carets-down';
-import { IconMinusComponent } from '../../shared/icon/icon-minus';
-import { IconMenuChatComponent } from '../../shared/icon/menu/icon-menu-chat';
-import { IconMenuMailboxComponent } from '../../shared/icon/menu/icon-menu-mailbox';
 import { IconMenuUsersComponent } from '../../shared/icon/menu/icon-menu-users';
+import { PlanesVentaComponent } from 'src/app/shared/icon/planes-venta';
+import { IconChartSquareComponent } from 'src/app/shared/icon/icon-chart-square';
+import { MenuService } from 'src/app/services/menu.service';
+import { MenuGroup } from 'src/app/config/menu.config';
 
 @Component({
   selector: 'app-sidebar',
@@ -18,10 +19,10 @@ import { IconMenuUsersComponent } from '../../shared/icon/menu/icon-menu-users';
     TranslateModule,
     NgScrollbarModule,
     IconCaretsDownComponent,
-    IconMinusComponent,
-    IconMenuChatComponent,
-    IconMenuMailboxComponent,
-    IconMenuUsersComponent
+    IconMenuUsersComponent,
+    PlanesVentaComponent,
+    IconChartSquareComponent,
+    RouterModule
   ],
   templateUrl: './sidebar.html',
   animations: [slideDownUp],
@@ -31,11 +32,13 @@ export class SidebarComponent implements OnInit {
   store: any;
   activeDropdown: string[] = [];
   parentDropdown: string = '';
+  menuGroups: MenuGroup[] = [];
 
   constructor(
     public translate: TranslateService,
     public storeData: Store<any>,
-    public router: Router
+    public router: Router,
+    private menuService: MenuService
   ) {
     this.initStore();
   }
@@ -47,6 +50,8 @@ export class SidebarComponent implements OnInit {
   }
 
   ngOnInit() {
+    const role = localStorage.getItem('userRole');
+    this.menuGroups = this.menuService.getMenuByRole(role);
     this.setActiveDropdown();
   }
 
