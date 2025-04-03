@@ -6,5 +6,16 @@ module.exports = {
         '.*\\.e2e\\.spec\\.ts$',
         '.*\\.functional\\.spec\\.ts$',
     ],
-    globalSetup: 'jest-preset-angular/global-setup'
+    globalSetup: 'jest-preset-angular/global-setup',
+    moduleNameMapper: {
+        '^src/(.*)$': '<rootDir>/src/$1',
+    },
+    coverageThreshold: {
+        global: {
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80
+        }
+    }
 }
