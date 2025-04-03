@@ -116,5 +116,38 @@ describe('AuthService', () => {
     });
   });
 
+  describe('logout', () => {
+    it('Debería eliminar los datos de sesión de LocalStorage', () => {
+
+      service.logout();
+      
+      expect(localStorage.removeItem).toHaveBeenCalledWith('accessToken');
+      expect(localStorage.removeItem).toHaveBeenCalledWith('userRole');
+      expect(localStorage.removeItem).toHaveBeenCalledWith('userId');
+    });
+  });
+
+  describe('isAuthenticated', () => {
+    it('debe devolver verdadero cuando exista accessToken', () => {
+
+      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue('token123');
+
+      const result = service.isAuthenticated();
+
+      expect(result).toBe(true);
+      expect(localStorage.getItem).toHaveBeenCalledWith('accessToken');
+    });
+
+    it('Debería devolver falso cuando el token de acceso no existe.', () => {
+
+      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
+
+      const result = service.isAuthenticated();
+      
+      expect(result).toBe(false);
+      expect(localStorage.getItem).toHaveBeenCalledWith('accessToken');
+    });
+  });
+
   
 });
