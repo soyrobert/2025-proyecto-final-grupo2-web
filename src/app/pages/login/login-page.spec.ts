@@ -164,6 +164,56 @@ describe('LoginPage', () => {
     // Comprobar que el servicio de autenticación fue llamado
     expect(authService.login).toHaveBeenCalledWith('test@example.com', 'password123');
   });
+
+  it('Debe navegar a la página de vendedores después de iniciar sesión correctamente como director de ventas', async () => {
+    authService.login.mockResolvedValue(true);
+    Storage.prototype.getItem = jest.fn().mockImplementation((key) => {
+      return key === 'userRole' ? 'director-ventas' : null;
+    });
+    
+    // Llenar el formulario
+    component.email = 'director@example.com';
+    component.password = 'password123';
+    
+    // Enviar el formulario
+    await component.onSubmit();
+    jest.runAllTimers();
+    
+    // Comprobar navegación
+    expect(router.navigate).toHaveBeenCalledWith(['/vendedores']);
+  });
+
+  it('Debe navegar a la página de logística después de iniciar sesión correctamente como encargado de logistica', async () => {
+    authService.login.mockResolvedValue(true);
+    Storage.prototype.getItem = jest.fn().mockImplementation((key) => {
+      return key === 'userRole' ? 'encargado-logistica' : null;
+    });
+    
+    component.email = 'logistica@example.com';
+    component.password = 'password123';
+    
+    await component.onSubmit();
+    jest.runAllTimers();
+    
+    // Comprobar navegación
+    expect(router.navigate).toHaveBeenCalledWith(['/logistica']);
+  });
+
+  it('Debe navegar a la página de proveedores después de iniciar sesión correctamente como director de compras.', async () => {
+    authService.login.mockResolvedValue(true);
+    Storage.prototype.getItem = jest.fn().mockImplementation((key) => {
+      return key === 'userRole' ? 'director-compras' : null;
+    });
+    
+    component.email = 'compras@example.com';
+    component.password = 'password123';
+    
+    await component.onSubmit();
+    jest.runAllTimers();
+    
+    // Comprobar navegación
+    expect(router.navigate).toHaveBeenCalledWith(['/proveedores']);
+  });
   
 
 });
