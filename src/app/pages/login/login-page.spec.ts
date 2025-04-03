@@ -252,6 +252,26 @@ describe('LoginPage', () => {
     const successMessage = fixture.debugElement.query(By.css('.bg-\\[\\#1abc9c\\]'));
     expect(successMessage.nativeElement.textContent).toContain('Luce bien!');
   });
+
+  it('Debe cambiar el idioma cuando se llama a changeLanguage', () => {
+    const languageItem = { code: 'es', name: 'Spanish' };
+    component.changeLanguage(languageItem);
+    
+    // Validar que se cambió el idioma
+    expect(translateService.use).toHaveBeenCalledWith('es');
+    expect(appService.toggleLanguage).toHaveBeenCalledWith(languageItem);
+  });
+  
+  it('Debería rastrear el idioma mediante código', () => {
+    const index = 1;
+    const item = { code: 'es', name: 'Spanish' };
+    
+    // Llamar a la función trackByLangCode
+    const result = component.trackByLangCode(index, item);
+    
+    // Validar el resultado
+    expect(result).toBe('es');
+  });
   
 
 });
