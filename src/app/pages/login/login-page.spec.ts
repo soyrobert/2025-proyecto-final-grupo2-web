@@ -133,6 +133,23 @@ describe('LoginPage', () => {
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
+
+  it('Debe mostrar mensajes de validación cuando se envía un formulario con campos vacíos', () => {
+    // Clic  en el botón de inicio de sesión
+    const submitButton = fixture.debugElement.query(By.css('button[type="submit"]'));
+    submitButton.nativeElement.click();
+    fixture.detectChanges();
+    
+    // Comprobar el estado de validación
+    expect(component.emailTouched).toBe(true);
+    expect(component.passwordTouched).toBe(true);
+    
+    // Obtener mensajes de error
+    const errorMessages = fixture.debugElement.queryAll(By.css('.bg-danger'));
+    expect(errorMessages.length).toBe(2);
+    expect(errorMessages[0].nativeElement.textContent).toContain('Ingrese un email válido');
+    expect(errorMessages[1].nativeElement.textContent).toContain('La contraseña es requerida');
+  });
   
 
 });
