@@ -84,5 +84,22 @@ describe('AppService', () => {
     expect(store.dispatch).toHaveBeenCalledWith({ type: 'toggleTheme', payload: 'dark' });
     expect(store.dispatch).toHaveBeenCalledWith({ type: 'toggleMenu', payload: 'vertical' });
   });
+
+  it('Debería alternar el idioma correctamente', () => {
+    const languageItem = { code: 'es', name: 'Spanish' };
+    const result = service.toggleLanguage(languageItem);
+    
+    expect(translateService.use).toHaveBeenCalledWith('es');
+    expect(store.dispatch).toHaveBeenCalledWith({ type: 'toggleLocale', payload: 'es' });
+    expect(result).toEqual(languageItem);
+  });
+
+  it('Debería alternar el idioma con el predeterminado', () => {
+    const result = service.toggleLanguage(null);
+    
+    expect(translateService.use).toHaveBeenCalled();
+    expect(store.dispatch).toHaveBeenCalled();
+    expect(result).toBeTruthy();
+  });
   
 });
