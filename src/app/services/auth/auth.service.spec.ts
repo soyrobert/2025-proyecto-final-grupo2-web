@@ -95,5 +95,26 @@ describe('AuthService', () => {
     });
   });
 
+  describe('getRole', () => {
+    it('Debería devolver el rol de usuario de localStorage', () => {
+      const expectedRole = 'director-ventas';
+      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(expectedRole);
+      
+      const result = service.getRole();
+
+      expect(result).toBe(expectedRole);
+      expect(localStorage.getItem).toHaveBeenCalledWith('userRole');
+    });
+
+    it('Debería devolver nulo cuando no se encuentra el rol', () => {
+      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
+      
+      const result = service.getRole();
+      
+      expect(result).toBeNull();
+      expect(localStorage.getItem).toHaveBeenCalledWith('userRole');
+    });
+  });
+
   
 });
