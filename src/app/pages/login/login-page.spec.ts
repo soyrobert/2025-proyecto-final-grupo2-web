@@ -214,6 +214,44 @@ describe('LoginPage', () => {
     // Comprobar navegación
     expect(router.navigate).toHaveBeenCalledWith(['/proveedores']);
   });
+
+  it('Debería mostrarse un mensaje de error cuando falla el inicio de sesión', async () => {
+    authService.login.mockResolvedValue(false);
+    
+    component.email = 'wrong@example.com';
+    component.password = 'wrongpassword';
+    
+    await component.onSubmit();
+    fixture.detectChanges();
+    
+    // Validar que se muestra el mensaje de error
+    expect(component.errorMessage).toBe('Credenciales incorrectas o error de autenticación.');
+    const errorElement = fixture.debugElement.query(By.css('.text-red-500'));
+    expect(errorElement.nativeElement.textContent.trim()).toBe('Credenciales incorrectas o error de autenticación.');
+  });
+
+  it('Debería validar el campo de correo electrónico en el desenfoque', () => {
+    // Obtener el campo de entrada de correo electrónico
+    const emailInput = fixture.debugElement.query(By.css('input[type="email"]'));
+    
+    // Simular el desenfoque del campo de entrada
+    emailInput.triggerEventHandler('blur', {});
+    fixture.detectChanges();
+    
+    expect(component.emailTouched).toBe(true);
+    
+    // Validar el mensaje de error
+    const errorMessage = fixture.debugElement.query(By.css('.bg-danger'));
+    expect(errorMessage.nativeElement.textContent).toContain('Ingrese un email válido');
+    
+    // Email válido
+    component.email = 'valid@example.com';
+    fixture.detectChanges();
+    
+    // Validar el mensaje de éxito
+    const successMessage = fixture.debugElement.query(By.css('.bg-\\[\\#1abc9c\\]'));
+    expect(successMessage.nativeElement.textContent).toContain('Luce bien!');
+  });
   
 
 });
