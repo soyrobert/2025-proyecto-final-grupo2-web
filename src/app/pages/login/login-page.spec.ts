@@ -150,6 +150,20 @@ describe('LoginPage', () => {
     expect(errorMessages[0].nativeElement.textContent).toContain('Ingrese un email válido');
     expect(errorMessages[1].nativeElement.textContent).toContain('La contraseña es requerida');
   });
+
+  it('Debe llamar a authService.login con las credenciales correctas', async () => {
+    authService.login.mockResolvedValue(true);
+    
+    // Llenar el formulario
+    component.email = 'test@example.com';
+    component.password = 'password123';
+    
+    // Enviar el formulario
+    await component.onSubmit();
+    
+    // Comprobar que el servicio de autenticación fue llamado
+    expect(authService.login).toHaveBeenCalledWith('test@example.com', 'password123');
+  });
   
 
 });
