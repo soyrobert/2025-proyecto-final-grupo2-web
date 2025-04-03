@@ -101,5 +101,31 @@ describe('AppService', () => {
     expect(store.dispatch).toHaveBeenCalled();
     expect(result).toBeTruthy();
   });
+
+  it('Deberían agregarse clases de animación', () => {
+    service.changeAnimation('add');
+    
+    expect(mockDocument.querySelector).toHaveBeenCalledWith('.animation');
+    expect(mockClassList.add).toHaveBeenCalledWith('animate__animated');
+    expect(mockClassList.add).toHaveBeenCalledWith('animate__fadeIn');
+  });
+
+  it('Deberia remover las clases de animación ', () => {
+    service.changeAnimation('remove');
+    
+    expect(mockDocument.querySelector).toHaveBeenCalledWith('.animation');
+    expect(mockClassList.remove).toHaveBeenCalledWith('animate__animated');
+    expect(mockClassList.remove).toHaveBeenCalledWith('animate__fadeIn');
+  });
+
+  it('Debe usar valores de configuración cuando localStorage esté vacío', () => {
+    jest.spyOn(window.localStorage, 'getItem').mockImplementation(() => null);
+    
+    service.initStoreData();
+    
+    expect(store.dispatch).toHaveBeenCalledWith({ type: 'toggleTheme', payload: $themeConfig.theme });
+    expect(store.dispatch).toHaveBeenCalledWith({ type: 'toggleMenu', payload: $themeConfig.menu });
+    expect(store.dispatch).toHaveBeenCalledWith({ type: 'toggleLayout', payload: $themeConfig.layout });
+  });
   
 });
