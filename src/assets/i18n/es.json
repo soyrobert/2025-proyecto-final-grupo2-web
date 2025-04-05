@@ -89,5 +89,6 @@
     "txt_title_logistica_productos": "Productos",
     "txt_logisitica_busqueda_productos": "Búsqueda de productos",
     "txt_title_logistica_visitas": "Visitas",
-    "txt_logistica_planificacion_rutas": "Planificación de rutas"
+    "txt_logistica_planificacion_rutas": "Planificación de rutas",
+    "btn_agregar_proveedor": "Agregar proveedor"
 }

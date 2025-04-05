@@ -4,6 +4,7 @@ export const $themeConfig = {
     menu: 'vertical',
     layout: 'full',
     rtlClass: 'ltr',
-    navbar: 'navbar-sticky',
+    navbar: 'navbar-navbar-sticky',
+    animation: 'animate__fadeIn',
     semidark: true,
 };

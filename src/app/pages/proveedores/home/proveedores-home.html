@@ -1,0 +1,105 @@
+<div>
+    <ul class="flex space-x-2 rtl:space-x-reverse">
+        <li>
+            <a href="javascript:;" class="text-primary hover:underline">{{ 'dashboard' | translate }}</a>
+        </li>
+        <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+            <span>{{ 'txt_title_proveedores' | translate }}</span>
+        </li>
+    </ul>
+
+    <div class="flex items-center justify-start py-7">
+        <button type="button" class="btn btn-primary btn-lg" (click)="abrirModalProveedor()">
+            <icon-plus class="text-white mr-2" />
+            {{ 'btn_agregar_proveedor' | translate }}
+        </button>
+    </div>
+
+    <div class="animation pt-6">
+        <div class="panel h-lvh">
+            <img src="/assets/images/logo.svg" alt="">
+            <div class="flex flex-col my-5">
+                <h3 class="text-lg font-semibold dark:text-white-light">Instrucciones de uso</h3>
+                <p>Instrucciones de uso Descargue la plantilla AQUI, complete los datos segun el formato y tipos de datos. </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar proveedor -->
+    <app-modal #modalProveedor title="Agregar proveedor">
+        <form [formGroup]="formularioProveedor" class="text-sm" (ngSubmit)="guardarProveedor()">
+            <div class="mb-5">
+                <label for="nombre" class="block text-sm font-medium mb-1">Nombre</label>
+                <input id="nombre" type="text" placeholder="Ingrese el nombre del proveedor" 
+                       class="form-input" formControlName="nombre" />
+                <div *ngIf="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.invalid" 
+                     class="text-danger text-xs mt-1">
+                    El nombre es requerido
+                </div>
+            </div>
+            
+            <div class="mb-5">
+                <label for="email" class="block text-sm font-medium mb-1">Email</label>
+                <input id="email" type="email" placeholder="Ingrese el email del proveedor" 
+                       class="form-input" formControlName="email" />
+                <div *ngIf="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.errors?.['required']" 
+                     class="text-danger text-xs mt-1">
+                    El email es requerido
+                </div>
+                <div *ngIf="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.errors?.['email']" 
+                     class="text-danger text-xs mt-1">
+                    Ingrese un email válido
+                </div>
+            </div>
+            
+            <div class="mb-5">
+                <label for="numeroContacto" class="block text-sm font-medium mb-1">Número de contacto</label>
+                <input id="numeroContacto" type="text" placeholder="Ingrese el número de contacto" 
+                       class="form-input" formControlName="numeroContacto" />
+                <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.invalid" 
+                     class="text-danger text-xs mt-1">
+                    El número de contacto es requerido
+                </div>
+            </div>
+            
+            <div class="mb-5">
+                <label for="pais" class="block text-sm font-medium mb-1">País</label>
+                <select id="pais" class="form-select" formControlName="pais">
+                    <option value="">Seleccione el país</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Brasil">Brasil</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Colombia">Colombia</option>
+                    <option value="Ecuador">Ecuador</option>
+                    <option value="México">México</option>
+                    <option value="Perú">Perú</option>
+                    <option value="Estados Unidos">Estados Unidos</option>
+                    <option value="España">España</option>
+                </select>
+                <div *ngIf="formularioProveedor.get('pais')?.touched && formularioProveedor.get('pais')?.invalid" 
+                     class="text-danger text-xs mt-1">
+                    Debe seleccionar un país
+                </div>
+            </div>
+            
+            <div class="mb-5">
+                <label for="caracteristicas" class="block text-sm font-medium mb-1">Características</label>
+                <textarea id="caracteristicas" rows="3" placeholder="Ingrese las características del proveedor" 
+                          class="form-textarea" formControlName="caracteristicas"></textarea>
+            </div>
+            
+            <div class="mb-5">
+                <label for="condiciones" class="block text-sm font-medium mb-1">Condiciones comerciales y tributarias</label>
+                <textarea id="condiciones" rows="3" placeholder="Ingrese las condiciones comerciales y tributarias" 
+                          class="form-textarea" formControlName="condiciones"></textarea>
+            </div>
+            
+            <div class="mt-8 flex items-center justify-end">
+                <button type="button" class="btn btn-outline-danger" (click)="modalProveedor.close()">Cancelar</button>
+                <button type="submit" class="btn btn-primary ml-4" [disabled]="formularioProveedor.invalid">
+                    Agregar proveedor
+                </button>
+            </div>
+        </form>
+    </app-modal>
+</div>
