@@ -28,11 +28,6 @@
     <!-- Modal para agregar proveedor -->
     <app-modal #modalProveedor title="{{ 'btn_agregar_proveedor' | translate }}">
         <form [formGroup]="formularioProveedor" class="text-sm" (ngSubmit)="guardarProveedor()">
-            <!-- Mensaje de error general -->
-            <div *ngIf="error" class="mb-5 p-3 rounded bg-danger text-white">
-                {{ error }}
-            </div>
-            
             <div class="mb-5">
                 <label for="nombre" class="block text-sm font-medium mb-1">{{ 'name' | translate }}</label>
                 <input id="nombre" type="text" placeholder="{{ 'txt_ingrese_el_nombre' | translate }}" 

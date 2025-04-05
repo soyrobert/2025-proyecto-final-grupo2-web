@@ -139,5 +139,10 @@
     "txt_ingrese_las_condiciones": "Enter the conditions",
     "txt_por_favor_ingrese_las_condiciones": "Please enter the conditions",
     "txt_solo_numeros": "Only numbers",
-    "btn_cancelar": "Cancel"
+    "btn_cancelar": "Cancel",
+    "txt_proveedor_registrado_exitosamente": "Provider registered successfully",
+    "msg_error_generico": "Unknown error",
+    "msg_proveedor_ya_existe": "Provider already exists",
+    "msg_no_tiene_permisos": "You do not have permissions",
+    "msg_error_conexion": "Connection error"
 }

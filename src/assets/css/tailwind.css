@@ -8,7 +8,7 @@
 @import 'swiper.css';
 
 /* sweetalert */
-@import 'sweetalert.css';
+/* @import 'sweetalert.css'; */
 
 /* tippy */
 @import 'tippy.css';
@@ -579,7 +579,8 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 }
 
 .swal2-container .swal2-popup.swal2-toast {
-    @apply bg-dark px-5 py-2.5;
+    /* @apply bg-dark px-5 py-2.5; */
+    @apply bg-[#1B2E4B];
 }
 
 .swal2-popup.swal2-toast .swal2-title,

@@ -111,5 +111,10 @@
     "txt_ingrese_las_condiciones": "Ingrese las condiciones comerciales y tributarias",
     "txt_por_favor_ingrese_las_condiciones": "Por favor ingrese las condiciones",
     "txt_solo_numeros": "Solo se permiten números",
-    "btn_cancelar": "Cancelar"
+    "btn_cancelar": "Cancelar",
+    "txt_proveedor_registrado_exitosamente": "Proveedor registrado exitosamente",
+    "msg_error_generico": "Error desconocido",
+    "msg_proveedor_ya_existe": "El proveedor ya existe",
+    "msg_no_tiene_permisos": "No tienes permisos",
+    "msg_error_conexion": "Error de conexión"
 }
