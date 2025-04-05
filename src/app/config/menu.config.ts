@@ -29,6 +29,16 @@ export interface MenuItem {
     ],
     'director-compras': [
       {
+        title: 'txt_title_proveedores',
+        items: [
+          {
+            icon: 'icon-proveedores',
+            label: 'txt_registro_proveedores',
+            path: '/proveedores',
+          },
+        ],
+      },
+      {
         title: 'txt_title_proveedores_productos',
         items: [
           {
@@ -37,16 +47,6 @@ export interface MenuItem {
             path: '/proveedores/importar-productos',
           },
           
-        ],
-      },
-      {
-        title: 'txt_title_proveedores',
-        items: [
-          {
-            icon: 'icon-proveedores',
-            label: 'txt_registro_proveedores',
-            path: '/proveedores/importar-proveedores',
-          },
         ],
       },
     ],
