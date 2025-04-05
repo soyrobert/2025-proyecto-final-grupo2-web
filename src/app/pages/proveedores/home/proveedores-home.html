@@ -33,7 +33,7 @@
                 <input id="nombre" type="text" placeholder="Ingrese el nombre del proveedor" 
                        class="form-input" formControlName="nombre" />
                 <div *ngIf="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.invalid" 
-                     class="text-danger text-xs mt-1">
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
                     El nombre es requerido
                 </div>
             </div>
@@ -43,11 +43,11 @@
                 <input id="email" type="email" placeholder="Ingrese el email del proveedor" 
                        class="form-input" formControlName="email" />
                 <div *ngIf="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.errors?.['required']" 
-                     class="text-danger text-xs mt-1">
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
                     El email es requerido
                 </div>
                 <div *ngIf="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.errors?.['email']" 
-                     class="text-danger text-xs mt-1">
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
                     Ingrese un email válido
                 </div>
             </div>
@@ -57,8 +57,12 @@
                 <input id="numeroContacto" type="text" placeholder="Ingrese el número de contacto" 
                        class="form-input" formControlName="numeroContacto" />
                 <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.invalid" 
-                     class="text-danger text-xs mt-1">
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
                     El número de contacto es requerido
+                </div>
+                <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.errors?.['pattern']" 
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    Solo se permiten números
                 </div>
             </div>
             
@@ -77,7 +81,7 @@
                     <option value="España">España</option>
                 </select>
                 <div *ngIf="formularioProveedor.get('pais')?.touched && formularioProveedor.get('pais')?.invalid" 
-                     class="text-danger text-xs mt-1">
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
                     Debe seleccionar un país
                 </div>
             </div>
@@ -86,12 +90,20 @@
                 <label for="caracteristicas" class="block text-sm font-medium mb-1">Características</label>
                 <textarea id="caracteristicas" rows="3" placeholder="Ingrese las características del proveedor" 
                           class="form-textarea" formControlName="caracteristicas"></textarea>
+                <div *ngIf="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.invalid" 
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                         El campo características es requerido
+                     </div>
             </div>
             
             <div class="mb-5">
                 <label for="condiciones" class="block text-sm font-medium mb-1">Condiciones comerciales y tributarias</label>
                 <textarea id="condiciones" rows="3" placeholder="Ingrese las condiciones comerciales y tributarias" 
                           class="form-textarea" formControlName="condiciones"></textarea>
+                <div *ngIf="formularioProveedor.get('condiciones')?.touched && formularioProveedor.get('condiciones')?.invalid"
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                         El campo condiciones comerciales y tributarias es requerido
+                </div>
             </div>
             
             <div class="mt-8 flex items-center justify-end">

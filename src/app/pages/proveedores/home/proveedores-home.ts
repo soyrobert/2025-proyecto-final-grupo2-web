@@ -33,10 +33,10 @@ export class ProveedoresHome {
     this.formularioProveedor = this.fb.group({
       nombre: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      numeroContacto: ['', Validators.required],
+      numeroContacto: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       pais: ['', Validators.required],
-      caracteristicas: [''],
-      condiciones: ['']
+      caracteristicas: ['', Validators.required],
+      condiciones: ['', Validators.required],
     });
   }
 
