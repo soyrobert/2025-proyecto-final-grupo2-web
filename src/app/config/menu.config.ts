@@ -20,7 +20,7 @@ export interface MenuItem {
             path: '/vendedores',
           },
           {
-            icon: 'icon-planes-venta',
+            icon: 'icon-shopping-bag',
             label: 'txt_planes_de_venta_vendedores',
             path: '/vendedores/planes-venta',
           },
@@ -32,7 +32,7 @@ export interface MenuItem {
         title: 'txt_title_proveedores',
         items: [
           {
-            icon: 'icon-proveedores',
+            icon: 'icon-user-plus',
             label: 'txt_registro_proveedores',
             path: '/proveedores',
           },
@@ -42,7 +42,7 @@ export interface MenuItem {
         title: 'txt_title_proveedores_productos',
         items: [
           {
-            icon: 'icon-productos',
+            icon: 'icon-box',
             label: 'txt_registro_productos',
             path: '/proveedores/importar-productos',
           },
@@ -55,7 +55,7 @@ export interface MenuItem {
         title: 'txt_title_logistica_productos',
         items: [
           {
-            icon: 'icon-productos',
+            icon: 'icon-search',
             label: 'txt_logisitica_busqueda_productos',
             path: '/logistica',
           },
@@ -66,7 +66,7 @@ export interface MenuItem {
         title: 'txt_title_logistica_visitas',
         items: [
           {
-            icon: 'icon-logistica',
+            icon: 'icon-map-pin',
             label: 'txt_logistica_planificacion_rutas',
             path: '/logistica/rutas',
           },
