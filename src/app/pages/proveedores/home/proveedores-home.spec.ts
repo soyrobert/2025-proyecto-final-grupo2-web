@@ -400,4 +400,33 @@ describe('ProveedoresHome', () => {
       padding: '10px 20px'
     });
   });
+
+  it('debería mostrar un mensaje de error cuando falla el registro con error 207 (proveedor existente por nombre)', () => {
+    const errorResponse = {
+      status: 207,
+      error: {
+        error: 'Ya existe un proveedor con el nombre',
+        detalles: 'Ya existe un proveedor con el nombre "Proveedor Ejemplo S.A."'
+      }
+    };
+    
+    proveedoresService.registrarProveedor.mockReturnValue(throwError(() => errorResponse));
+    
+    component.formularioProveedor.setValue({
+      nombre: 'Proveedor Ejemplo S.A.',
+      email: 'test@example.com',
+      numeroContacto: '1234567890',
+      pais: 'Colombia',
+      caracteristicas: 'Características de prueba',
+      condiciones: 'Condiciones de prueba'
+    });
+    
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
+    
+    component.guardarProveedor();
+    
+    expect(spyShowMessage).toHaveBeenCalledWith('msg_proveedor_ya_existe_nombre', 'error');
+    expect(component.modalProveedor.close).not.toHaveBeenCalled();
+    expect(component.cargando).toBe(false);
+  });
 });
