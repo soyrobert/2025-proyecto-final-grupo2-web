@@ -4,6 +4,6 @@
 
 export const environment = {
     production: false,
-    apiBaseUrl: 'http://localhost:3000',
-    proveedoresApiUrl: 'http://localhost:3003/api/v1/inventario/gestor_proveedores',
+    apiBaseUrl: 'http://34.49.18.136/api/v1/seguridad/gestor_usuarios/r',
+    proveedoresApiUrl: 'http://34.49.18.136/api/v1/inventario/gestor_proveedores',
 };
