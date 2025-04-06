@@ -1,0 +1,121 @@
+<div>
+    <ul class="flex space-x-2 rtl:space-x-reverse">
+        <li>
+            <a href="javascript:;" class="text-primary hover:underline">{{ 'dashboard' | translate }}</a>
+        </li>
+        <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+            <span>{{ 'txt_title_proveedores' | translate }}</span>
+        </li>
+    </ul>
+
+    <div class="flex items-center justify-start py-7">
+        <button type="button" class="btn btn-primary btn-lg" (click)="abrirModalProveedor()">
+            <icon-plus class="text-white mr-2" />
+            {{ 'btn_agregar_proveedor' | translate }}
+        </button>
+    </div>
+
+    <div class="animation pt-6">
+        <div class="panel min-h-[600px] ">
+            <img src="/assets/images/logo.svg" alt="">
+            <div class="flex flex-col my-5">
+                <h3 class="text-lg font-semibold dark:text-white-light">{{ 'txt_intrucciones_de_uso' | translate }}</h3>
+                <p>{{ 'txt_intrucciones_de_uso_guia' | translate }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar proveedor -->
+    <app-modal #modalProveedor title="{{ 'btn_agregar_proveedor' | translate }}">
+        <form [formGroup]="formularioProveedor" class="text-sm" (ngSubmit)="guardarProveedor()">
+            <div class="mb-5">
+                <label for="nombre" class="block text-sm font-medium mb-1">{{ 'name' | translate }}</label>
+                <input id="nombre" type="text" placeholder="{{ 'txt_ingrese_el_nombre' | translate }}" 
+                       class="form-input" formControlName="nombre" />
+                <div *ngIf="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.invalid" 
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_por_favor_ingrese_el_nombre' | translate }}
+                </div>
+            </div>
+            
+            <div class="mb-5">
+                <label for="email" class="block text-sm font-medium mb-1">{{ 'email' | translate }}</label>
+                <input id="email" type="email" placeholder="{{ 'txt_ingrese_el_email' | translate }}" 
+                       class="form-input" formControlName="email" />
+                <div *ngIf="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.errors?.['required']" 
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_por_favor_ingrese_el_email' | translate }}
+                </div>
+                <div *ngIf="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.errors?.['email']" 
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_email_invalido' | translate }}
+                </div>
+            </div>
+            
+            <div class="mb-5">
+                <label for="numeroContacto" class="block text-sm font-medium mb-1">{{ 'txt_numero_de_contacto' | translate }}</label>
+                <input id="numeroContacto" type="text" placeholder="{{ 'txt_ingrese_el_numero_de_contacto' | translate }}" 
+                       class="form-input" formControlName="numeroContacto" />
+                <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.errors?.['required']" 
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_por_favor_ingrese_el_numero_de_contacto' | translate }}
+                </div>
+                <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.errors?.['pattern']" 
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ 'txt_solo_numeros' | translate }}
+                </div>
+            </div>
+            
+            <div class="mb-5">
+                <label for="pais" class="block text-sm font-medium mb-1">{{ 'pais' | translate }}</label>
+                <select id="pais" class="form-select" formControlName="pais">
+                    <option value="">{{ 'txt_seleccione_el_pais' | translate }}</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Brasil">Brasil</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Colombia">Colombia</option>
+                    <option value="Ecuador">Ecuador</option>
+                    <option value="México">México</option>
+                    <option value="Perú">Perú</option>
+                    <option value="Estados Unidos">Estados Unidos</option>
+                    <option value="España">España</option>
+                </select>
+                <div *ngIf="formularioProveedor.get('pais')?.touched && formularioProveedor.get('pais')?.invalid" 
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_por_favor_seleccione_el_pais' | translate }}
+                </div>
+            </div>
+            
+            <div class="mb-5">
+                <label for="caracteristicas" class="block text-sm font-medium mb-1">{{ 'caracteristicas' | translate }}</label>
+                <textarea id="caracteristicas" rows="3" placeholder="{{ 'txt_ingrese_las_caracteristicas' | translate }}" 
+                          class="form-textarea" formControlName="caracteristicas"></textarea>
+                <div *ngIf="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.invalid" 
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          {{ 'txt_por_favor_ingrese_las_caracteristicas' | translate }}
+                     </div>
+            </div>
+            
+            <div class="mb-5">
+                <label for="condiciones" class="block text-sm font-medium mb-1">{{ 'txt_condiciones_comerciales' | translate }}</label>
+                <textarea id="condiciones" rows="3" placeholder="{{ 'txt_ingrese_las_condiciones' | translate }}" 
+                          class="form-textarea" formControlName="condiciones"></textarea>
+                <div *ngIf="formularioProveedor.get('condiciones')?.touched && formularioProveedor.get('condiciones')?.invalid"
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          {{ 'txt_por_favor_ingrese_las_condiciones' | translate }}
+                </div>
+            </div>
+            
+            <div class="mt-8 flex items-center justify-end">
+                <button type="button" class="btn btn-outline-danger" (click)="modalProveedor.close()">{{ 'btn_cancelar' | translate }}</button>
+                <button type="submit" class="btn btn-primary ml-4" [disabled]="formularioProveedor.invalid || cargando">
+                    <svg *ngIf="cargando" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {{ cargando ? ('txt_guardando' | translate) : ('btn_agregar_proveedor' | translate) }}
+                </button>
+            </div>
+        </form>
+    </app-modal>
+</div>

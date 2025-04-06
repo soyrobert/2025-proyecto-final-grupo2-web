@@ -1,0 +1,75 @@
+﻿<div [ngClass]="{ 'dark text-white-dark': store.semidark }">
+    <nav class="sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300">
+        <div class="h-full bg-white dark:bg-[#0e1726]">
+            <div class="flex items-center justify-between px-4 py-3">
+                <a routerLink="/" class="main-logo flex shrink-0 items-center">
+                    <img class="ml-[5px] w-8 flex-none" src="/assets/images/logo.svg" alt="CCP" />
+                    <span class="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">CCP</span>
+                </a>
+                <a
+                    href="javascript:;"
+                    class="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 hover:text-primary rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
+                    (click)="storeData.dispatch({ type: 'toggleSidebar'})"
+                >
+                    <icon-carets-down class="m-auto rotate-90" />
+                </a>
+            </div>
+            <ng-scrollbar class="relative !h-[calc(100vh-80px)]" appearance="compact">
+                <ul class="relative space-y-0.5 p-4 py-0 font-semibold">
+
+                    <!-- Dinamico -->
+                    <ng-container *ngFor="let group of menuGroups">
+                        <h2 class="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
+                          <span>{{ (group.title | translate) || '&nbsp;' }}</span>
+                        </h2>
+                        <li class="nav-item">
+                          <ul>
+                            <li class="nav-item" *ngFor="let item of group.items">
+                              <a [routerLink]="item.path" class="group" routerLinkActive="active" (click)="toggleMobileMenu()">
+                                <div class="flex items-center">
+                                  <ng-container [ngSwitch]="item.icon">
+                                    <icon-chart-square *ngSwitchCase="'icon-chart-square'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-planes-venta *ngSwitchCase="'icon-planes-venta'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-chart-square *ngSwitchCase="'icon-productos'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-chart-square *ngSwitchCase="'icon-proveedores'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-user-plus *ngSwitchCase="'icon-user-plus'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-box *ngSwitchCase="'icon-box'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-search *ngSwitchCase="'icon-search'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-map-pin *ngSwitchCase="'icon-map-pin'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-shopping-bag *ngSwitchCase="'icon-shopping-bag'" class="shrink-0 group-hover:!text-primary" />
+                                    <!-- Agrega más iconos aquí -->
+                                  </ng-container>
+                                  <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#FFF] dark:group-hover:text-white-dark">
+                                    {{ item.label | translate }}
+                                  </span>
+                                </div>
+                              </a>
+                            </li>
+                          </ul>
+                        </li>
+                      </ng-container>
+                    <!-- Fin Dinamico -->
+
+                    <!-- Estatico -->
+
+                    <h2 class="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
+                        <span>{{ ('user_config' | translate) || '&nbsp;' }}</span>
+                    </h2>
+
+                    <ul>
+                        <li class="nav-item">
+                            <a routerLink="/#" class="group" routerLinkActive="active" (click)="toggleMobileMenu()">
+                                <div class="flex items-center">
+                                    <icon-menu-users class="shrink-0 group-hover:!text-primary" />
+                                    <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#FFF] dark:group-hover:text-white-dark"
+                                        >{{ 'account_settings' | translate }}</span
+                                    >
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </ul>
+            </ng-scrollbar>
+        </div>
+    </nav>
+</div>

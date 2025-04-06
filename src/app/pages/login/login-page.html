@@ -1,0 +1,139 @@
+<div>
+    <div class="relative flex min-h-screen items-center justify-center px-6 py-10 dark:bg-[#060818] sm:px-16">
+        <div class="relative flex w-full max-w-[1502px] flex-col justify-between overflow-hidden rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 lg:min-h-[500px] lg:flex-row lg:gap-10 xl:gap-0">
+            <div class="relative hidden w-full items-center justify-center bg-[linear-gradient(225deg,rgba(239,18,98,1)_0%,rgba(67,97,238,1)_100%)] p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[-14deg]">
+                <div class="ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
+                </div>
+            </div>
+            <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-[667px]">
+                <div class="flex w-full max-w-[440px] items-center gap-2 lg:absolute lg:end-6 lg:top-6 lg:max-w-full">
+                    <div class="dropdown ms-auto w-max">
+                        <div hlMenu>
+                            <button
+                                type="button"
+                                hlMenuButton
+                                class="flex items-center gap-2.5 rounded-lg border border-white-dark/30 bg-white px-2 py-1.5 text-white-dark hover:border-primary hover:text-primary dark:bg-black">
+                                <div>
+                                    <img
+                                        *ngIf="store"
+                                        [src]="'/assets/images/flags/'+ store.locale.toUpperCase() + '.svg'"
+                                        alt="image"
+                                        class="h-5 w-5 rounded-full object-cover"
+                                    />
+                                </div>
+                                <div class="text-base font-bold uppercase">{{ store.locale }}</div>
+                                <span class="shrink-0">
+                                    <icon-caret-down />
+                                </span>
+                            </button>
+                            <ul
+                                *hlMenuItems
+                                @toggleAnimation
+                                class="top-11 grid w-[280px] grid-cols-2 gap-2 !px-2 font-semibold text-dark ltr:-right-14 rtl:-left-14 dark:text-white-dark dark:text-white-light/90 sm:ltr:-right-2 sm:rtl:-left-2">
+                                <li *ngFor="let item of store?.languageList; trackBy: trackByLangCode">
+                                    <button
+                                        *hlMenuItem="let menuItem"
+                                        type="button"
+                                        class="w-full hover:text-primary"
+                                        [ngClass]="{ 'bg-primary/10 text-primary': translate.currentLang === item.code }"
+                                        (click)="changeLanguage(item)">
+                                        <img
+                                            class="h-5 w-5 rounded-full object-cover"
+                                            [src]="'/assets/images/flags/'+ item.code.toUpperCase() + '.svg'"
+                                            alt=""
+                                        />
+                                        <span class="ltr:ml-3 rtl:mr-3">{{ item.name }}</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full max-w-[440px] lg:mt-16">
+                    <div class="mb-10">
+                        <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">{{ 'login' | translate }}</h1>
+                        <p class="text-base font-bold leading-normal text-white-dark">{{ 'txt_ingrese_contraseña' | translate }}</p>
+                    </div>
+                    <form class="space-y-5 dark:text-white" (ngSubmit)="onSubmit()" novalidate>
+                        <!-- Campo EMAIL -->
+                        <div [ngClass]="submitted ? !email ? 'has-error' : 'has-success' : ''">
+                          <label for="Email">{{ 'email' | translate }}</label>
+                          <div class="relative text-white-dark">
+                            <input
+                              id="Email"
+                              type="email"
+                              [(ngModel)]="email"
+                              name="email"
+                              required
+                              placeholder="{{ 'plh_ingrese_correo' | translate }}"
+                              class="form-input ps-10 placeholder:text-white-dark"
+                              (blur)="onEmailBlur()"
+                            />
+                            <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                              <icon-mail [fill]="true" />
+                            </span>
+                          </div>
+                          <ng-container *ngIf="emailTouched">
+                            <span *ngIf="email" class="rounded bg-[#1abc9c] py-1 px-2 text-white">Luce bien!</span>
+                            <span *ngIf="!email" class="rounded bg-danger py-1 px-2 text-white">Ingrese un email válido</span>
+                          </ng-container>
+                        </div>
+                      
+                        <!-- Campo PASSWORD -->
+                        <div [ngClass]="submitted ? !password ? 'has-error' : 'has-success' : ''">
+                          <label for="Password">{{ 'password' | translate }}</label>
+                          <div class="relative text-white-dark">
+                            <input
+                              id="Password"
+                              type="password"
+                              [(ngModel)]="password"
+                              name="password"
+                              required
+                              placeholder="{{ 'plh_ingrese_contraseña' | translate }}"
+                              class="form-input ps-10 placeholder:text-white-dark"
+                              (blur)="onPasswordBlur()"
+                            />
+                            <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                              <icon-lock-dots [fill]="true" />
+                            </span>
+                          </div>
+                          <ng-container *ngIf="passwordTouched">
+                            <span *ngIf="password" class="rounded bg-[#1abc9c] py-1 px-2 text-white">Luce bien!</span>
+                            <span *ngIf="!password" class="rounded bg-danger py-1 px-2 text-white">La contraseña es requerida</span>
+                          </ng-container>
+                        </div>
+                      
+                        <!-- BOTÓN SUBMIT -->
+                        <button
+                          type="submit"
+                          class="btn btn-primary !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
+                          [disabled]="loading"
+                        >
+                          {{ 'btn_iniciar_sesion' | translate }}
+                        </button>
+                      
+                        <!-- MENSAJE DE ERROR -->
+                        <div *ngIf="errorMessage" class="mt-4 text-red-500 text-center">
+                          {{ errorMessage }}
+                        </div>
+                      </form>
+                      
+                      
+                    <div class="text-center dark:text-white mt-10">
+                        {{ 'txt_no_tiene_cuenta' | translate }}
+                        <a routerLink="/#" class="uppercase text-primary underline transition hover:text-black dark:hover:text-white">
+                            {{ 'btn_registrarse' | translate }}
+                        </a>
+                        <div>
+                            <a routerLink="/#" class="mt-10 underline text-primary transition hover:text-black dark:hover:text-white">
+                                {{ 'txt_recordar_clave' | translate }}
+                            </a>
+                        </div>
+                        
+                    </div>
+                </div>
+                <p class="absolute bottom-6 w-full text-center dark:text-white">© {{ currYear }} {{ 'derechos_reservados' | translate }}.</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,173 @@
+body.modal-open {
+    overflow: hidden; /* Optional: hides body scroll bar when modal is open. */
+}
+
+.modal {
+    @apply !z-[52] h-full !items-start overflow-auto !bg-[black]/60 px-4 py-8 opacity-0 transition-opacity duration-300;
+}
+ngx-custom-modal .modal {
+    @apply flex justify-center;
+}
+
+.modal .modal-dialog {
+    @apply my-auto w-full max-w-lg overflow-hidden rounded-lg;
+}
+
+.modal .modal-content {
+    @apply relative bg-white text-base text-black shadow dark:bg-[#0e1726] dark:text-white-dark;
+}
+.modal .modal-header > div {
+    @apply bg-[#fbfbfb] py-3 text-lg font-bold dark:bg-[#121c2c] ltr:pl-5 ltr:pr-[50px] rtl:pl-[50px] rtl:pr-5;
+}
+
+.modal .modal-header .close {
+    @apply absolute top-3 shrink-0 !text-3xl font-normal !leading-7 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 ltr:right-5  rtl:left-5;
+}
+
+.modal .modal-body {
+    @apply px-5 pt-5;
+}
+
+.modal .modal-footer {
+    @apply mt-8 flex items-center justify-end px-5 pb-5;
+}
+
+.modal.modal-top .modal-dialog {
+    @apply !my-0;
+}
+
+.modal.no-animation {
+    @apply !transition-none;
+}
+
+.extra-large-modal .modal-dialog {
+    @apply !max-w-5xl;
+}
+
+.large-modal .modal-dialog {
+    @apply !max-w-xl;
+}
+
+.small-modal .modal-dialog {
+    @apply !max-w-sm;
+}
+
+.video-modal .modal-content {
+    @apply !bg-transparent;
+}
+
+.video-modal .modal-body {
+    @apply !px-0 !pt-0;
+}
+
+.video-modal .modal-header .close {
+    @apply top-0 ltr:!right-0;
+}
+
+.video-modal .modal-dialog {
+    @apply !max-w-3xl;
+}
+
+.modal.animate .modal-dialog {
+    animation-duration: 1s;
+    animation-duration: var(--animate-duration);
+    animation-fill-mode: both;
+}
+
+.modal.animate-fade-in .modal-dialog {
+    animation-name: fadeIn;
+}
+
+.modal.animate-slide-in-down .modal-dialog {
+    animation-name: slideInDown;
+}
+
+.modal.animate-fade-in-up .modal-dialog {
+    animation-name: fadeInUp;
+}
+
+.modal.animate-slide-in-up .modal-dialog {
+    animation-name: slideInUp;
+}
+
+.modal.animate-fade-in-left .modal-dialog {
+    animation-name: fadeInLeft;
+}
+
+.modal.animate-rotate-in-left .modal-dialog {
+    animation-name: rotateInDownLeft;
+    transform-origin: left bottom;
+}
+
+.modal.animate-rotate-in-right .modal-dialog {
+    animation-name: rotateInDownRight;
+    transform-origin: right bottom;
+}
+
+.modal.animate-fade-in-right .modal-dialog {
+    animation-name: fadeInRight;
+}
+
+.modal.animate-zoom-in-up .modal-dialog {
+    animation-name: zoomInUp;
+}
+
+.modal.custom-modal .modal-header .close {
+    @apply hidden;
+}
+
+.modal.profile-modal .modal-content {
+    @apply bg-secondary py-5;
+}
+
+.modal.profile-modal .modal-dialog {
+    @apply max-w-[300px];
+}
+
+.modal.profile-modal .modal-header .close {
+    @apply !text-[26px];
+}
+
+.modal.profile-modal .modal-footer {
+    @apply justify-center;
+}
+
+.modal.auth-modal .modal-content,
+.modal.slider-modal .modal-content {
+    @apply px-4 py-1;
+}
+
+.modal.auth-modal .modal-dialog {
+    @apply max-w-sm;
+}
+
+.modal.auth-modal .modal-header div {
+    @apply bg-transparent font-semibold;
+}
+
+.modal.auth-modal .modal-header,
+.modal.slider-modal .modal-header {
+    @apply relative;
+}
+
+.modal.auth-modal .modal-header .close,
+.modal.slider-modal .modal-header .close {
+    @apply top-1/2 -translate-y-1/2;
+}
+
+.modal.slider-modal .modal-footer,
+.no-footer .modal .modal-footer {
+    @apply hidden;
+}
+
+.no-footer .modal .modal-body {
+    @apply pb-5;
+}
+
+.modal.slider-modal .modal-body {
+    @apply p-0;
+}
+
+.modal.slider-modal .modal-header .close {
+    @apply ltr:right-0 rtl:left-0;
+}
