@@ -32,9 +32,14 @@
                                     <icon-planes-venta *ngSwitchCase="'icon-planes-venta'" class="shrink-0 group-hover:!text-primary" />
                                     <icon-chart-square *ngSwitchCase="'icon-productos'" class="shrink-0 group-hover:!text-primary" />
                                     <icon-chart-square *ngSwitchCase="'icon-proveedores'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-user-plus *ngSwitchCase="'icon-user-plus'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-box *ngSwitchCase="'icon-box'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-search *ngSwitchCase="'icon-search'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-map-pin *ngSwitchCase="'icon-map-pin'" class="shrink-0 group-hover:!text-primary" />
+                                    <icon-shopping-bag *ngSwitchCase="'icon-shopping-bag'" class="shrink-0 group-hover:!text-primary" />
                                     <!-- Agrega más iconos aquí -->
                                   </ng-container>
-                                  <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                                  <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#FFF] dark:group-hover:text-white-dark">
                                     {{ item.label | translate }}
                                   </span>
                                 </div>
@@ -56,7 +61,7 @@
                             <a routerLink="/#" class="group" routerLinkActive="active" (click)="toggleMobileMenu()">
                                 <div class="flex items-center">
                                     <icon-menu-users class="shrink-0 group-hover:!text-primary" />
-                                    <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark"
+                                    <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#FFF] dark:group-hover:text-white-dark"
                                         >{{ 'account_settings' | translate }}</span
                                     >
                                 </div>

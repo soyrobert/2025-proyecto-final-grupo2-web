@@ -9,7 +9,12 @@ import { IconCaretsDownComponent } from '../../shared/icon/icon-carets-down';
 import { IconMenuUsersComponent } from '../../shared/icon/menu/icon-menu-users';
 import { PlanesVentaComponent } from 'src/app/shared/icon/planes-venta';
 import { IconChartSquareComponent } from 'src/app/shared/icon/icon-chart-square';
+import { IconUserPlusComponent } from 'src/app/shared/icon/icon-user-plus';
+import { IconBoxComponent } from 'src/app/shared/icon/icon-box';
+import { IconSearchComponent } from 'src/app/shared/icon/icon-search';
 import { MenuService } from 'src/app/services/menu.service';
+import {IconMapPinComponent} from 'src/app/shared/icon/icon-map-pin';
+import { IconShoppingBagComponent } from 'src/app/shared/icon/icon-shopping-bag';
 import { MenuGroup } from 'src/app/config/menu.config';
 
 @Component({
@@ -22,7 +27,12 @@ import { MenuGroup } from 'src/app/config/menu.config';
     IconMenuUsersComponent,
     PlanesVentaComponent,
     IconChartSquareComponent,
-    RouterModule
+    IconUserPlusComponent,
+    RouterModule,
+    IconBoxComponent,
+    IconSearchComponent,
+    IconMapPinComponent,
+    IconShoppingBagComponent
   ],
   templateUrl: './sidebar.html',
   animations: [slideDownUp],

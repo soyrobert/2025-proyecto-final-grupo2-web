@@ -144,5 +144,6 @@
     "msg_error_generico": "Unknown error",
     "msg_proveedor_ya_existe": "Provider already exists",
     "msg_no_tiene_permisos": "You do not have permissions",
-    "msg_error_conexion": "Connection error"
+    "msg_error_conexion": "Connection error",
+    "txt_guardando": "Saving..."
 }
