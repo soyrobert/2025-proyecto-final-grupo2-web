@@ -116,5 +116,6 @@
     "msg_error_generico": "Error desconocido",
     "msg_proveedor_ya_existe": "El proveedor ya existe",
     "msg_no_tiene_permisos": "No tienes permisos",
-    "msg_error_conexion": "Error de conexión"
+    "msg_error_conexion": "Error de conexión",
+    "txt_guardando": "Guardando..."
 }
