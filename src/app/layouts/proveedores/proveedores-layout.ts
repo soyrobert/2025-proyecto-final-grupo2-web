@@ -7,11 +7,12 @@ import { AppService } from '../../service/app.service';
 import { SidebarComponent } from './../shared-ui/sidebar';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './../shared-ui/header';
+import { FooterComponent } from './../shared-ui/footer';
 
 @Component({
   selector: 'proveedores-layout',
   standalone: true,
-  imports: [CommonModule, TranslateModule, SidebarComponent,  RouterOutlet, HeaderComponent],
+  imports: [CommonModule, TranslateModule, SidebarComponent,  RouterOutlet, HeaderComponent, FooterComponent],
   templateUrl: './proveedores-layout.html',
 })
 export class ProveedoresLayout implements OnInit, OnDestroy {
