@@ -1,6 +1,50 @@
 /* animation */
 @import 'animate.css';
 
+/* quill editor */
+@import 'quill-editor.css';
+
+/* swiper */
+@import 'swiper.css';
+
+/* sweetalert */
+/* @import 'sweetalert.css'; */
+
+/* tippy */
+@import 'tippy.css';
+
+/* noui-slider */
+@import 'noui-slider.css';
+
+/* flatpickr */
+@import 'flatpickr.css';
+
+/* file upload with preview */
+@import 'file-upload-preview.css';
+
+
+/* select2 */
+@import 'select2.css';
+
+/* ng-datatable */
+@import 'datatable.css';
+
+/* lightbox */
+@import 'lightbox.css';
+
+/* scrumboard */
+@import 'scrumboard.css';
+
+/* dragndrop */
+@import 'dragndrop.css';
+
+/* form element*/
+@import 'form-elements.css';
+
+/* modal popup */
+@import 'modal.css';
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -535,7 +579,8 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 }
 
 .swal2-container .swal2-popup.swal2-toast {
-    @apply bg-dark px-5 py-2.5;
+    /* @apply bg-dark px-5 py-2.5; */
+    @apply bg-[#1B2E4B];
 }
 
 .swal2-popup.swal2-toast .swal2-title,

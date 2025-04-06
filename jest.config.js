@@ -17,5 +17,8 @@ module.exports = {
             lines: 80,
             statements: 80
         }
-    }
+    },
+    coveragePathIgnorePatterns: [
+        "<rootDir>/src/app/shared/icon/"
+    ]
 }

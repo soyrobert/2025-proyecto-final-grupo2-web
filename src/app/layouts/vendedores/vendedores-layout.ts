@@ -31,7 +31,13 @@ export class VendedoresLayout implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initAnimation();
     this.toggleLoader();
-    window.addEventListener('scroll', this.onScroll);
+    window.addEventListener('scroll', () => {
+        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+            this.showTopButton = true;
+        } else {
+            this.showTopButton = false;
+        }
+    });
   }
 
   ngOnDestroy(): void {
