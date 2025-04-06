@@ -63,28 +63,26 @@ export class ProveedoresHome {
     this.proveedoresService.registrarProveedor(this.formularioProveedor.value)
       .subscribe({
         next: (respuesta) => {
-          console.log('Proveedor registrado exitosamente:', respuesta);
           this.cargando = false;
           
           this.showMessage(
             this.translate.instant('txt_proveedor_registrado_exitosamente'),
             'success'
           );
-        
+          
           this.modalProveedor.close();
         },
         error: (error) => {
-          console.error('Error al registrar proveedor:', error);
           this.cargando = false;
           
           // Manejar errores
-          let errorMsg = this.translate.instant('msg_error_generico');
+          let errorMsg = this.translate.instant('txt_error_desconocido');
           
           if (error.status === 400 && error.error.detalles) {
             // Error de validación
             errorMsg = Object.values(error.error.detalles).join(', ');
           } else if (error.status === 409) {
-            // Error proveedor ya existe
+            // Error de conflicto (proveedor ya existe)
             errorMsg = this.translate.instant('msg_proveedor_ya_existe');
           } else if (error.status === 403) {
             // Error de permisos
@@ -111,7 +109,7 @@ export class ProveedoresHome {
       toast: true,
       position: 'top-end',
       showConfirmButton: false,
-      timer: 6000,
+      timer: 4000,
       timerProgressBar: true,
       customClass: {
         container: 'toast'
