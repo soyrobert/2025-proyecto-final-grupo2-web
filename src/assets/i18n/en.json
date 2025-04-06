@@ -145,5 +145,6 @@
     "msg_proveedor_ya_existe": "Provider already exists",
     "msg_no_tiene_permisos": "You do not have permissions",
     "msg_error_conexion": "Connection error",
-    "txt_guardando": "Saving..."
+    "txt_guardando": "Saving...",
+    "msg_proveedor_ya_existe_nombre": "Provider already exists with the name"
 }

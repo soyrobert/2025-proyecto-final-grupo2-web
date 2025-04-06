@@ -87,6 +87,11 @@ export class ProveedoresHome {
           } else if (error.status === 403) {
             // Error de permisos
             errorMsg = this.translate.instant('msg_no_tiene_permisos');
+          }
+          else if (error.status === 207) {
+            // Proveedor ya existe por nombre
+            errorMsg = this.translate.instant('msg_proveedor_ya_existe_nombre');
+
           } else if (error.status === 0) {
             // Error de conexión
             errorMsg = this.translate.instant('msg_error_conexion');
