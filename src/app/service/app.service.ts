@@ -79,7 +79,6 @@ export class AppService {
 
         this.translate.use(lang.code); // Configurar idioma
         this.store.dispatch({ type: 'toggleLocale', payload: lang.code });
-        console.log('language', lang);
         return lang;
     }
 
