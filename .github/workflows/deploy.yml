@@ -2,7 +2,10 @@ name: Deploy Angular to Cloud Run
 
 on:
   push:
-    branches: [feat/*]
+    branches: 
+      - 'feat/*'
+      - 'develop'
+      - 'main'
 
 jobs:
   deploy:
@@ -11,9 +14,7 @@ jobs:
     env:
       PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       REGION: us-central1
-      SERVICE: ccp-web
       REPO_NAME: ccp-web-repo
-      IMAGE_NAME: ccp-web
 
     steps:
       - name: Checkout repo
@@ -30,8 +31,25 @@ jobs:
       - name: Run Unit Tests with Coverage
         run: npm run test:coverage
 
-      - name: Build Angular app
+      - name: Set environment variables
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "ENVIRONMENT=prod" >> $GITHUB_ENV
+            echo "SERVICE=ccp-web-prod" >> $GITHUB_ENV
+            echo "IMAGE_NAME=ccp-web-prod" >> $GITHUB_ENV
+          else
+            echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+            echo "SERVICE=ccp-web-dev" >> $GITHUB_ENV
+            echo "IMAGE_NAME=ccp-web-dev" >> $GITHUB_ENV
+          fi
+
+      - name: Build Angular app for Production
+        if: github.ref == 'refs/heads/main'
         run: npm run build -- --configuration=production
+
+      - name: Build Angular app for Development
+        if: github.ref != 'refs/heads/main'
+        run: npm run build
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
@@ -44,15 +62,23 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
-      - name: Build and Push Docker image
+      - name: Build and Push Docker image for Production
+        if: github.ref == 'refs/heads/main'
         run: |
-          docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$IMAGE_NAME .
-          docker push us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$IMAGE_NAME
+          docker build --build-arg BUILD_ENV=production -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker push us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }}
+      
+      - name: Build and Push Docker image for Development
+        if: github.ref != 'refs/heads/main'
+        run: |
+          docker build --build-arg BUILD_ENV=development -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker push us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy $SERVICE \
-            --image us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/$IMAGE_NAME \
+          gcloud run deploy ${{ env.SERVICE }} \
+            --image us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --region $REGION \
             --platform managed \
-            --allow-unauthenticated
+            --allow-unauthenticated \
+            --set-env-vars="ENVIRONMENT=${{ env.ENVIRONMENT }}"
