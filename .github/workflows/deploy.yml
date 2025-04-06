@@ -37,16 +37,19 @@ jobs:
             echo "ENVIRONMENT=prod" >> $GITHUB_ENV
             echo "SERVICE=ccp-web-prod" >> $GITHUB_ENV
             echo "IMAGE_NAME=ccp-web-prod" >> $GITHUB_ENV
-            echo "BUILD_CONFIG=production" >> $GITHUB_ENV
           else
             echo "ENVIRONMENT=dev" >> $GITHUB_ENV
             echo "SERVICE=ccp-web-dev" >> $GITHUB_ENV
             echo "IMAGE_NAME=ccp-web-dev" >> $GITHUB_ENV
-            echo "BUILD_CONFIG=development" >> $GITHUB_ENV
           fi
 
-      - name: Build Angular app
-        run: npm run build -- --configuration=${{ env.BUILD_CONFIG }}
+      - name: Build Angular app for Production
+        if: github.ref == 'refs/heads/main'
+        run: npm run build -- --configuration=production
+
+      - name: Build Angular app for Development
+        if: github.ref != 'refs/heads/main'
+        run: npm run build
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
