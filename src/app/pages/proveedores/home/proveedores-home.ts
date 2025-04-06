@@ -63,14 +63,20 @@ export class ProveedoresHome {
     this.proveedoresService.registrarProveedor(this.formularioProveedor.value)
       .subscribe({
         next: (respuesta) => {
-          this.cargando = false;
-          
-          this.showMessage(
-            this.translate.instant('txt_proveedor_registrado_exitosamente'),
-            'success'
-          );
-          
-          this.modalProveedor.close();
+          if (respuesta && respuesta.error) {
+            this.cargando = false;
+            this.showMessage(
+              respuesta.error || this.translate.instant('msg_proveedor_ya_existe_nombre'),
+              'error'
+            );
+          } else {
+            this.cargando = false;
+            this.showMessage(
+              this.translate.instant('txt_proveedor_registrado_exitosamente'),
+              'success'
+            );
+            this.modalProveedor.close();
+          }
         },
         error: (error) => {
           this.cargando = false;
