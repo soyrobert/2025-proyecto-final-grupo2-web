@@ -62,9 +62,16 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
-      - name: Build and Push Docker image
+      - name: Build and Push Docker image for Production
+        if: github.ref == 'refs/heads/main'
         run: |
-          docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker build --build-arg BUILD_ENV=production -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker push us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }}
+      
+      - name: Build and Push Docker image for Development
+        if: github.ref != 'refs/heads/main'
+        run: |
+          docker build --build-arg BUILD_ENV=development -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} .
           docker push us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Deploy to Cloud Run
