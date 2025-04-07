@@ -146,5 +146,6 @@
     "msg_no_tiene_permisos": "You do not have permissions",
     "msg_error_conexion": "Connection error",
     "txt_guardando": "Saving...",
-    "msg_proveedor_ya_existe_nombre": "Provider already exists with the name"
+    "msg_proveedor_ya_existe_nombre": "Provider already exists with the name",
+    "txt_crear_vendedores": "Create vendors"
 }

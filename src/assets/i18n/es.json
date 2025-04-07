@@ -118,5 +118,6 @@
     "msg_no_tiene_permisos": "No tienes permisos",
     "msg_error_conexion": "Error de conexión",
     "txt_guardando": "Guardando...",
-    "msg_proveedor_ya_existe_nombre": "El proveedor ya existe con este nombre"
+    "msg_proveedor_ya_existe_nombre": "El proveedor ya existe con este nombre",
+    "txt_crear_vendedores": "Crear vendedores"
 }
