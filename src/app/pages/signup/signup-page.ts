@@ -64,7 +64,7 @@ export class SignupVendedores implements OnInit {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      role: ['cliente'],
+      role: ['vendedor'],
       country: ['', Validators.required],
       city: ['', Validators.required],
       address: ['', Validators.required],
@@ -97,6 +97,10 @@ export class SignupVendedores implements OnInit {
             respuesta.message || this.translate.instant('signup_success'),
             'success'
           );
+
+            this.registroForm.reset();
+            this.registroForm.markAsPristine();
+            this.registroForm.markAsUntouched();
           
         },
         error: (error) => {

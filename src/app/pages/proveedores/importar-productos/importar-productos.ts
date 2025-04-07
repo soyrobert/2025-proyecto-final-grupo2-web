@@ -1,15 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { IconPlusComponent } from 'src/app/shared/icon/icon-plus';
+import { ModalComponent } from '../../../components/modal/modal.component';
+
 
 @Component({
   standalone: true,
-  selector: 'app-importar-productos',
-  template: `
-    <div class="p-4">
-      <h1 class="text-xl font-bold">Importar productos</h1>
-      <p></p>
-    </div>
-  `,
-  imports: [CommonModule],
+  selector: 'app-proveedores-productos',
+  templateUrl: './importar-productos.html',
+  imports: [
+    CommonModule,
+    TranslateModule,
+    IconPlusComponent,
+    ModalComponent
+  ],
 })
 export class ImportarProductos {}
