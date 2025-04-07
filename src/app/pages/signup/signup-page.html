@@ -1,0 +1,193 @@
+<div class="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-50 to-blue-50 p-4">
+    <div class="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+        <div class="mb-6 text-center">
+            <h1 class="text-4xl font-bold text-primary">{{ 'signup_title' | translate }}</h1>
+            <p class="mt-2 text-gray-600">{{ 'signup_subtitle' | translate }}</p>
+        </div>
+        
+        <form [formGroup]="registroForm" (ngSubmit)="registrarUsuario()" class="space-y-4">
+            <!-- Mensaje de error general -->
+            <div *ngIf="error" class="rounded bg-danger py-2 px-3 text-sm text-white">
+                {{ error }}
+            </div>
+            
+            <!-- Campo Nombre -->
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">{{ 'name' | translate }}</label>
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        formControlName="name"
+                        class="w-full rounded-md border py-2 pl-10 pr-3 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        [ngClass]="{'border-danger': isInvalid('name')}"
+                        placeholder="{{ 'placeholder_name' | translate }}"
+                    />
+                </div>
+                <div *ngIf="isInvalid('name')" class="mt-1 text-xs text-danger">
+                    {{ 'error_name_required' | translate }}
+                </div>
+            </div>
+            
+            <!-- Campo Email -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">{{ 'email' | translate }}</label>
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                    </span>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        formControlName="email"
+                        class="w-full rounded-md border py-2 pl-10 pr-3 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        [ngClass]="{'border-danger': isInvalid('email')}"
+                        placeholder="{{ 'placeholder_email' | translate }}"
+                    />
+                </div>
+                <div *ngIf="isInvalid('email') && registroForm.get('email')?.errors?.['required']" class="mt-1 text-xs text-danger">
+                    {{ 'error_email_required' | translate }}
+                </div>
+                <div *ngIf="isInvalid('email') && registroForm.get('email')?.errors?.['email']" class="mt-1 text-xs text-danger">
+                    {{ 'error_email_invalid' | translate }}
+                </div>
+            </div>
+            
+            <!-- Campo Contraseña -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">{{ 'password' | translate }}</label>
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <input 
+                        [type]="showPassword ? 'text' : 'password'" 
+                        id="password" 
+                        formControlName="password"
+                        class="w-full rounded-md border py-2 pl-10 pr-10 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        [ngClass]="{'border-danger': isInvalid('password')}"
+                        placeholder="{{ 'placeholder_password' | translate }}"
+                    />
+                    <button 
+                        type="button"
+                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+                        (click)="togglePasswordVisibility()"
+                    >
+                        <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                        <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 00-1.06 1.06l14.5 14.5a.75.75 0 101.06-1.06l-1.745-1.745a10.029 10.029 0 003.3-4.38 1.651 1.651 0 000-1.185A10.004 10.004 0 009.999 3a9.956 9.956 0 00-4.744 1.194L3.28 2.22zM7.752 6.69l1.092 1.092a2.5 2.5 0 013.374 3.373l1.091 1.092a4 4 0 00-5.557-5.557z" clip-rule="evenodd" />
+                            <path d="M10.748 13.93l2.523 2.523a9.987 9.987 0 01-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 010-1.186A10.007 10.007 0 012.839 6.02L6.07 9.252a4 4 0 004.678 4.678z" />
+                        </svg>
+                    </button>
+                </div>
+                <div *ngIf="isInvalid('password') && registroForm.get('password')?.errors?.['required']" class="mt-1 text-xs text-danger">
+                    {{ 'error_password_required' | translate }}
+                </div>
+                <div *ngIf="isInvalid('password') && registroForm.get('password')?.errors?.['minlength']" class="mt-1 text-xs text-danger">
+                    {{ 'error_password_min_length' | translate }}
+                </div>
+            </div>
+            
+            <!-- País -->
+            <div>
+                <label for="country" class="block text-sm font-medium text-gray-700">{{ 'country' | translate }}</label>
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <select
+                        id="country"
+                        formControlName="country"
+                        class="w-full rounded-md border py-2 pl-10 pr-3 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        [ngClass]="{'border-danger': isInvalid('country')}"
+                    >
+                        <option value="">{{ 'placeholder_country_select' | translate }}</option>
+                        <option *ngFor="let pais of paises" [value]="pais">{{ pais }}</option>
+                    </select>
+                </div>
+                <div *ngIf="isInvalid('country')" class="mt-1 text-xs text-danger">
+                    {{ 'error_country_required' | translate }}
+                </div>
+            </div>
+            
+            <!-- Ciudad -->
+            <div>
+                <label for="city" class="block text-sm font-medium text-gray-700">{{ 'city' | translate }}</label>
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                        </svg>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="city" 
+                        formControlName="city"
+                        class="w-full rounded-md border py-2 pl-10 pr-3 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        [ngClass]="{'border-danger': isInvalid('city')}"
+                        placeholder="{{ 'placeholder_city' | translate }}"
+                    />
+                </div>
+                <div *ngIf="isInvalid('city')" class="mt-1 text-xs text-danger">
+                    {{ 'error_city_required' | translate }}
+                </div>
+            </div>
+            
+            <!-- Dirección -->
+            <div>
+                <label for="address" class="block text-sm font-medium text-gray-700">{{ 'address' | translate }}</label>
+                <div class="relative mt-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="address" 
+                        formControlName="address"
+                        class="w-full rounded-md border py-2 pl-10 pr-3 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                        [ngClass]="{'border-danger': isInvalid('address')}"
+                        placeholder="{{ 'placeholder_address' | translate }}"
+                    />
+                </div>
+                <div *ngIf="isInvalid('address')" class="mt-1 text-xs text-danger">
+                    {{ 'error_address_required' | translate }}
+                </div>
+            </div>
+            
+            <!-- Botón de registro -->
+            <div>
+                <button
+                    type="submit"
+                    class="group relative flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    [disabled]="cargando || registroForm.invalid"
+                >
+                    <span *ngIf="cargando" class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </span>
+                    {{ cargando ? ('signup_loading' | translate) : ('signup_button' | translate) }}
+                </button>
+            </div>
+        </form>
+        
+    </div>
+</div>
