@@ -17,6 +17,7 @@ import { ImportarProveedores } from './pages/proveedores/importar-proveedores/im
 import { ImportarProductos } from './pages/proveedores/importar-productos/importar-productos';
 
 import { RoleGuard } from './core/guards/role.guard';
+import { SignupVendedores } from './pages/signup/signup-page';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,10 @@ export const routes: Routes = [
       {
         path: '',
         component: VendedoresHome,
+      },
+      {
+        path: 'crear',
+        component: SignupVendedores,
       },
       {
         path: 'planes-venta',

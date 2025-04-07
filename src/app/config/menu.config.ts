@@ -20,6 +20,11 @@ export interface MenuItem {
             path: '/vendedores',
           },
           {
+            icon: 'icon-chart-square',
+            label: 'txt_crear_vendedores',
+            path: '/vendedores/crear',
+          },
+          {
             icon: 'icon-shopping-bag',
             label: 'txt_planes_de_venta_vendedores',
             path: '/vendedores/planes-venta',
