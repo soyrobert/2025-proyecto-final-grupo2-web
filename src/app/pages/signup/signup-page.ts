@@ -97,6 +97,10 @@ export class SignupVendedores implements OnInit {
             respuesta.message || this.translate.instant('signup_success'),
             'success'
           );
+
+            this.registroForm.reset();
+            this.registroForm.markAsPristine();
+            this.registroForm.markAsUntouched();
           
         },
         error: (error) => {
