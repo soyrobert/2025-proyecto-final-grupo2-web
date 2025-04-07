@@ -50,7 +50,7 @@ describe('SignupService', () => {
       });
       
       // Verificar que se hizo la solicitud correcta
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}/signup`);
+      const req = httpMock.expectOne(`${environment.usuariosApiUrl}/signup`);
       expect(req.request.method).toBe('POST');
       expect(req.request.headers.get('Content-Type')).toBe('application/json');
       expect(req.request.body).toEqual(userData);
@@ -90,7 +90,7 @@ describe('SignupService', () => {
       });
       
       // Verificar que se hizo la solicitud correcta
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}/signup`);
+      const req = httpMock.expectOne(`${environment.usuariosApiUrl}/signup`);
       expect(req.request.method).toBe('POST');
       
       // Simular respuesta de error del servidor
@@ -135,7 +135,7 @@ describe('SignupService', () => {
       });
       
       // Verificar que se hizo la solicitud correcta
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}/signup`);
+      const req = httpMock.expectOne(`${environment.usuariosApiUrl}/signup`);
       expect(req.request.method).toBe('POST');
       
       // Simular respuesta de error del servidor
@@ -170,7 +170,7 @@ describe('SignupService', () => {
       });
       
       // Verificar que se hizo la solicitud correcta
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}/signup`);
+      const req = httpMock.expectOne(`${environment.usuariosApiUrl}/signup`);
       expect(req.request.method).toBe('POST');
       
       // Simular error de red

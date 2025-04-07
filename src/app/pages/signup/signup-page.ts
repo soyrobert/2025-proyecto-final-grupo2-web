@@ -64,7 +64,7 @@ export class SignupVendedores implements OnInit {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      role: ['cliente'], // Valor por defecto
+      role: ['cliente'],
       country: ['', Validators.required],
       city: ['', Validators.required],
       address: ['', Validators.required],
@@ -73,7 +73,6 @@ export class SignupVendedores implements OnInit {
 
   registrarUsuario(): void {
     if (this.registroForm.invalid) {
-      // Marcar todos los campos como tocados para mostrar errores
       Object.keys(this.registroForm.controls).forEach(key => {
         this.registroForm.get(key)?.markAsTouched();
       });
@@ -94,23 +93,31 @@ export class SignupVendedores implements OnInit {
           this.cargando = false;
           
           // Mostrar mensaje de éxito
-          this.showSuccessMessage(respuesta.message || this.translate.instant('signup_success'));
+          this.showMessage(
+            respuesta.message || this.translate.instant('signup_success'),
+            'success'
+          );
           
         },
         error: (error) => {
           this.cargando = false;
           
           // Manejar diferentes tipos de errores
+          let errorMessage = '';
           if (error.status === 409) {
             // Email ya registrado
-            this.error = error.error?.error || this.translate.instant('error_email_exists');
+            errorMessage = error.error?.error || this.translate.instant('error_email_exists');
           } else if (error.status === 400) {
             // Error de validación
-            this.error = error.error?.error || this.translate.instant('error_invalid_data');
+            errorMessage = error.error?.error || this.translate.instant('error_invalid_data');
           } else {
             // Otros errores
-            this.error = error.error?.error || this.translate.instant('error_server');
+            errorMessage = error.error?.error || this.translate.instant('error_server');
           }
+          
+          // Mostrar mensaje de error
+          this.showMessage(errorMessage, 'error');
+          this.error = errorMessage;
         }
       });
   }
@@ -124,13 +131,27 @@ export class SignupVendedores implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  showSuccessMessage(message: string): void {
-    Swal.fire({
-      title: this.translate.instant('signup_success_title'),
-      text: message,
-      icon: 'success',
-      confirmButtonText: this.translate.instant('ok'),
-      confirmButtonColor: '#4361ee'
+  /**
+   * Muestra un mensaje usando Sweetalert2
+   * @param msg Mensaje a mostrar
+   * @param type Tipo de mensaje: 'success', 'error', 'warning', 'info'
+   */
+  showMessage(msg = '', type: 'success' | 'error' | 'warning' | 'info' | 'question' = 'success') {
+    const toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true,
+      customClass: {
+        container: 'toast'
+      }
+    });
+    
+    toast.fire({
+      icon: type,
+      title: msg,
+      padding: '10px 20px'
     });
   }
 }

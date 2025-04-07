@@ -20,7 +20,7 @@ export interface MenuItem {
             path: '/vendedores',
           },
           {
-            icon: 'icon-chart-square',
+            icon: 'icon-user-plus',
             label: 'txt_crear_vendedores',
             path: '/vendedores/crear',
           },
