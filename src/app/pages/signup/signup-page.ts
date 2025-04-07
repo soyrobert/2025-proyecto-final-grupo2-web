@@ -96,10 +96,6 @@ export class SignupVendedores implements OnInit {
           // Mostrar mensaje de éxito
           this.showSuccessMessage(respuesta.message || this.translate.instant('signup_success'));
           
-          // Redireccionar al login
-          setTimeout(() => {
-            this.router.navigate(['/auth/login']);
-          }, 2000);
         },
         error: (error) => {
           this.cargando = false;
