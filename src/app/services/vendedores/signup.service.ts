@@ -23,7 +23,7 @@ export interface SignupResponse {
   providedIn: 'root'
 })
 export class SignupService {
-  private apiUrl = `${environment.apiBaseUrl}/signup`;
+  private apiUrl = `${environment.usuariosApiUrl}/signup`;
 
   constructor(private http: HttpClient) { }
 

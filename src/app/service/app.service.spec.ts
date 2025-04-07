@@ -127,5 +127,109 @@ describe('AppService', () => {
     expect(store.dispatch).toHaveBeenCalledWith({ type: 'toggleMenu', payload: $themeConfig.menu });
     expect(store.dispatch).toHaveBeenCalledWith({ type: 'toggleLayout', payload: $themeConfig.layout });
   });
+
+  it('debería suscribirse correctamente al store', () => {
+    const mockStoreData = {
+      languageList: [
+        { code: 'en', name: 'English' },
+        { code: 'es', name: 'Spanish' },
+      ],
+      animation: 'animate__fadeIn'
+    };
+    
+    store.select.mockReturnValue(of(mockStoreData));
+    service.initStoreData();
+    expect(service.storeData).toEqual(mockStoreData);
+  });
+
+  it('debería manejar correctamente la ausencia del elemento de animación', () => {
+    window.document.querySelector = jest.fn().mockReturnValue(null);
+    
+    service.changeAnimation('add');
+    service.changeAnimation('remove');
+
+    expect(window.document.querySelector).toHaveBeenCalledWith('.animation');
+  });
+
+  it('debería manejar correctamente cuando no hay animación definida', () => {
+    service.storeData = { animation: undefined };
+    service.changeAnimation();
+    expect(window.document.querySelector).not.toHaveBeenCalled();
+  });
+
+  it('debería obtener correctamente los valores de localStorage', () => {
+    const localStorageSpy = jest.spyOn(window.localStorage, 'getItem');
+    
+    service.initStoreData();
+    
+    expect(localStorageSpy).toHaveBeenCalledWith('theme');
+    expect(localStorageSpy).toHaveBeenCalledWith('menu');
+    expect(localStorageSpy).toHaveBeenCalledWith('layout');
+    expect(localStorageSpy).toHaveBeenCalledWith('i18n_locale');
+    expect(localStorageSpy).toHaveBeenCalledWith('rtlClass');
+    expect(localStorageSpy).toHaveBeenCalledWith('animation');
+    expect(localStorageSpy).toHaveBeenCalledWith('navbar');
+    expect(localStorageSpy).toHaveBeenCalledWith('semidark');
+  });
+
+  it('debería manejar el caso de no tener animación definida', () => {
+    service.storeData = { animation: null };
+    const querySpy = jest.spyOn(document, 'querySelector');
+    
+    service.changeAnimation();
+
+    expect(querySpy).not.toHaveBeenCalled();
+  });
+
+  it('debería manejar correctamente la ausencia del elemento de animación', () => {
+    window.document.querySelector = jest.fn().mockReturnValue(null);
+    
+    expect(() => {
+      service.changeAnimation('add');
+      service.changeAnimation('remove');
+    }).not.toThrow();
+    
+    expect(window.document.querySelector).toHaveBeenCalledWith('.animation');
+  });
+
+  it('debería leer todos los valores necesarios de localStorage', () => {
+    const localStorageSpy = jest.spyOn(localStorage, 'getItem');
+    
+    service.initStoreData();
+    
+    expect(localStorageSpy).toHaveBeenCalledWith('theme');
+    expect(localStorageSpy).toHaveBeenCalledWith('menu');
+    expect(localStorageSpy).toHaveBeenCalledWith('layout');
+    expect(localStorageSpy).toHaveBeenCalledWith('i18n_locale');
+    expect(localStorageSpy).toHaveBeenCalledWith('rtlClass');
+    expect(localStorageSpy).toHaveBeenCalledWith('animation');
+    expect(localStorageSpy).toHaveBeenCalledWith('navbar');
+    expect(localStorageSpy).toHaveBeenCalledWith('semidark');
+  });
+
+  it('debería manejar el caso cuando storeData.animation es falsy', () => {
+    service.storeData = { animation: null };
+    const querySpy = jest.spyOn(document, 'querySelector');
+    
+    service.changeAnimation();
+
+    expect(querySpy).not.toHaveBeenCalled();
+  });
+
+  it('debería manejar el caso cuando no hay idioma en el almacenamiento local ni configurado', () => {
+    translateService.currentLang = null;
+
+    service.storeData = {
+      languageList: [
+        { code: 'en', name: 'English' },
+        { code: 'es', name: 'Spanish' },
+      ]
+    };
+    const result = service.toggleLanguage(null);
+
+    expect(translateService.use).toHaveBeenCalledWith('es');
+    expect(store.dispatch).toHaveBeenCalledWith({ type: 'toggleLocale', payload: 'es' });
+  });
+
   
 });

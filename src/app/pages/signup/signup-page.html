@@ -1,15 +1,11 @@
-<div class="flex min-h-screen items-center justify-center bg-gradient-to-r from-indigo-50 to-blue-50 p-4">
-    <div class="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+<div class="flex justify-center p-4">
+    <div class="w-full max-w-lg rounded-lg bg-white items-center p-8 shadow-lg">
         <div class="mb-6 text-center">
             <h1 class="text-4xl font-bold text-primary">{{ 'signup_title' | translate }}</h1>
             <p class="mt-2 text-gray-600">{{ 'signup_subtitle' | translate }}</p>
         </div>
         
         <form [formGroup]="registroForm" (ngSubmit)="registrarUsuario()" class="space-y-4">
-            <!-- Mensaje de error general -->
-            <div *ngIf="error" class="rounded bg-danger py-2 px-3 text-sm text-white">
-                {{ error }}
-            </div>
             
             <!-- Campo Nombre -->
             <div>
@@ -29,7 +25,7 @@
                         placeholder="{{ 'placeholder_name' | translate }}"
                     />
                 </div>
-                <div *ngIf="isInvalid('name')" class="mt-1 text-xs text-danger">
+                <div *ngIf="isInvalid('name')" class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ 'error_name_required' | translate }}
                 </div>
             </div>
@@ -53,10 +49,10 @@
                         placeholder="{{ 'placeholder_email' | translate }}"
                     />
                 </div>
-                <div *ngIf="isInvalid('email') && registroForm.get('email')?.errors?.['required']" class="mt-1 text-xs text-danger">
+                <div *ngIf="isInvalid('email') && registroForm.get('email')?.errors?.['required']" class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ 'error_email_required' | translate }}
                 </div>
-                <div *ngIf="isInvalid('email') && registroForm.get('email')?.errors?.['email']" class="mt-1 text-xs text-danger">
+                <div *ngIf="isInvalid('email') && registroForm.get('email')?.errors?.['email']" class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ 'error_email_invalid' | translate }}
                 </div>
             </div>
@@ -93,10 +89,10 @@
                         </svg>
                     </button>
                 </div>
-                <div *ngIf="isInvalid('password') && registroForm.get('password')?.errors?.['required']" class="mt-1 text-xs text-danger">
+                <div *ngIf="isInvalid('password') && registroForm.get('password')?.errors?.['required']" class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ 'error_password_required' | translate }}
                 </div>
-                <div *ngIf="isInvalid('password') && registroForm.get('password')?.errors?.['minlength']" class="mt-1 text-xs text-danger">
+                <div *ngIf="isInvalid('password') && registroForm.get('password')?.errors?.['minlength']" class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ 'error_password_min_length' | translate }}
                 </div>
             </div>
@@ -120,7 +116,7 @@
                         <option *ngFor="let pais of paises" [value]="pais">{{ pais }}</option>
                     </select>
                 </div>
-                <div *ngIf="isInvalid('country')" class="mt-1 text-xs text-danger">
+                <div *ngIf="isInvalid('country')" class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ 'error_country_required' | translate }}
                 </div>
             </div>
@@ -143,7 +139,7 @@
                         placeholder="{{ 'placeholder_city' | translate }}"
                     />
                 </div>
-                <div *ngIf="isInvalid('city')" class="mt-1 text-xs text-danger">
+                <div *ngIf="isInvalid('city')" class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ 'error_city_required' | translate }}
                 </div>
             </div>
@@ -166,7 +162,7 @@
                         placeholder="{{ 'placeholder_address' | translate }}"
                     />
                 </div>
-                <div *ngIf="isInvalid('address')" class="mt-1 text-xs text-danger">
+                <div *ngIf="isInvalid('address')" class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ 'error_address_required' | translate }}
                 </div>
             </div>
@@ -175,7 +171,7 @@
             <div>
                 <button
                     type="submit"
-                    class="group relative flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    class="group mt-10 relative flex w-full justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     [disabled]="cargando || registroForm.invalid"
                 >
                     <span *ngIf="cargando" class="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -188,6 +184,5 @@
                 </button>
             </div>
         </form>
-        
     </div>
 </div>

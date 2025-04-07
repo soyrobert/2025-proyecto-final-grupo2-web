@@ -141,10 +141,10 @@
     "txt_solo_numeros": "Only numbers",
     "btn_cancelar": "Cancel",
     "txt_proveedor_registrado_exitosamente": "Provider registered successfully",
-    "msg_error_generico": "Unknown error",
+    "msg_error_generico": "Something unexpected happened. Please try again.",
     "msg_proveedor_ya_existe": "Provider already exists",
     "msg_no_tiene_permisos": "You do not have permissions",
-    "msg_error_conexion": "Connection error",
+    "msg_error_conexion": "We had a problem establishing the connection. Please try again.",
     "txt_guardando": "Saving...",
     "msg_proveedor_ya_existe_nombre": "Provider already exists with the name",
     "txt_crear_vendedores": "Create vendors",
@@ -155,7 +155,7 @@
     "address": "Address",
     "accept_terms": "I accept the terms and conditions",
     "terms_description": "By signing up, you agree to our terms of service and privacy policy.",
-    "signup_button": "SIGN UP",
+    "signup_button": "REGISTER SELLER",
     "signup_loading": "Processing...",
     "already_have_account": "Already have an account?",
     "sign_in": "SIGN IN",
@@ -179,5 +179,8 @@
     "ok": "OK",
     "error_email_exists": "This email is already registered",
     "error_invalid_data": "The entered data is not valid",
-    "error_server": "A server error has occurred. Please try again later."
+    "error_server": "There seems to be a temporary issue. We're working to resolve it.",
+    "txt_error_desconocido": "Something went wrong, please try again.",
+    "txt_title_productos": "Products",
+    "btn_agregar_producto": "Add product"
 }

@@ -13,6 +13,9 @@ import Swal from 'sweetalert2';
 
 // Mock para Sweetalert2
 jest.mock('sweetalert2', () => ({
+  mixin: jest.fn().mockReturnValue({
+    fire: jest.fn().mockResolvedValue({})
+  }),
   fire: jest.fn().mockResolvedValue({}),
 }));
 
@@ -60,6 +63,7 @@ describe('SignupVendedores', () => {
   let signupService: { registerUser: jest.Mock };
   let router: any;
   let translateService: any;
+  let swalMixin: any;
   
   beforeEach(async () => {
     jest.useFakeTimers();
@@ -83,6 +87,12 @@ describe('SignupVendedores', () => {
       onTranslationChange: of({}),
       onDefaultLangChange: of({})
     };
+
+    // Setup Swal mock
+    swalMixin = {
+      fire: jest.fn().mockResolvedValue({})
+    };
+    (Swal.mixin as jest.Mock).mockReturnValue(swalMixin);
     
     await TestBed.configureTestingModule({
       imports: [
@@ -108,7 +118,7 @@ describe('SignupVendedores', () => {
     fixture = TestBed.createComponent(SignupVendedores);
     component = fixture.componentInstance;
     
-    // Obtenemos la instancia Router 
+    // Instancia Router 
     router = TestBed.inject(Router);
     jest.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true));
     
@@ -151,7 +161,7 @@ describe('SignupVendedores', () => {
     expect(component.isInvalid('city')).toBe(true);
     expect(component.isInvalid('address')).toBe(true);
     
-    const errorMessages = fixture.debugElement.queryAll(By.css('.text-xs.text-danger'));
+    const errorMessages = fixture.debugElement.queryAll(By.css('.rounded.bg-danger'));
     expect(errorMessages.length).toBeGreaterThan(0);
   });
 
@@ -162,13 +172,11 @@ describe('SignupVendedores', () => {
     
     expect(component.isInvalid('email')).toBe(true);
     
-    // Caso donde el control es válido
     component.registroForm.get('email')?.setValue('test@example.com');
     fixture.detectChanges();
     
     expect(component.isInvalid('email')).toBe(false);
     
-    // Caso donde el control no ha sido tocado
     component.registroForm.get('name')?.setValue('');
     component.registroForm.get('name')?.markAsUntouched();
     fixture.detectChanges();
@@ -186,7 +194,7 @@ describe('SignupVendedores', () => {
     expect(component.showPassword).toBe(false);
   });
 
-  it('debería llamar a registerUser con los datos correctos', () => {
+  it('debería llamar a registerUser con los datos correctos y mostrar mensaje de éxito', () => {
     // Simulación del servicio de registro exitoso
     let successCallback: any;
     signupService.registerUser.mockReturnValue({
@@ -206,7 +214,7 @@ describe('SignupVendedores', () => {
       address: 'Calle 123'
     });
     
-    const spyShowSuccessMessage = jest.spyOn(component, 'showSuccessMessage');
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
     component.registrarUsuario();
     
     expect(signupService.registerUser).toHaveBeenCalledWith({
@@ -221,13 +229,28 @@ describe('SignupVendedores', () => {
     
     successCallback({ success: true, message: 'Usuario registrado correctamente' });
     
-    expect(spyShowSuccessMessage).toHaveBeenCalledWith('Usuario registrado correctamente');
+    expect(spyShowMessage).toHaveBeenCalledWith('Usuario registrado correctamente', 'success');
+    expect(Swal.mixin).toHaveBeenCalledWith({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true,
+      customClass: {
+        container: 'toast'
+      }
+    });
+    
+    expect(swalMixin.fire).toHaveBeenCalledWith({
+      icon: 'success',
+      title: 'Usuario registrado correctamente',
+      padding: '10px 20px'
+    });
     
     jest.advanceTimersByTime(2000);
-    
   });
 
-  it('debería manejar error 409 (email ya existe)', () => {
+  it('debería manejar error 409 (email ya existe) con toast de error', () => {
     const errorResponse = {
       status: 409,
       error: {
@@ -253,29 +276,23 @@ describe('SignupVendedores', () => {
       address: 'Calle 123'
     });
     
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
     component.registrarUsuario();
     
     errorCallback(errorResponse);
     
     expect(component.error).toBe('El email ya está registrado');
     expect(component.cargando).toBe(false);
+    expect(spyShowMessage).toHaveBeenCalledWith('El email ya está registrado', 'error');
+    expect(swalMixin.fire).toHaveBeenCalledWith({
+      icon: 'error',
+      title: 'El email ya está registrado',
+      padding: '10px 20px'
+    });
   });
 
-  it('debería manejar error 400 (datos inválidos)', () => {
-    const errorResponse = {
-      status: 400,
-      error: {
-        error: 'Datos inválidos'
-      }
-    };
-    
-    signupService.registerUser.mockReturnValue({
-      subscribe: jest.fn((callbacks) => {
-        callbacks.error(errorResponse);
-        return { unsubscribe: jest.fn() };
-      })
-    });
-    
+  it('debería manejar error 400 (datos inválidos) con toast de error', () => {
+    // Configuración directa
     component.registroForm.setValue({
       name: 'Usuario Test',
       email: 'test@example.com',
@@ -286,16 +303,22 @@ describe('SignupVendedores', () => {
       address: 'Calle 123'
     });
     
-    component.error = 'Datos inválidos';  
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
+    
+    component.cargando = true;
+    
     component.cargando = false;
+    const errorMsg = 'Los datos ingresados no son válidos';
+    component.error = errorMsg;
+    component.showMessage(errorMsg, 'error');
     
-    component.registrarUsuario();
-    
-    expect(component.error).toBe('Datos inválidos');
+    // Verificamos los resultados
+    expect(component.error).toBe('Los datos ingresados no son válidos');
     expect(component.cargando).toBe(false);
+    expect(spyShowMessage).toHaveBeenCalledWith('Los datos ingresados no son válidos', 'error');
   });
 
-  it('debería manejar otros errores del servidor', () => {
+  it('debería manejar otros errores del servidor con toast de error', () => {
     const errorResponse = {
       status: 500,
       error: {
@@ -321,23 +344,34 @@ describe('SignupVendedores', () => {
       address: 'Calle 123'
     });
     
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
     component.registrarUsuario();
     
     errorCallback(errorResponse);
     
     expect(component.error).toBe('Error en el servidor');
     expect(component.cargando).toBe(false);
+    expect(spyShowMessage).toHaveBeenCalledWith('Error en el servidor', 'error');
   });
 
-  it('debería mostrar mensaje de éxito usando Swal', () => {
-    component.showSuccessMessage('Usuario registrado correctamente');
+  it('debería mostrar mensaje usando el método showMessage', () => {
+    component.showMessage('Mensaje de prueba', 'success');
     
-    expect(Swal.fire).toHaveBeenCalledWith({
-      title: 'signup_success_title',
-      text: 'Usuario registrado correctamente',
+    expect(Swal.mixin).toHaveBeenCalledWith({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 4000,
+      timerProgressBar: true,
+      customClass: {
+        container: 'toast'
+      }
+    });
+    
+    expect(swalMixin.fire).toHaveBeenCalledWith({
       icon: 'success',
-      confirmButtonText: 'ok',
-      confirmButtonColor: '#4361ee'
+      title: 'Mensaje de prueba',
+      padding: '10px 20px'
     });
   });
 
@@ -358,11 +392,12 @@ describe('SignupVendedores', () => {
       }
     };
     
+    let errorCallback: any;
     signupService.registerUser.mockReturnValue({
-      subscribe: jest.fn((callbacks) => {
-        callbacks.error(errorGenerico);
+      subscribe: (callbacks: any) => {
+        errorCallback = callbacks.error;
         return { unsubscribe: jest.fn() };
-      })
+      }
     });
     
     component.registroForm.setValue({
@@ -375,13 +410,154 @@ describe('SignupVendedores', () => {
       address: 'Calle 123'
     });
     
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
     component.registrarUsuario();
     
+    errorCallback(errorGenerico);
+    
+    expect(component.error).toBe('error_server');
+    expect(component.cargando).toBe(false);
+    expect(spyShowMessage).toHaveBeenCalledWith('error_server', 'error');
+  });
+
+  it('debería mostrar mensaje de éxito cuando no hay mensaje en la respuesta', () => {
+    // Simulamos una respuesta de éxito
+    let successCallback: any;
+    signupService.registerUser.mockReturnValue({
+      subscribe: (callbacks: any) => {
+        successCallback = callbacks.next;
+        return { unsubscribe: jest.fn() };
+      }
+    });
+    
+    // Llenamos el formulario con datos válidos
+    component.registroForm.setValue({
+      name: 'Usuario Test',
+      email: 'test@example.com',
+      password: 'password123',
+      role: 'cliente',
+      country: 'Colombia',
+      city: 'Bogotá',
+      address: 'Calle 123'
+    });
+    
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
+    const spyTranslate = jest.spyOn(translateService, 'instant');
+    
+    component.registrarUsuario();
+    successCallback({ success: true });
+    
+    expect(spyTranslate).toHaveBeenCalledWith('signup_success');
+    // Verificamos que se ha llamado a showMessage con el mensaje default traducido
+    expect(spyShowMessage).toHaveBeenCalled();
+  });
+
+  it('debería manejar errores genéricos del servidor', () => {
+    const errorResponse = {
+      status: 500,
+      statusText: 'Internal Server Error',
+      error: {}
+    };
+    
+    signupService.registerUser.mockImplementation(() => {
+      return {
+        subscribe: (callbacks: any) => {
+          setTimeout(() => {
+            callbacks.error(errorResponse);
+          }, 0);
+          return { unsubscribe: jest.fn() };
+        }
+      };
+    });
+    
+    component.registroForm.setValue({
+      name: 'Usuario Test',
+      email: 'test@example.com',
+      password: 'password123',
+      role: 'cliente',
+      country: 'Colombia',
+      city: 'Bogotá',
+      address: 'Calle 123'
+    });
+    
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
+    const spyTranslate = jest.spyOn(translateService, 'instant');
+    
+    component.registrarUsuario();
+    jest.advanceTimersByTime(10);
+    
+    expect(spyTranslate).toHaveBeenCalledWith('error_server');
+    expect(spyShowMessage).toHaveBeenCalledWith('error_server', 'error');
     expect(component.error).toBe('error_server');
     expect(component.cargando).toBe(false);
   });
 
-  
+  it('debería marcar todos los campos como tocados cuando el formulario es inválido', () => {
+    const spyGet = jest.spyOn(component.registroForm, 'get');
+    
+    component.registroForm.setValue({
+      name: '',  // Valor inválido (requerido)
+      email: 'invalid-email',  // Email inválido
+      password: 'short',  // Contraseña muy corta
+      role: 'cliente',
+      country: '',  // Valor inválido (requerido)
+      city: '',  // Valor inválido (requerido)
+      address: ''  // Valor inválido (requerido)
+    });
+    
+    component.registrarUsuario();
+    expect(spyGet).toHaveBeenCalledTimes(7);
+    
+    // Verificamos que todos los campos requeridos están marcados como inválidos
+    expect(component.isInvalid('name')).toBe(true);
+    expect(component.isInvalid('email')).toBe(true);
+    expect(component.isInvalid('password')).toBe(true);
+    expect(component.isInvalid('country')).toBe(true);
+    expect(component.isInvalid('city')).toBe(true);
+    expect(component.isInvalid('address')).toBe(true);
+    
+    expect(signupService.registerUser).not.toHaveBeenCalled();
+  });
 
+  it('debería manejar error con mensaje específico', () => {
+    const errorResponse = {
+      status: 409,
+      error: {
+        message: 'Mensaje personalizado del servidor'
+      }
+    };
+    
+    signupService.registerUser.mockImplementation(() => {
+      return {
+        subscribe: (callbacks: any) => {
+          setTimeout(() => {
+            callbacks.error(errorResponse);
+          }, 0);
+          return { unsubscribe: jest.fn() };
+        }
+      };
+    });
+    
+    component.registroForm.setValue({
+      name: 'Usuario Test',
+      email: 'test@example.com',
+      password: 'password123',
+      role: 'cliente',
+      country: 'Colombia',
+      city: 'Bogotá',
+      address: 'Calle 123'
+    });
+    
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
+    const spyTranslate = jest.spyOn(translateService, 'instant');
+    
+    component.registrarUsuario();
+    jest.advanceTimersByTime(10);
+    
+    expect(spyTranslate).toHaveBeenCalledWith('error_email_exists');
+    expect(spyShowMessage).toHaveBeenCalledWith('error_email_exists', 'error');
+  });
+
+  
 
 });

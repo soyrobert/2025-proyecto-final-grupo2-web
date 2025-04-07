@@ -113,10 +113,10 @@
     "txt_solo_numeros": "Solo se permiten números",
     "btn_cancelar": "Cancelar",
     "txt_proveedor_registrado_exitosamente": "Proveedor registrado exitosamente",
-    "msg_error_generico": "Error desconocido",
+    "msg_error_generico": "Ocurrió algo inesperado. Por favor, intenta nuevamente.",
     "msg_proveedor_ya_existe": "El proveedor ya existe",
     "msg_no_tiene_permisos": "No tienes permisos",
-    "msg_error_conexion": "Error de conexión",
+    "msg_error_conexion": "Tuvimos un problema al establecer la conexión. Por favor, vuelve a intentarlo.",
     "txt_guardando": "Guardando...",
     "msg_proveedor_ya_existe_nombre": "El proveedor ya existe con este nombre",
     "txt_crear_vendedores": "Crear vendedores",
@@ -127,7 +127,7 @@
     "address": "Dirección",
     "accept_terms": "Acepto los términos y condiciones",
     "terms_description": "Al registrarse, acepta nuestros términos de servicio y política de privacidad.",
-    "signup_button": "REGISTRARSE",
+    "signup_button": "REGISTRAR VENDEDOR",
     "signup_loading": "Procesando...",
     "already_have_account": "¿Ya tiene una cuenta?",
     "sign_in": "INICIAR SESIÓN",
@@ -151,5 +151,8 @@
     "ok": "Aceptar",
     "error_email_exists": "Este correo electrónico ya está registrado",
     "error_invalid_data": "Los datos ingresados no son válidos",
-    "error_server": "Ha ocurrido un error en el servidor. Por favor, intente más tarde."
+    "error_server": "Parece que hay un problema temporal. Estamos trabajando para solucionarlo.",
+    "txt_error_desconocido": "Algo salió mal, por favor intenta nuevamente",
+    "txt_title_productos": "Productos",
+    "btn_agregar_producto": "Agregar producto"
 }

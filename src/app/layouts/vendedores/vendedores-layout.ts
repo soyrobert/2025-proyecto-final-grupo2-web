@@ -7,11 +7,12 @@ import { AppService } from '../../service/app.service';
 import { SidebarComponent } from './../shared-ui/sidebar';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './../shared-ui/header';
+import { FooterComponent } from "../shared-ui/footer";
 
 @Component({
   selector: 'vendedores-layout',
   standalone: true,
-  imports: [CommonModule, TranslateModule, SidebarComponent,  RouterOutlet, HeaderComponent],
+  imports: [CommonModule, TranslateModule, SidebarComponent, RouterOutlet, HeaderComponent, FooterComponent],
   templateUrl: './vendedores-layout.html',
 })
 export class VendedoresLayout implements OnInit, OnDestroy {
