@@ -152,5 +152,7 @@
     "error_email_exists": "Este correo electrónico ya está registrado",
     "error_invalid_data": "Los datos ingresados no son válidos",
     "error_server": "Parece que hay un problema temporal. Estamos trabajando para solucionarlo.",
-    "txt_error_desconocido": "Algo salió mal, por favor intenta nuevamente"
+    "txt_error_desconocido": "Algo salió mal, por favor intenta nuevamente",
+    "txt_title_productos": "Productos",
+    "btn_agregar_producto": "Agregar producto"
 }

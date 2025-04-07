@@ -180,5 +180,7 @@
     "error_email_exists": "This email is already registered",
     "error_invalid_data": "The entered data is not valid",
     "error_server": "There seems to be a temporary issue. We're working to resolve it.",
-    "txt_error_desconocido": "Something went wrong, please try again."
+    "txt_error_desconocido": "Something went wrong, please try again.",
+    "txt_title_productos": "Products",
+    "btn_agregar_producto": "Add product"
 }
