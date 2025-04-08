@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { HttpClientModule, HttpBackend, HttpClient } from '@angular/common/http';
@@ -18,6 +18,7 @@ import { AppService } from './service/app.service';
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { ConfigService } from './services/config/config.service';
 
 export function HttpLoaderFactory(httpHandler: HttpBackend): TranslateHttpLoader {
   return new TranslateHttpLoader(new HttpClient(httpHandler));
@@ -27,12 +28,24 @@ export function getBaseUrl() {
   return document.getElementsByTagName('base')[0].href;
 }
 
+// Factory para inicializar el ConfigService
+export function initializeConfigService(configService: ConfigService) {
+  return () => configService.initialize();
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(
       withInterceptors([authInterceptor])
     ),
     { provide: 'BASE_URL', useFactory: getBaseUrl, deps: [] },
+    // Inicialización del ConfigService antes de que arranque la app
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeConfigService,
+      deps: [ConfigService],
+      multi: true
+    },
     provideRouter(routes),
     provideAnimations(),
     provideScrollbarOptions({
