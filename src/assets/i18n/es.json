@@ -156,5 +156,13 @@
     "txt_title_productos": "Productos",
     "btn_agregar_producto": "Agregar producto",
     "luce_bien": "Luce bien",
-    "msg_credenciales_incorrectas": "Credenciales incorrectas o error de autenticación."
+    "msg_credenciales_incorrectas": "Credenciales incorrectas o error de autenticación.",
+    "txt_nombre_minimo_3": "El nombre debe tener al menos 3 caracteres",
+    "txt_nombre_maximo_50": "El nombre no puede tener más de 50 caracteres",
+    "txt_numero_contacto_minimo_7": "El número de contacto debe tener al menos 7 dígitos",
+    "txt_numero_contacto_maximo_15": "El número de contacto no puede exceder los 15 dígitos",
+    "txt_caracteristicas_minimo_10": "Las características deben tener al menos 3 caracteres",
+    "txt_caracteristicas_maximo_200": "Las características no pueden tener más de 200 caracteres",
+    "txt_condiciones_minimo_10": "Las condiciones deben tener al menos 10 caracteres",
+    "txt_condiciones_maximo_200": "Las condiciones no pueden tener más de 200 caracteres"
 }
