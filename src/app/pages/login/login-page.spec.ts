@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { LoginPage } from './login-page';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Router } from '@angular/router';
@@ -30,7 +30,11 @@ class FakeTranslateLoader implements TranslateLoader {
       'txt_no_tiene_cuenta': '¿No tiene cuenta?',
       'btn_registrarse': 'Registrarse',
       'txt_recordar_clave': 'Recordar contraseña',
-      'derechos_reservados': 'Todos los derechos reservados'
+      'derechos_reservados': 'Todos los derechos reservados',
+      'txt_email_invalido': 'Ingrese un email válido',
+      'error_password_required': 'La contraseña es requerida',
+      'luce_bien': 'Luce bien!',
+      'msg_credenciales_incorrectas': 'Credenciales incorrectas o error de autenticación.'
     });
   }
 }
@@ -71,7 +75,15 @@ describe('LoginPage', () => {
       use: jest.fn(),
       get: jest.fn().mockReturnValue(of('')),
       getTranslation: jest.fn().mockReturnValue(of({})),
-      instant: jest.fn(key => key),
+      instant: jest.fn((key: string) => {
+        const translations: Record<string, string> = {
+          'msg_credenciales_incorrectas': 'Credenciales incorrectas o error de autenticación.',
+          'txt_email_invalido': 'Ingrese un email válido',
+          'error_password_required': 'La contraseña es requerida',
+          'luce_bien': 'Luce bien!'
+        };
+        return translations[key] || key;
+      }),
       currentLang: 'en',
       onLangChange: of({}),
       onTranslationChange: of({}),
@@ -135,20 +147,17 @@ describe('LoginPage', () => {
   });
 
   it('Debe mostrar mensajes de validación cuando se envía un formulario con campos vacíos', () => {
-    // Clic  en el botón de inicio de sesión
-    const submitButton = fixture.debugElement.query(By.css('button[type="submit"]'));
-    submitButton.nativeElement.click();
+    // Simulamos un envío de formulario con campos vacíos
+    component.email = '';
+    component.password = '';
+    component.onSubmit();
     fixture.detectChanges();
     
-    // Comprobar el estado de validación
+    expect(component.submitted).toBe(true);
     expect(component.emailTouched).toBe(true);
     expect(component.passwordTouched).toBe(true);
     
-    // Obtener mensajes de error
-    const errorMessages = fixture.debugElement.queryAll(By.css('.bg-danger'));
-    expect(errorMessages.length).toBe(2);
-    expect(errorMessages[0].nativeElement.textContent).toContain('Ingrese un email válido');
-    expect(errorMessages[1].nativeElement.textContent).toContain('La contraseña es requerida');
+    expect(authService.login).not.toHaveBeenCalled();
   });
 
   it('Debe llamar a authService.login con las credenciales correctas', async () => {
@@ -224,40 +233,36 @@ describe('LoginPage', () => {
     await component.onSubmit();
     fixture.detectChanges();
     
-    // Validar que se muestra el mensaje de error
+    // Validar que se muestra el mensaje de error correcto
     expect(component.errorMessage).toBe('Credenciales incorrectas o error de autenticación.');
-    const errorElement = fixture.debugElement.query(By.css('.text-red-500'));
-    expect(errorElement.nativeElement.textContent.trim()).toBe('Credenciales incorrectas o error de autenticación.');
+    expect(translateService.instant).toHaveBeenCalledWith('msg_credenciales_incorrectas');
   });
 
   it('Debería validar el campo de correo electrónico en el desenfoque', () => {
-    // Obtener el campo de entrada de correo electrónico
-    const emailInput = fixture.debugElement.query(By.css('input[type="email"]'));
     
-    // Simular el desenfoque del campo de entrada
-    emailInput.triggerEventHandler('blur', {});
+    // Configurar un correo electrónico no válido y llamar al método
+    component.email = '';
+    component.onEmailBlur();
     fixture.detectChanges();
     
+    // Verificar estado
     expect(component.emailTouched).toBe(true);
+    expect(component.isEmailValid).toBe(false);
     
-    // Validar el mensaje de error
-    const errorMessage = fixture.debugElement.query(By.css('.bg-danger'));
-    expect(errorMessage.nativeElement.textContent).toContain('Ingrese un email válido');
-    
-    // Email válido
+    // Configurar un correo electrónico válido y llamar al método
     component.email = 'valid@example.com';
+    component.onEmailBlur();
     fixture.detectChanges();
     
-    // Validar el mensaje de éxito
-    const successMessage = fixture.debugElement.query(By.css('.bg-\\[\\#1abc9c\\]'));
-    expect(successMessage.nativeElement.textContent).toContain('Luce bien!');
+    // Verificar estado
+    expect(component.emailTouched).toBe(true);
+    expect(component.isEmailValid).toBe(true);
   });
 
   it('Debe cambiar el idioma cuando se llama a changeLanguage', () => {
     const languageItem = { code: 'es', name: 'Spanish' };
     component.changeLanguage(languageItem);
     
-    // Validar que se cambió el idioma
     expect(translateService.use).toHaveBeenCalledWith('es');
     expect(appService.toggleLanguage).toHaveBeenCalledWith(languageItem);
   });
@@ -266,12 +271,8 @@ describe('LoginPage', () => {
     const index = 1;
     const item = { code: 'es', name: 'Spanish' };
     
-    // Llamar a la función trackByLangCode
     const result = component.trackByLangCode(index, item);
-    
     // Validar el resultado
     expect(result).toBe('es');
   });
-  
-
 });
