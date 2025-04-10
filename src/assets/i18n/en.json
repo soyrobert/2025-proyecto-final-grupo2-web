@@ -98,7 +98,7 @@
     "item_vendedores": "Vendors",
     "goout": "Go Out",
     "txt_ingrese_contraseña": "Enter your email and password",
-    "derechos_reservados": "CCP All rights reserved",
+    "derechos_reservados": "All rights reserved",
     "btn_iniciar_sesion": "Login",
     "email": "Email",
     "password": "Password",
@@ -182,5 +182,7 @@
     "error_server": "There seems to be a temporary issue. We're working to resolve it.",
     "txt_error_desconocido": "Something went wrong, please try again.",
     "txt_title_productos": "Products",
-    "btn_agregar_producto": "Add product"
+    "btn_agregar_producto": "Add product",
+    "luce_bien": "Looks good",
+    "msg_credenciales_incorrectas": "Incorrect credentials or authentication error."
 }

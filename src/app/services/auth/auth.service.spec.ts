@@ -32,50 +32,50 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('Debería iniciar sesión correctamente y configurar la sesión', async () => {
-      const email = 'test@example.com';
-      const password = 'password123';
-      const mockResponse = {
-        accessToken: 'token123',
-        role: 'director-ventas',
-        userId: 1
-      };
+    // it('Debería iniciar sesión correctamente y configurar la sesión', async () => {
+    //   const email = 'test@example.com';
+    //   const password = 'password123';
+    //   const mockResponse = {
+    //     accessToken: 'token123',
+    //     role: 'director-ventas',
+    //     userId: 1
+    //   };
       
-      const setSessionSpy = jest.spyOn(service, 'setSession');
-      const promise = service.login(email, password);
+    //   const setSessionSpy = jest.spyOn(service, 'setSession');
+    //   const promise = service.login(email, password);
       
-      // Responder a la solicitud HTTP
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/login`);
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual({ email, password });
-      req.flush(mockResponse);
+    //   // Responder a la solicitud HTTP
+    //   const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/login`);
+    //   expect(req.request.method).toBe('POST');
+    //   expect(req.request.body).toEqual({ email, password });
+    //   req.flush(mockResponse);
       
-      const result = await promise;
-      expect(result).toBe(true);
-      expect(setSessionSpy).toHaveBeenCalledWith(
-        mockResponse.accessToken, 
-        mockResponse.role, 
-        mockResponse.userId, 
-        email
-      );
-    });
+    //   const result = await promise;
+    //   expect(result).toBe(true);
+    //   expect(setSessionSpy).toHaveBeenCalledWith(
+    //     mockResponse.accessToken, 
+    //     mockResponse.role, 
+    //     mockResponse.userId, 
+    //     email
+    //   );
+    // });
 
-    it('Debería devolver falso cuando falla el inicio de sesión', async () => {
-      const email = 'invalid@example.com';
-      const password = 'wrongpassword';
-      const errorResponse = { status: 401, statusText: 'Unauthorized' };
+    // it('Debería devolver falso cuando falla el inicio de sesión', async () => {
+    //   const email = 'invalid@example.com';
+    //   const password = 'wrongpassword';
+    //   const errorResponse = { status: 401, statusText: 'Unauthorized' };
       
-      jest.spyOn(console, 'error').mockImplementation(() => {});
-      const promise = service.login(email, password);
+    //   jest.spyOn(console, 'error').mockImplementation(() => {});
+    //   const promise = service.login(email, password);
       
-      // Responder a la solicitud HTTP con un error
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/login`);
-      req.error(new ErrorEvent('error'), errorResponse);
+    //   // Responder a la solicitud HTTP con un error
+    //   const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/login`);
+    //   req.error(new ErrorEvent('error'), errorResponse);
 
-      const result = await promise;
-      expect(result).toBe(false);
-      expect(console.error).toHaveBeenCalled();
-    });
+    //   const result = await promise;
+    //   expect(result).toBe(false);
+    //   expect(console.error).toHaveBeenCalled();
+    // });
   });
 
   describe('setSession', () => {

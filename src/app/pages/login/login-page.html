@@ -58,7 +58,7 @@
                         <!-- Campo EMAIL -->
                         <div [ngClass]="submitted ? !email ? 'has-error' : 'has-success' : ''">
                           <label for="Email">{{ 'email' | translate }}</label>
-                          <div class="relative text-white-dark">
+                          <div class="relative text-white-dark mb-2">
                             <input
                               id="Email"
                               type="email"
@@ -74,15 +74,15 @@
                             </span>
                           </div>
                           <ng-container *ngIf="emailTouched">
-                            <span *ngIf="email" class="rounded bg-[#1abc9c] py-1 px-2 text-white">Luce bien!</span>
-                            <span *ngIf="!email" class="rounded bg-danger py-1 px-2 text-white">Ingrese un email válido</span>
+                            <span *ngIf="isEmailValid" class="rounded bg-[#1abc9c] py-1 px-2 text-white">{{ 'luce_bien' | translate }}</span>
+                            <span *ngIf="!isEmailValid" class="rounded bg-danger py-1 px-2 text-white">{{ 'txt_email_invalido' | translate }}</span>
                           </ng-container>
                         </div>
                       
                         <!-- Campo PASSWORD -->
                         <div [ngClass]="submitted ? !password ? 'has-error' : 'has-success' : ''">
                           <label for="Password">{{ 'password' | translate }}</label>
-                          <div class="relative text-white-dark">
+                          <div class="relative text-white-dark mb-2">
                             <input
                               id="Password"
                               type="password"
@@ -98,8 +98,8 @@
                             </span>
                           </div>
                           <ng-container *ngIf="passwordTouched">
-                            <span *ngIf="password" class="rounded bg-[#1abc9c] py-1 px-2 text-white">Luce bien!</span>
-                            <span *ngIf="!password" class="rounded bg-danger py-1 px-2 text-white">La contraseña es requerida</span>
+                            <span *ngIf="password" class="rounded bg-[#1abc9c] py-1 px-2 text-white">{{ 'luce_bien' | translate }}</span>
+                            <span *ngIf="!password" class="rounded bg-danger py-1 px-2 text-white">{{ 'error_password_required' | translate }}</span>
                           </ng-container>
                         </div>
                       
@@ -107,13 +107,13 @@
                         <button
                           type="submit"
                           class="btn btn-primary !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]"
-                          [disabled]="loading"
+                          [disabled]="!isEmailValid || !email || !password || loading"
                         >
                           {{ 'btn_iniciar_sesion' | translate }}
                         </button>
                       
                         <!-- MENSAJE DE ERROR -->
-                        <div *ngIf="errorMessage" class="mt-4 text-red-500 text-center">
+                        <div *ngIf="errorMessage" class="mt-4 text-red-600 text-center">
                           {{ errorMessage }}
                         </div>
                       </form>
