@@ -3,8 +3,6 @@ name: Deploy Angular to Cloud Run
 on:
   push:
     branches:
-      - 'develop'
-      - 'feat/*'
       - 'main'
 
 jobs:
@@ -65,13 +63,19 @@ jobs:
       - name: Build and Push Docker image for Production
         if: github.ref == 'refs/heads/main'
         run: |
-          docker build --build-arg BUILD_ENV=production -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker build \
+            --build-arg BUILD_ENV=production \
+            --build-arg ENCRYPTION_KEY="${{ secrets.ENCRYPTION_KEY }}" \
+            -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} .
           docker push us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }}
       
       - name: Build and Push Docker image for Development
         if: github.ref != 'refs/heads/main'
         run: |
-          docker build --build-arg BUILD_ENV=development -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker build \
+            --build-arg BUILD_ENV=development \
+            --build-arg ENCRYPTION_KEY="${{ secrets.ENCRYPTION_KEY }}" \
+            -t us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }} .
           docker push us-central1-docker.pkg.dev/$PROJECT_ID/$REPO_NAME/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Deploy to Cloud Run

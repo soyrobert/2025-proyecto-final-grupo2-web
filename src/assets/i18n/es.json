@@ -68,7 +68,7 @@
     "checkbox": "Caja",
     "goout": "Salir",
     "txt_ingrese_contraseña": "Ingrese su email y contraseña",
-    "derechos_reservados": "CCP Todos los derechos reservados",
+    "derechos_reservados": "Todos los derechos reservados",
     "btn_iniciar_sesion": "Iniciar sesión",
     "email": "Correo electrónico",
     "password": "Contraseña",
@@ -154,5 +154,7 @@
     "error_server": "Parece que hay un problema temporal. Estamos trabajando para solucionarlo.",
     "txt_error_desconocido": "Algo salió mal, por favor intenta nuevamente",
     "txt_title_productos": "Productos",
-    "btn_agregar_producto": "Agregar producto"
+    "btn_agregar_producto": "Agregar producto",
+    "luce_bien": "Luce bien",
+    "msg_credenciales_incorrectas": "Credenciales incorrectas o error de autenticación."
 }
