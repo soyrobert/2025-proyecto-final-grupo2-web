@@ -3,8 +3,6 @@ name: Deploy Angular to Cloud Run
 on:
   push:
     branches:
-      - 'develop'
-      - 'feat/*'
       - 'main'
 
 jobs:
