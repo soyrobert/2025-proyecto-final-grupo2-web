@@ -184,5 +184,14 @@
     "txt_title_productos": "Products",
     "btn_agregar_producto": "Add product",
     "luce_bien": "Looks good",
-    "msg_credenciales_incorrectas": "Incorrect credentials or authentication error."
+    "msg_credenciales_incorrectas": "Incorrect credentials or authentication error.",
+    "txt_nombre_minimo_3": "The name must be at least 3 characters long",
+    "txt_nombre_maximo_50": "The name cannot be longer than 50 characters",
+    "txt_numero_contacto_minimo_7": "The contact number must be at least 7 digits",
+    "txt_numero_contacto_maximo_15": "The contact number cannot exceed 15 digits",
+    "txt_caracteristicas_minimo_10": "Features must be at least 3 characters long",
+    "txt_caracteristicas_maximo_200": "Features cannot be longer than 200 characters",
+    "txt_condiciones_minimo_10": "Conditions must be at least 10 characters long",
+    "txt_condiciones_maximo_200": "Conditions cannot be longer than 200 characters"
+    
 }

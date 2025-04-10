@@ -36,6 +36,15 @@
                      class="rounded bg-danger py-1 px-2 text-white mt-1">
                      {{ 'txt_por_favor_ingrese_el_nombre' | translate }}
                 </div>
+                <div *ngIf="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.errors?.['minlength']"
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ 'txt_nombre_minimo_3' | translate }}
+                </div>
+                <div *ngIf="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.errors?.['maxlength']"
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ 'txt_nombre_maximo_50' | translate }}
+                </div>
+
             </div>
             
             <div class="mb-5">
@@ -64,6 +73,15 @@
                     class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ 'txt_solo_numeros' | translate }}
                 </div>
+                <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.errors?.['minlength']"
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ 'txt_numero_contacto_minimo_7' | translate }}
+                </div>
+                <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.errors?.['maxlength']"
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ 'txt_numero_contacto_maximo_15' | translate }}
+                </div>
+
             </div>
             
             <div class="mb-5">
@@ -93,7 +111,17 @@
                 <div *ngIf="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.invalid" 
                           class="rounded bg-danger py-1 px-2 text-white mt-1">
                           {{ 'txt_por_favor_ingrese_las_caracteristicas' | translate }}
-                     </div>
+                </div>
+                <div *ngIf="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.errors?.['minlength']"
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ 'txt_caracteristicas_minimo_10' | translate }}
+                </div>
+                <div *ngIf="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.errors?.['maxlength']"
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ 'txt_caracteristicas_maximo_200' | translate }}
+                </div>
+
+
             </div>
             
             <div class="mb-5">
@@ -104,6 +132,15 @@
                           class="rounded bg-danger py-1 px-2 text-white mt-1">
                           {{ 'txt_por_favor_ingrese_las_condiciones' | translate }}
                 </div>
+                <div *ngIf="formularioProveedor.get('condiciones')?.touched && formularioProveedor.get('condiciones')?.errors?.['minlength']"
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ 'txt_condiciones_minimo_10' | translate }}
+                </div>
+                <div *ngIf="formularioProveedor.get('condiciones')?.touched && formularioProveedor.get('condiciones')?.errors?.['maxlength']"
+                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ 'txt_condiciones_maximo_200' | translate }}
+                </div>
+
             </div>
             
             <div class="mt-8 flex items-center justify-end">
