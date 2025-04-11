@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IconPlusComponent } from 'src/app/shared/icon/icon-plus';
 import { ModalComponent } from '../../../components/modal/modal.component';
+import { ProductosService } from '../../../services/proveedores/productos.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -26,7 +27,8 @@ export class ImportarProductos {
   
   constructor(
     private fb: FormBuilder,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private productosService: ProductosService
   ) {
     this.inicializarFormulario();
   }
@@ -62,15 +64,52 @@ export class ImportarProductos {
 
     this.cargando = true;
 
-    // TODO: realizar el envío de datos
-    setTimeout(() => {
-      this.cargando = false;
-      this.showMessage(
-        this.translate.instant('txt_producto_registrado_exitosamente'),
-        'success'
-      );
-      this.modalProducto.close();
-    }, 1000);
+    this.productosService.registrarProducto(this.formularioProducto.value)
+      .subscribe({
+        next: (respuesta) => {
+          if (respuesta && respuesta.error) {
+            this.cargando = false;
+            this.showMessage(
+              respuesta.error || this.translate.instant('msg_producto_ya_existe'),
+              'error'
+            );
+          } else {
+            this.cargando = false;
+            this.showMessage(
+              this.translate.instant('txt_producto_registrado_exitosamente'),
+              'success'
+            );
+            this.modalProducto.close();
+          }
+        },
+        error: (error) => {
+          this.cargando = false;
+          
+          // Manejar errores
+          let errorMsg = this.translate.instant('txt_error_desconocido');
+          
+          if (error.status === 400 && error.error.detalles) {
+            // Error de validación
+            errorMsg = Object.values(error.error.detalles).join(', ');
+          } else if (error.status === 409) {
+            // Error de conflicto (producto ya existe)
+            errorMsg = this.translate.instant('msg_producto_ya_existe');
+          } else if (error.status === 413) {
+            // Payload muy grande
+            errorMsg = this.translate.instant('msg_archivo_muy_grande');
+          } else if (error.status === 403) {
+            // Error de permisos
+            errorMsg = this.translate.instant('msg_no_tiene_permisos');
+          } else if (error.status === 0) {
+            // Error de conexión
+            errorMsg = this.translate.instant('msg_error_conexion');
+          } else if (error.error.message) {
+            errorMsg = error.error.message;
+          }
+          
+          this.showMessage(errorMsg, 'error');
+        }
+      });
   }
 
   /**
