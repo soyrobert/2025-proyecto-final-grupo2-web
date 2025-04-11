@@ -1,11 +1,18 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IconPlusComponent } from 'src/app/shared/icon/icon-plus';
 import { ModalComponent } from '../../../components/modal/modal.component';
 import { ProductosService } from '../../../services/proveedores/productos.service';
+import { ProveedoresService } from '../../../services/proveedores/proveedores.service';
 import Swal from 'sweetalert2';
+
+interface Proveedor {
+  id: number;
+  nombre: string;
+  [key: string]: any; // Para otras propiedades que pueda tener el proveedor
+}
 
 @Component({
   standalone: true,
@@ -20,17 +27,43 @@ import Swal from 'sweetalert2';
     ModalComponent
   ],
 })
-export class ImportarProductos {
+export class ImportarProductos implements OnInit {
   @ViewChild('modalProducto') modalProducto!: ModalComponent;
   formularioProducto!: FormGroup;
   cargando: boolean = false;
+  proveedores: Proveedor[] = [];
+  cargandoProveedores: boolean = false;
+  errorProveedores: string | null = null;
   
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
-    private productosService: ProductosService
+    private productosService: ProductosService,
+    private proveedoresService: ProveedoresService
   ) {
     this.inicializarFormulario();
+  }
+
+  ngOnInit(): void {
+    this.cargarProveedores();
+  }
+
+  cargarProveedores(): void {
+    this.cargandoProveedores = true;
+    this.errorProveedores = null;
+
+    this.proveedoresService.obtenerProveedores()
+      .subscribe({
+        next: (respuesta) => {
+          this.proveedores = respuesta;
+          this.cargandoProveedores = false;
+        },
+        error: (error) => {
+          console.error('Error al cargar proveedores:', error);
+          this.cargandoProveedores = false;
+          this.errorProveedores = this.translate.instant('txt_error_cargar_proveedores');
+        }
+      });
   }
 
   inicializarFormulario() {
@@ -49,6 +82,11 @@ export class ImportarProductos {
   }
 
   abrirModalProducto() {
+    // Asegurar que tenemos los proveedores cargados
+    if (this.proveedores.length === 0 && !this.cargandoProveedores) {
+      this.cargarProveedores();
+    }
+    
     this.inicializarFormulario();
     this.modalProducto.open();
   }

@@ -52,9 +52,21 @@
                     <label for="proveedor" class="block text-sm font-medium mb-1">{{ 'txt_proveedor' | translate }}</label>
                     <select id="proveedor" class="form-select" formControlName="proveedor">
                         <option value="">{{ 'txt_seleccione_proveedor' | translate }}</option>
-                        <option value="1">Proveedor 1</option>
-                        <option value="2">Proveedor 2</option>
-                        <option value="3">Proveedor 3</option>
+                        
+                        <!-- Mostrar mensaje de carga -->
+                        <option *ngIf="cargandoProveedores" value="" disabled>
+                            {{ 'txt_cargando_proveedores' | translate }}
+                        </option>
+                        
+                        <!-- Mostrar proveedores desde el backend -->
+                        <option *ngFor="let proveedor of proveedores" [value]="proveedor.id">
+                            {{ proveedor.nombre }}
+                        </option>
+                        
+                        <!-- Mostrar mensaje de error si ocurrió alguno -->
+                        <option *ngIf="errorProveedores && !cargandoProveedores" value="" disabled>
+                            {{ 'txt_error_cargar_proveedores' | translate }}
+                        </option>
                     </select>
                     <div *ngIf="formularioProducto.get('proveedor')?.touched && formularioProducto.get('proveedor')?.invalid" 
                           class="rounded bg-danger py-1 px-2 text-white mt-1">

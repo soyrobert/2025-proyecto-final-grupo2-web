@@ -236,6 +236,10 @@
     "txt_proveedor": "Supplier",
     "txt_seleccione_proveedor": "Select the supplier",
     "txt_por_favor_seleccione_proveedor": "Please select the supplier",
-    "txt_producto_registrado_exitosamente": "Product successfully registered"
+    "txt_producto_registrado_exitosamente": "Product successfully registered",
+    "txt_cargando_proveedores": "Loading suppliers...",
+    "txt_error_cargar_proveedores": "Error loading suppliers. Please try again.",
+    "msg_producto_ya_existe": "The product already exists",
+    "msg_archivo_muy_grande": "The file is too large"
     
 }
