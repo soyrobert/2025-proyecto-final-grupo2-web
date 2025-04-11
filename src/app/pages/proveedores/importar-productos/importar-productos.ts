@@ -11,7 +11,13 @@ import Swal from 'sweetalert2';
 interface Proveedor {
   id: number;
   nombre: string;
-  [key: string]: any; // Para otras propiedades que pueda tener el proveedor
+  [key: string]: any;
+}
+
+interface ImagenPreview {
+  archivo: File;
+  url: string;
+  tamanio: string;
 }
 
 @Component({
@@ -29,11 +35,19 @@ interface Proveedor {
 })
 export class ImportarProductos implements OnInit {
   @ViewChild('modalProducto') modalProducto!: ModalComponent;
+  @ViewChild('fileInput') fileInput: any;
+  
   formularioProducto!: FormGroup;
   cargando: boolean = false;
   proveedores: Proveedor[] = [];
   cargandoProveedores: boolean = false;
   errorProveedores: string | null = null;
+  
+  // Configuración para las imágenes
+  imagenSeleccionada: ImagenPreview[] = [];
+  errorImagen: string | null = null;
+  maxTamanioImagen: number = 5 * 1024 * 1024; // 5MB en bytes
+  formatosPermitidos: string[] = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   
   constructor(
     private fb: FormBuilder,
@@ -88,7 +102,105 @@ export class ImportarProductos implements OnInit {
     }
     
     this.inicializarFormulario();
+    this.imagenSeleccionada = [];
+    this.errorImagen = null;
     this.modalProducto.open();
+  }
+
+  /**
+   * Maneja la selección de imágenes
+   * @param event Evento de cambio del input file
+   */
+  onImagenSeleccionada(event: any): void {
+    this.errorImagen = null;
+    const files = event.target.files;
+    
+    if (files && files.length > 0) {
+      // Validar cada archivo seleccionado
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Validar formato
+        if (!this.formatosPermitidos.includes(file.type)) {
+          this.errorImagen = this.translate.instant('txt_formato_imagen_no_valido');
+          this.limpiarSeleccionImagen();
+          return;
+        }
+        
+        // Validar tamaño
+        if (file.size > this.maxTamanioImagen) {
+          this.errorImagen = this.translate.instant('txt_imagen_demasiado_grande');
+          this.limpiarSeleccionImagen();
+          return;
+        }
+
+        // Crear preview
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.imagenSeleccionada.push({
+            archivo: file,
+            url: e.target.result,
+            tamanio: this.formatearTamanio(file.size)
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+      
+      // Actualizar el valor del formulario (usar el primer archivo por ahora)
+      this.formularioProducto.patchValue({
+        imagenes: files[0]
+      });
+    }
+  }
+
+  /**
+   * Elimina una imagen de la previsualización
+   * @param index Índice de la imagen a eliminar
+   */
+  eliminarImagen(index: number): void {
+    if (index >= 0 && index < this.imagenSeleccionada.length) {
+      this.imagenSeleccionada.splice(index, 1);
+      
+      // Si no quedan imágenes, limpiar el campo del formulario
+      if (this.imagenSeleccionada.length === 0) {
+        this.formularioProducto.patchValue({
+          imagenes: null
+        });
+      } else {
+        // Actualizar con la primera imagen disponible
+        this.formularioProducto.patchValue({
+          imagenes: this.imagenSeleccionada[0].archivo
+        });
+      }
+    }
+  }
+
+  /**
+   * Limpia la selección de imágenes
+   */
+  limpiarSeleccionImagen(): void {
+    this.imagenSeleccionada = [];
+    this.formularioProducto.patchValue({
+      imagenes: null
+    });
+    
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
+  }
+
+  /**
+   * Formatea el tamaño del archivo a una representación legible
+   * @param bytes Tamaño en bytes
+   */
+  formatearTamanio(bytes: number): string {
+    if (bytes === 0) return '0 B';
+    
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   guardarProducto() {
@@ -102,7 +214,15 @@ export class ImportarProductos implements OnInit {
 
     this.cargando = true;
 
-    this.productosService.registrarProducto(this.formularioProducto.value)
+    // Preparar los datos del producto, incluyendo las imágenes
+    const datosProducto = {...this.formularioProducto.value};
+    
+    // Si hay imágenes seleccionadas, convertirlas a formato adecuado
+    if (this.imagenSeleccionada.length > 0) {
+      datosProducto.imagenes = this.imagenSeleccionada.map(img => img.archivo);
+    }
+
+    this.productosService.registrarProducto(datosProducto)
       .subscribe({
         next: (respuesta) => {
           if (respuesta && respuesta.error) {
