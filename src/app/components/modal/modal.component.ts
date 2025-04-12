@@ -59,7 +59,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
       background-color: white;
       border-radius: 0.5rem;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      max-width: 500px;
+      max-width: 700px;
       width: 100%;
       max-height: 90vh;
       overflow: auto;

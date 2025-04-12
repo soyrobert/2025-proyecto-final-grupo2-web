@@ -9,7 +9,7 @@
     </ul>
 
     <div class="flex items-center justify-start py-7">
-        <button type="button" class="btn btn-primary btn-lg">
+        <button type="button" class="btn btn-primary btn-lg" (click)="abrirModalProducto()">
             <icon-plus class="text-white mr-2" />
             {{ 'btn_agregar_producto' | translate }}
         </button>
@@ -26,7 +26,234 @@
     </div>
 
     <!-- Modal para agregar producto -->
-    <app-modal #modalProveedor title="{{ 'btn_agregar_proveedor' | translate }}">
-        <p>Modal aquí</p>>
+    <app-modal #modalProducto title="{{ 'btn_agregar_producto' | translate }}">
+        <form [formGroup]="formularioProducto" class="text-sm" (ngSubmit)="guardarProducto()">
+            <!-- Fila 1: Nombre y Proveedor -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                <div>
+                    <label for="nombre" class="block text-sm font-medium mb-1">{{ 'name' | translate }}</label>
+                    <input id="nombre" type="text" placeholder="{{ 'txt_ingrese_el_nombre_producto' | translate }}" 
+                          class="form-input" formControlName="nombre" />
+                    <div *ngIf="formularioProducto.get('nombre')?.touched && formularioProducto.get('nombre')?.errors?.['required']" 
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          {{ 'txt_por_favor_ingrese_el_nombre_producto' | translate }}
+                    </div>
+                    <div *ngIf="formularioProducto.get('nombre')?.touched && formularioProducto.get('nombre')?.errors?.['minlength']"
+                         class="rounded bg-danger py-1 px-2 text-white mt-1">
+                         {{ 'txt_nombre_producto_minimo_3' | translate }}
+                    </div>
+                    <div *ngIf="formularioProducto.get('nombre')?.touched && formularioProducto.get('nombre')?.errors?.['maxlength']"
+                         class="rounded bg-danger py-1 px-2 text-white mt-1">
+                         {{ 'txt_nombre_producto_maximo_50' | translate }}
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="proveedor" class="block text-sm font-medium mb-1">{{ 'txt_proveedor' | translate }}</label>
+                    <select id="proveedor" class="form-select" formControlName="proveedor">
+                        <option value="">{{ 'txt_seleccione_proveedor' | translate }}</option>
+                        
+                        <!-- Mostrar mensaje de carga -->
+                        <option *ngIf="cargandoProveedores" value="" disabled>
+                            {{ 'txt_cargando_proveedores' | translate }}
+                        </option>
+                        
+                        <!-- Mostrar proveedores desde el backend -->
+                        <option *ngFor="let proveedor of proveedores" [value]="proveedor.id">
+                            {{ proveedor.nombre }}
+                        </option>
+                        
+                        <!-- Mostrar mensaje de error si ocurrió alguno -->
+                        <option *ngIf="errorProveedores && !cargandoProveedores" value="" disabled>
+                            {{ 'txt_error_cargar_proveedores' | translate }}
+                        </option>
+                    </select>
+                    <div *ngIf="formularioProducto.get('proveedor')?.touched && formularioProducto.get('proveedor')?.invalid" 
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          {{ 'txt_por_favor_seleccione_proveedor' | translate }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fila 2: Descripción) -->
+            <div class="mb-5">
+                <label for="descripcion" class="block text-sm font-medium mb-1">{{ 'txt_descripcion' | translate }}</label>
+                <textarea id="descripcion" rows="3" placeholder="{{ 'txt_ingrese_la_descripcion' | translate }}" 
+                          class="form-textarea w-full" formControlName="descripcion"></textarea>
+                <div *ngIf="formularioProducto.get('descripcion')?.touched && formularioProducto.get('descripcion')?.errors?.['required']" 
+                      class="rounded bg-danger py-1 px-2 text-white mt-1">
+                      {{ 'txt_por_favor_ingrese_la_descripcion' | translate }}
+                </div>
+                <div *ngIf="formularioProducto.get('descripcion')?.touched && formularioProducto.get('descripcion')?.errors?.['minlength']"
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_descripcion_minimo_10' | translate }}
+                </div>
+                <div *ngIf="formularioProducto.get('descripcion')?.touched && formularioProducto.get('descripcion')?.errors?.['maxlength']"
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_descripcion_maximo_200' | translate }}
+                </div>
+            </div>
+            
+            <!-- Fila 3: Precio Unitario y Tiempo de Entrega -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                <div>
+                    <label for="precioUnitario" class="block text-sm font-medium mb-1">{{ 'txt_precio_unitario' | translate }}</label>
+                    <input id="precioUnitario" type="text" placeholder="{{ 'txt_ingrese_el_precio_unitario' | translate }}" 
+                          class="form-input" formControlName="precioUnitario" />
+                    <div *ngIf="formularioProducto.get('precioUnitario')?.touched && formularioProducto.get('precioUnitario')?.errors?.['required']" 
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          {{ 'txt_por_favor_ingrese_el_precio_unitario' | translate }}
+                    </div>
+                    <div *ngIf="formularioProducto.get('precioUnitario')?.touched && formularioProducto.get('precioUnitario')?.errors?.['pattern']" 
+                         class="rounded bg-danger py-1 px-2 text-white mt-1">
+                         {{ 'txt_precio_unitario_invalido' | translate }}
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="tiempoEntrega" class="block text-sm font-medium mb-1">{{ 'txt_tiempo_entrega' | translate }}</label>
+                    <select id="tiempoEntrega" class="form-select" formControlName="tiempoEntrega">
+                        <option value="">{{ 'txt_seleccione_tiempo_entrega' | translate }}</option>
+                        <option value="Inmediato">{{ 'txt_inmediato' | translate }}</option>
+                        <option value="1-3 días">1-3 {{ 'txt_dias' | translate }}</option>
+                        <option value="4-7 días">4-7 {{ 'txt_dias' | translate }}</option>
+                        <option value="8-15 días">8-15 {{ 'txt_dias' | translate }}</option>
+                        <option value="15-30 días">15-30 {{ 'txt_dias' | translate }}</option>
+                        <option value="Más de 30 días">{{ 'txt_mas_de_30_dias' | translate }}</option>
+                    </select>
+                    <div *ngIf="formularioProducto.get('tiempoEntrega')?.touched && formularioProducto.get('tiempoEntrega')?.invalid" 
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          {{ 'txt_por_favor_seleccione_tiempo_entrega' | translate }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fila 4: Condiciones de almacenamiento -->
+            <div class="mb-5">
+                <label for="condicionesAlmacenamiento" class="block text-sm font-medium mb-1">{{ 'txt_condiciones_almacenamiento' | translate }}</label>
+                <textarea id="condicionesAlmacenamiento" rows="3" placeholder="{{ 'txt_ingrese_condiciones_almacenamiento' | translate }}" 
+                          class="form-textarea w-full" formControlName="condicionesAlmacenamiento"></textarea>
+                <div *ngIf="formularioProducto.get('condicionesAlmacenamiento')?.touched && formularioProducto.get('condicionesAlmacenamiento')?.errors?.['required']" 
+                      class="rounded bg-danger py-1 px-2 text-white mt-1">
+                      {{ 'txt_por_favor_ingrese_condiciones_almacenamiento' | translate }}
+                </div>
+                <div *ngIf="formularioProducto.get('condicionesAlmacenamiento')?.touched && formularioProducto.get('condicionesAlmacenamiento')?.errors?.['minlength']"
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_condiciones_almacenamiento_minimo_5' | translate }}
+                </div>
+                <div *ngIf="formularioProducto.get('condicionesAlmacenamiento')?.touched && formularioProducto.get('condicionesAlmacenamiento')?.errors?.['maxlength']"
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_condiciones_almacenamiento_maximo_200' | translate }}
+                </div>
+            </div>
+            
+            <!-- Fila 5: Fecha de vencimiento y Estado -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                <div>
+                    <label for="fechaVencimiento" class="block text-sm font-medium mb-1">{{ 'txt_fecha_vencimiento' | translate }}</label>
+                    <input id="fechaVencimiento" type="date" class="form-input" formControlName="fechaVencimiento" />
+                    <div *ngIf="formularioProducto.get('fechaVencimiento')?.touched && formularioProducto.get('fechaVencimiento')?.invalid" 
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          {{ 'txt_por_favor_ingrese_fecha_vencimiento' | translate }}
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="estado" class="block text-sm font-medium mb-1">{{ 'txt_estado' | translate }}</label>
+                    <select id="estado" class="form-select" formControlName="estado">
+                        <option value="">{{ 'txt_seleccione_estado' | translate }}</option>
+                        <option value="Activo">{{ 'txt_activo' | translate }}</option>
+                        <option value="Inactivo">{{ 'txt_inactivo' | translate }}</option>
+                        <option value="Agotado">{{ 'txt_agotado' | translate }}</option>
+                    </select>
+                    <div *ngIf="formularioProducto.get('estado')?.touched && formularioProducto.get('estado')?.invalid" 
+                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          {{ 'txt_por_favor_seleccione_estado' | translate }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fila 6: Inventario inicial -->
+            <div class="mb-5">
+                <label for="inventarioInicial" class="block text-sm font-medium mb-1">{{ 'txt_inventario_inicial' | translate }}</label>
+                <input id="inventarioInicial" type="text" placeholder="{{ 'txt_ingrese_inventario_inicial' | translate }}" 
+                      class="form-input" formControlName="inventarioInicial" />
+                <div *ngIf="formularioProducto.get('inventarioInicial')?.touched && formularioProducto.get('inventarioInicial')?.errors?.['required']" 
+                      class="rounded bg-danger py-1 px-2 text-white mt-1">
+                      {{ 'txt_por_favor_ingrese_inventario_inicial' | translate }}
+                </div>
+                <div *ngIf="formularioProducto.get('inventarioInicial')?.touched && formularioProducto.get('inventarioInicial')?.errors?.['pattern']" 
+                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     {{ 'txt_solo_numeros_enteros' | translate }}
+                </div>
+            </div>
+            
+            <!-- Fila 7: Imágenes del producto con previsualización -->
+            <div class="mb-5">
+                <label for="imagenes" class="block text-sm font-medium mb-1">{{ 'txt_imagenes_producto' | translate }}</label>
+                <div class="flex items-center">
+                    <input 
+                        #fileInput 
+                        id="imagenes" 
+                        type="file" 
+                        class="hidden" 
+                        accept="image/jpeg,image/png,image/gif,image/webp" 
+                        multiple 
+                        (change)="onImagenSeleccionada($event)"
+                    />
+                    <label for="imagenes" class="btn btn-outline-primary cursor-pointer">
+                        {{ 'txt_seleccionar_imagenes' | translate }}
+                    </label>
+                    <span *ngIf="imagenSeleccionada.length === 0" class="ml-3 text-sm text-gray-500">
+                        {{ 'txt_no_hay_imagenes_seleccionadas' | translate }}
+                    </span>
+                    <span *ngIf="imagenSeleccionada.length > 0" class="ml-3 text-sm text-green-500">
+                        {{ imagenSeleccionada.length }} {{ 'txt_imagenes_seleccionadas' | translate }}
+                    </span>
+                </div>
+                
+                <!-- Mensaje de error -->
+                <div *ngIf="errorImagen" class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    {{ errorImagen }}
+                </div>
+                
+                <!-- Previsualización de imágenes seleccionadas -->
+                <div *ngIf="imagenSeleccionada.length > 0" class="mt-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <div *ngFor="let imagen of imagenSeleccionada; let i = index" class="relative group">
+                        <div class="w-full h-24 rounded-md overflow-hidden border border-gray-200">
+                            <img [src]="imagen.url" alt="Preview" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 px-2 py-1 text-xs text-white">
+                            {{ imagen.tamanio }}
+                        </div>
+                        <button 
+                            type="button" 
+                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            (click)="eliminarImagen(i)"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Información sobre formatos y tamaños permitidos -->
+                <div class="mt-2 text-xs text-gray-500">
+                    {{ 'txt_formatos_permitidos' | translate }}: JPG, PNG, GIF, WEBP
+                    <br>
+                    {{ 'txt_tamanio_maximo' | translate }}: 5MB
+                </div>
+            </div>
+            
+            <div class="mt-8 flex items-center justify-end">
+                <button type="button" class="btn btn-outline-danger" (click)="modalProducto.close()">{{ 'btn_cancelar' | translate }}</button>
+                <button type="submit" class="btn btn-primary ml-4" [disabled]="formularioProducto.invalid || cargando">
+                    <svg *ngIf="cargando" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {{ cargando ? ('txt_guardando' | translate) : ('btn_agregar_producto' | translate) }}
+                </button>
+            </div>
+        </form>
     </app-modal>
 </div>
