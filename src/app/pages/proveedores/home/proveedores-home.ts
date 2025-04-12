@@ -35,12 +35,12 @@ export class ProveedoresHome {
 
   inicializarFormulario() {
     this.formularioProveedor = this.fb.group({
-      nombre: ['', Validators.required],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
-      numeroContacto: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      numeroContacto: ['', [Validators.required, Validators.pattern('^[0-9]+$'), Validators.minLength(7), Validators.maxLength(15)]],
       pais: ['', Validators.required],
-      caracteristicas: ['', Validators.required],
-      condiciones: ['', Validators.required],
+      caracteristicas: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      condiciones: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
     });
   }
 
