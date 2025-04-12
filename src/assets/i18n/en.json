@@ -236,6 +236,16 @@
     "txt_proveedor": "Supplier",
     "txt_seleccione_proveedor": "Select the supplier",
     "txt_por_favor_seleccione_proveedor": "Please select the supplier",
-    "txt_producto_registrado_exitosamente": "Product successfully registered"
+    "txt_producto_registrado_exitosamente": "Product successfully registered",
+    "txt_cargando_proveedores": "Loading suppliers...",
+    "txt_error_cargar_proveedores": "Error loading suppliers. Please try again.",
+    "msg_producto_ya_existe": "The product already exists",
+    "msg_archivo_muy_grande": "The file is too large",
+    "txt_imagenes_seleccionadas": "images selected",
+    "txt_formato_imagen_no_valido": "Invalid image format. Please use JPG, PNG, GIF or WEBP.",
+    "txt_imagen_demasiado_grande": "The image is too large. Maximum allowed size is 5MB.",
+    "txt_formatos_permitidos": "Allowed formats",
+    "txt_tamanio_maximo": "Maximum size",
+    "txt_error_cargar_imagenes": "Error loading images. Please try again."
     
 }
