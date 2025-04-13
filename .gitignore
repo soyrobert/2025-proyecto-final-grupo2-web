@@ -51,3 +51,4 @@ Thumbs.db
 # Local env files
 src/assets/config.json
 src/assets/runtime-config.js
+cors-config.json

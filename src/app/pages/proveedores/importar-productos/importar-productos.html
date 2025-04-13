@@ -220,16 +220,41 @@
                 <!-- Previsualización de imágenes seleccionadas -->
                 <div *ngIf="imagenSeleccionada.length > 0" class="mt-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                     <div *ngFor="let imagen of imagenSeleccionada; let i = index" class="relative group">
-                        <div class="w-full h-24 rounded-md overflow-hidden border border-gray-200">
+                        <!-- Contenedor de imagen con altura fija -->
+                        <div class="w-full h-24 rounded-md overflow-hidden border border-gray-200 relative">
+                            <!-- Imagen de previsualización -->
                             <img [src]="imagen.url" alt="Preview" class="w-full h-full object-cover">
+                            
+                            <!-- Indicador de carga -->
+                            <div *ngIf="imagen.uploading" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white text-xs">
+                                <div class="mb-1">{{ 'txt_subiendo' | translate }}...</div>
+                                <div class="w-full max-w-[80%] bg-white h-2 rounded-full overflow-hidden">
+                                    <div class="bg-primary h-full transition-all" [style.width.%]="imagen.uploadProgress || 0"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Indicador de error -->
+                            <div *ngIf="imagen.uploadError" class="absolute inset-0 bg-red-500 bg-opacity-50 flex items-center justify-center">
+                                <span class="text-white text-xs px-2 text-center">{{ imagen.uploadError }}</span>
+                            </div>
+                            
+                            <!-- Indicador de éxito -->
+                            <div *ngIf="imagen.publicUrl && !imagen.uploading" class="absolute top-1 left-1 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                                ✓
+                            </div>
                         </div>
+                        
+                        <!-- Información de tamaño -->
                         <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 px-2 py-1 text-xs text-white">
                             {{ imagen.tamanio }}
                         </div>
+                        
+                        <!-- Botón de eliminar -->
                         <button 
                             type="button" 
                             class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                             (click)="eliminarImagen(i)"
+                            [disabled]="imagen.uploading"
                         >
                             ×
                         </button>

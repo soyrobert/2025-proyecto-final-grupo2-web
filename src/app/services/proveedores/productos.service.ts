@@ -42,10 +42,10 @@ export class ProductosService {
       fecha_vencimiento: producto.fechaVencimiento,
       estado: this.mapearEstado(producto.estado),
       inventario_inicial: parseInt(producto.inventarioInicial, 10),
-      imagenes_productos: producto.imagenes ? [producto.imagenes] : [], 
+      imagenes_productos: producto.imagenes_productos || [], 
       proveedor: producto.proveedor
     };
-
+  
     return this.http.post(this.apiUrl, productoData, { headers: this.getHeaders() });
   }
 
