@@ -6,6 +6,7 @@ import { IconPlusComponent } from 'src/app/shared/icon/icon-plus';
 import { ModalComponent } from '../../../components/modal/modal.component';
 import { ProductosService } from '../../../services/proveedores/productos.service';
 import { ProveedoresService } from '../../../services/proveedores/proveedores.service';
+import { StorageService } from '../../../services/storage/storage.service';
 import Swal from 'sweetalert2';
 
 interface Proveedor {
@@ -16,8 +17,12 @@ interface Proveedor {
 
 interface ImagenPreview {
   archivo: File;
-  url: string;
+  url: string; // URL imagen previsualización local
   tamanio: string;
+  publicUrl?: string; // URL en Cloud Storage
+  uploading?: boolean; // Estado de subida
+  uploadProgress?: number; // Progreso de subida (0-100)
+  uploadError?: string; // Error si ocurre
 }
 
 @Component({
@@ -53,7 +58,8 @@ export class ImportarProductos implements OnInit {
     private fb: FormBuilder,
     private translate: TranslateService,
     private productosService: ProductosService,
-    private proveedoresService: ProveedoresService
+    private proveedoresService: ProveedoresService,
+    private storageService: StorageService
   ) {
     this.inicializarFormulario();
   }
@@ -137,20 +143,55 @@ export class ImportarProductos implements OnInit {
         // Crear preview
         const reader = new FileReader();
         reader.onload = (e: any) => {
-          this.imagenSeleccionada.push({
+          const nuevaImagen: ImagenPreview = {
             archivo: file,
             url: e.target.result,
-            tamanio: this.formatearTamanio(file.size)
-          });
+            tamanio: this.formatearTamanio(file.size),
+            uploading: true,
+            uploadProgress: 0
+          };
+          
+          this.imagenSeleccionada.push(nuevaImagen);
+          const index = this.imagenSeleccionada.length - 1;
+          
+          // Iniciar la subida a Cloud Storage
+          this.subirImagenACloudStorage(file, index);
         };
         reader.readAsDataURL(file);
       }
-      
-      // Actualizar el valor del formulario (usar el primer archivo por ahora)
-      this.formularioProducto.patchValue({
-        imagenes: files[0]
-      });
     }
+  }
+
+  /**
+   * Sube una imagen a Cloud Storage
+   * @param file Archivo de imagen
+   * @param index Índice en el array de imágenes
+   */
+  subirImagenACloudStorage(file: File, index: number): void {
+    console.log(`Iniciando subida de imagen ${index + 1}: ${file.name}`);
+    
+    this.storageService.uploadFile(file).subscribe({
+      next: (publicUrl) => {
+        console.log(`Imagen ${index + 1} subida exitosamente a: ${publicUrl}`);
+        
+        // Actualizar la imagen con la URL pública
+        if (index < this.imagenSeleccionada.length) {
+          this.imagenSeleccionada[index].publicUrl = publicUrl;
+          this.imagenSeleccionada[index].uploading = false;
+          this.imagenSeleccionada[index].uploadProgress = 100;
+        }
+      },
+      error: (error) => {
+        console.error(`Error al subir imagen ${index + 1}:`, error);
+        
+        if (index < this.imagenSeleccionada.length) {
+          this.imagenSeleccionada[index].uploading = false;
+          this.imagenSeleccionada[index].uploadError = this.translate.instant('txt_error_subir_imagen');
+        }
+        
+        this.errorImagen = this.translate.instant('txt_error_subir_imagen');
+      }
+    });
   }
 
   /**
@@ -159,19 +200,16 @@ export class ImportarProductos implements OnInit {
    */
   eliminarImagen(index: number): void {
     if (index >= 0 && index < this.imagenSeleccionada.length) {
-      this.imagenSeleccionada.splice(index, 1);
-      
-      // Si no quedan imágenes, limpiar el campo del formulario
-      if (this.imagenSeleccionada.length === 0) {
-        this.formularioProducto.patchValue({
-          imagenes: null
-        });
-      } else {
-        // Actualizar con la primera imagen disponible
-        this.formularioProducto.patchValue({
-          imagenes: this.imagenSeleccionada[0].archivo
-        });
+      // No permitir eliminar si la imagen se está subiendo
+      if (this.imagenSeleccionada[index].uploading) {
+        this.showMessage(
+          this.translate.instant('txt_no_puede_eliminar_imagen_subiendo'),
+          'warning'
+        );
+        return;
       }
+      
+      this.imagenSeleccionada.splice(index, 1);
     }
   }
 
@@ -203,6 +241,9 @@ export class ImportarProductos implements OnInit {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
+  /**
+   * Guarda el producto con las URLs de las imágenes
+   */
   guardarProducto() {
     if (this.formularioProducto.invalid) {
       Object.keys(this.formularioProducto.controls).forEach(key => {
@@ -211,15 +252,36 @@ export class ImportarProductos implements OnInit {
       });
       return;
     }
-
+  
+    // Verificar si hay imágenes aún subiéndose
+    const imagenesSubiendo = this.imagenSeleccionada.some(img => img.uploading);
+    if (imagenesSubiendo) {
+      this.showMessage(
+        this.translate.instant('txt_esperar_subida_imagenes'),
+        'warning'
+      );
+      return;
+    }
+  
     this.cargando = true;
-
-    // Preparar los datos del producto, incluyendo las imágenes
+  
+    // Preparar los datos del producto
     const datosProducto = {...this.formularioProducto.value};
     
-    // Si hay imágenes seleccionadas, convertirlas a formato adecuado
     if (this.imagenSeleccionada.length > 0) {
-      datosProducto.imagenes = this.imagenSeleccionada.map(img => img.archivo);
+      // Filtrar solo las imágenes que se subieron exitosamente
+      const imagenesValidas = this.imagenSeleccionada
+        .filter(img => img.publicUrl && !img.uploading && !img.uploadError)
+        .map(img => img.publicUrl);
+      
+      datosProducto.imagenes_productos = imagenesValidas;
+      
+      if (datosProducto.imagenes) {
+        delete datosProducto.imagenes;
+      }
+    } else {
+      // Si no hay imágenes, enviar un array vacío
+      datosProducto.imagenes_productos = [];
     }
 
     this.productosService.registrarProducto(datosProducto)
@@ -243,23 +305,17 @@ export class ImportarProductos implements OnInit {
         error: (error) => {
           this.cargando = false;
           
-          // Manejar errores
           let errorMsg = this.translate.instant('txt_error_desconocido');
           
           if (error.status === 400 && error.error.detalles) {
-            // Error de validación
             errorMsg = Object.values(error.error.detalles).join(', ');
           } else if (error.status === 409) {
-            // Error de conflicto (producto ya existe)
             errorMsg = this.translate.instant('msg_producto_ya_existe');
           } else if (error.status === 413) {
-            // Payload muy grande
             errorMsg = this.translate.instant('msg_archivo_muy_grande');
           } else if (error.status === 403) {
-            // Error de permisos
             errorMsg = this.translate.instant('msg_no_tiene_permisos');
           } else if (error.status === 0) {
-            // Error de conexión
             errorMsg = this.translate.instant('msg_error_conexion');
           } else if (error.error.message) {
             errorMsg = error.error.message;
