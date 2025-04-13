@@ -218,5 +218,20 @@
     "txt_imagen_demasiado_grande": "La imagen es demasiado grande. El tamaño máximo permitido es 5MB.",
     "txt_formatos_permitidos": "Formatos permitidos",
     "txt_tamanio_maximo": "Tamaño máximo",
-    "txt_error_cargar_imagenes": "Error al cargar las imágenes. Intente nuevamente."
+    "txt_error_cargar_imagenes": "Error al cargar las imágenes. Intente nuevamente.",
+    "txt_logistica": "Logística",
+    "txt_localizar_productos_bodega": "Localizar productos en bodega",
+    "txt_codigo": "Código",
+    "txt_buscar_por_codigo": "Buscar por código...",
+    "txt_buscar_por_nombre": "Buscar por nombre...",
+    "txt_productos": "Productos",
+    "txt_busqueda_rapida": "Búsqueda rápida...",
+    "txt_cantidad": "Cantidad",
+    "txt_ubicacion": "Ubicación",
+    "txt_mostrando_productos": "Mostrando {{start}} a {{end}} de {{total}} productos",
+    "txt_todos": "Todos",
+    "txt_disponible": "Disponible",
+    "txt_sin_stock": "Sin stock",
+    "txt_suspended": "Suspendido", 
+    "txt_approved": "Aprobado"
 }

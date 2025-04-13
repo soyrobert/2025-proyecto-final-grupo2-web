@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 interface Product {
   codigo: string;
@@ -16,14 +17,16 @@ interface Product {
   standalone: true,
   selector: 'app-logistica-home',
   templateUrl: './logistica-home.html',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
 })
 export class LogisticaHome implements OnInit {
   searchCode = '';
   searchName = '';
   searchStatus = '';
   
-  statusOptions = ['Todos', 'Disponible', 'Sin stock', 'Suspended', 'Approved'];
+  constructor(private translate: TranslateService) {}
+  
+  statusOptions = ['txt_todos', 'txt_disponible', 'txt_sin_stock', 'txt_suspended', 'txt_approved'];
   
   products: Product[] = [
     {
@@ -32,7 +35,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 30000.00,
       fechaVencimiento: '20/02/2025',
       cantidad: 102,
-      estado: 'Disponible',
+      estado: 'txt_disponible',
       ubicacion: 'Bodega 1'
     },
     {
@@ -41,7 +44,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 4500.00,
       fechaVencimiento: '15/05/2025',
       cantidad: 68,
-      estado: 'Sin stock',
+      estado: 'txt_sin_stock',
       ubicacion: 'Bodega 2'
     },
     {
@@ -50,7 +53,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 24000.00,
       fechaVencimiento: '12/09/2025',
       cantidad: 56,
-      estado: 'Suspended',
+      estado: 'txt_suspended',
       ubicacion: 'Bodega 2'
     },
     {
@@ -59,7 +62,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 120000.00,
       fechaVencimiento: '04/11/2025',
       cantidad: 203,
-      estado: 'Suspended',
+      estado: 'txt_suspended',
       ubicacion: 'Bodega 4'
     },
     {
@@ -68,7 +71,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 3000.00,
       fechaVencimiento: '18/10/2025',
       cantidad: 45,
-      estado: 'Approved',
+      estado: 'txt_approved',
       ubicacion: 'Bodega 2'
     },
     {
@@ -77,7 +80,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 3000.00,
       fechaVencimiento: '18/10/2025',
       cantidad: 45,
-      estado: 'Approved',
+      estado: 'txt_approved',
       ubicacion: 'Bodega 3'
     },
     {
@@ -86,7 +89,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 3000.00,
       fechaVencimiento: '18/10/2025',
       cantidad: 45,
-      estado: 'Approved',
+      estado: 'txt_approved',
       ubicacion: 'Bodega 2'
     },
     {
@@ -95,7 +98,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 3000.00,
       fechaVencimiento: '18/10/2025',
       cantidad: 45,
-      estado: 'Approved',
+      estado: 'txt_approved',
       ubicacion: 'Bodega 4'
     },
     {
@@ -104,7 +107,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 3000.00,
       fechaVencimiento: '18/10/2025',
       cantidad: 45,
-      estado: 'Approved',
+      estado: 'txt_approved',
       ubicacion: 'Bodega 4'
     },
     {
@@ -113,7 +116,7 @@ export class LogisticaHome implements OnInit {
       precioUnitario: 3000.00,
       fechaVencimiento: '18/10/2025',
       cantidad: 45,
-      estado: 'Approved',
+      estado: 'txt_approved',
       ubicacion: 'Bodega 2'
     }
   ];
@@ -129,7 +132,7 @@ export class LogisticaHome implements OnInit {
       return (
         (this.searchCode === '' || product.codigo.toLowerCase().includes(this.searchCode.toLowerCase())) &&
         (this.searchName === '' || product.nombre.toLowerCase().includes(this.searchName.toLowerCase())) &&
-        (this.searchStatus === '' || this.searchStatus === 'Todos' || product.estado === this.searchStatus)
+        (this.searchStatus === '' || this.searchStatus === 'txt_todos' || product.estado === this.searchStatus)
       );
     });
   }
@@ -137,12 +140,16 @@ export class LogisticaHome implements OnInit {
   getStatusClass(status: string): string {
     switch (status) {
       case 'Disponible':
+      case 'txt_disponible':
         return 'bg-primary';
       case 'Sin stock':
+      case 'txt_sin_stock':
         return 'bg-danger';
       case 'Suspended':
+      case 'txt_suspended':
         return 'bg-warning';
       case 'Approved':
+      case 'txt_approved':
         return 'bg-success';
       default:
         return 'bg-primary';

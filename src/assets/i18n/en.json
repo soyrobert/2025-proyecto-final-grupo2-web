@@ -246,6 +246,21 @@
     "txt_imagen_demasiado_grande": "The image is too large. Maximum allowed size is 5MB.",
     "txt_formatos_permitidos": "Allowed formats",
     "txt_tamanio_maximo": "Maximum size",
-    "txt_error_cargar_imagenes": "Error loading images. Please try again."
+    "txt_error_cargar_imagenes": "Error loading images. Please try again.",
+    "txt_logistica": "Logistics",
+    "txt_localizar_productos_bodega": "Locate products in warehouse",
+    "txt_codigo": "Code",
+    "txt_buscar_por_codigo": "Search by code...",
+    "txt_buscar_por_nombre": "Search by name...",
+    "txt_productos": "Products",
+    "txt_busqueda_rapida": "Quick search...",
+    "txt_cantidad": "Quantity",
+    "txt_ubicacion": "Location",
+    "txt_mostrando_productos": "Showing {{start}} to {{end}} of {{total}} products",
+    "txt_todos": "All",
+    "txt_disponible": "Available",
+    "txt_sin_stock": "Out of stock",
+    "txt_suspended": "Suspended",
+    "txt_approved": "Approved"
     
 }

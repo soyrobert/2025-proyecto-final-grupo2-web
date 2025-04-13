@@ -1,96 +1,99 @@
 <div class="p-4">
-    <h1 class="text-xl font-bold mb-5">Localizar productos en bodega</h1>
-  
-    <!-- Filters -->
-    <div class="mb-5 bg-white dark:bg-navy-700 p-4 rounded shadow">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label for="searchCode" class="block text-sm font-medium mb-1">Código</label>
-          <input id="searchCode" [(ngModel)]="searchCode" (input)="applyFilters()" type="text" class="form-input w-full" placeholder="Buscar por código..." />
-        </div>
-        <div>
-          <label for="searchName" class="block text-sm font-medium mb-1">Nombre</label>
-          <input id="searchName" [(ngModel)]="searchName" (input)="applyFilters()" type="text" class="form-input w-full" placeholder="Buscar por nombre..." />
-        </div>
-        <div>
-          <label for="searchStatus" class="block text-sm font-medium mb-1">Estado</label>
-          <select id="searchStatus" [(ngModel)]="searchStatus" (change)="applyFilters()" class="form-select w-full">
-            <option *ngFor="let option of statusOptions" [value]="option">{{ option }}</option>
-          </select>
-        </div>
+  <ul class="flex space-x-2 rtl:space-x-reverse">
+    <li>
+      <a href="javascript:;" class="text-primary hover:underline">{{ 'dashboard' | translate }}</a>
+    </li>
+    <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+      <span>{{ 'txt_logistica' | translate }}</span>
+    </li>
+  </ul>
+
+  <h1 class="text-xl font-bold my-5">{{ 'txt_localizar_productos_bodega' | translate }}</h1>
+
+  <!-- Filters -->
+  <div class="mb-5 bg-white dark:bg-navy-700 p-4 rounded shadow">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label for="searchCode" class="block text-sm font-medium mb-1">{{ 'txt_codigo' | translate }}</label>
+        <input id="searchCode" [(ngModel)]="searchCode" (input)="applyFilters()" type="text" class="form-input w-full" placeholder="{{ 'txt_buscar_por_codigo' | translate }}" />
+      </div>
+      <div>
+        <label for="searchName" class="block text-sm font-medium mb-1">{{ 'name' | translate }}</label>
+        <input id="searchName" [(ngModel)]="searchName" (input)="applyFilters()" type="text" class="form-input w-full" placeholder="{{ 'txt_buscar_por_nombre' | translate }}" />
+      </div>
+      <div>
+        <label for="searchStatus" class="block text-sm font-medium mb-1">{{ 'txt_estado' | translate }}</label>
+        <select id="searchStatus" [(ngModel)]="searchStatus" (change)="applyFilters()" class="form-select w-full">
+          <option *ngFor="let option of statusOptions" [value]="option">{{ option | translate }}</option>
+        </select>
       </div>
     </div>
-  
-    <!-- Table Panel -->
-    <div class="panel mt-6 pb-0">
-      <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-        <h5 class="text-lg font-semibold dark:text-white-light">Productos</h5>
-        <div class="flex items-center ltr:ml-auto rtl:mr-auto">
-          <input type="text" class="form-input w-auto" placeholder="Búsqueda rápida..." />
-        </div>
-      </div>
-  
-      <div class="datatable">
-        <table class="whitespace-nowrap table-hover">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nombre</th>
-              <th>Precio Unitario</th>
-              <th>Fecha vencimiento</th>
-              <th>Cantidad</th>
-              <th>Estado</th>
-              <th>Ubicación</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let product of filteredProducts">
-              <td>{{ product.codigo }}</td>
-              <td>{{ product.nombre }}</td>
-              <td>{{ formatCurrency(product.precioUnitario) }}</td>
-              <td>{{ product.fechaVencimiento }}</td>
-              <td>{{ product.cantidad }}</td>
-              <td>
-                <span class="badge" [ngClass]="getStatusClass(product.estado)">{{ product.estado }}</span>
-              </td>
-              <td>{{ product.ubicacion }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-  
-      <!-- Pagination -->
-      <div class="flex items-center justify-between mt-5 p-5">
-        <div>Mostrando 1 a 10 de 90 productos</div>
-        <div>
-          <div class="flex items-center gap-1">
-            <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
-                <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </button>
-            <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
-                <path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </button>
-            <button type="button" class="p-1 px-2 rounded bg-primary text-white">1</button>
-            <button type="button" class="p-1 px-2 rounded border border-gray-300 dark:border-gray-600">2</button>
-            <button type="button" class="p-1 px-2 rounded border border-gray-300 dark:border-gray-600">3</button>
-            <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
-                <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </button>
-            <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
-                <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </button>
-          </div>
+  </div>
+
+  <!-- Table Panel -->
+  <div class="panel mt-6 pb-0">
+
+    <div class="datatable">
+      <table class="whitespace-nowrap table-hover">
+        <thead>
+          <tr>
+            <th>{{ 'txt_codigo' | translate }}</th>
+            <th>{{ 'name' | translate }}</th>
+            <th>{{ 'txt_precio_unitario' | translate }}</th>
+            <th>{{ 'txt_fecha_vencimiento' | translate }}</th>
+            <th>{{ 'txt_cantidad' | translate }}</th>
+            <th>{{ 'txt_estado' | translate }}</th>
+            <th>{{ 'txt_ubicacion' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of filteredProducts">
+            <td>{{ product.codigo }}</td>
+            <td>{{ product.nombre }}</td>
+            <td>{{ formatCurrency(product.precioUnitario) }}</td>
+            <td>{{ product.fechaVencimiento }}</td>
+            <td>{{ product.cantidad }}</td>
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(product.estado)">{{ product.estado | translate }}</span>
+            </td>
+            <td>{{ product.ubicacion }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-between mt-5 p-5">
+      <div>{{ 'txt_mostrando_productos' | translate: {start: 1, end: 10, total: 90} }}</div>
+      <div>
+        <div class="flex items-center gap-1">
+          <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+              <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+              <path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button type="button" class="p-1 px-2 rounded bg-primary text-white">1</button>
+          <button type="button" class="p-1 px-2 rounded border border-gray-300 dark:border-gray-600">2</button>
+          <button type="button" class="p-1 px-2 rounded border border-gray-300 dark:border-gray-600">3</button>
+          <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+              <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+              <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
   </div>
+</div>
