@@ -6,6 +6,7 @@ import { ImportarProductos } from './importar-productos';
 import { ModalComponent } from '../../../components/modal/modal.component';
 import { ProductosService } from '../../../services/proveedores/productos.service';
 import { ProveedoresService } from '../../../services/proveedores/proveedores.service';
+import { StorageService } from '../../../services/storage/storage.service';
 import { IconPlusComponent } from 'src/app/shared/icon/icon-plus';
 import Swal from 'sweetalert2';
 
@@ -33,6 +34,7 @@ describe('ImportarProductos', () => {
   let productosService: ProductosService;
   let proveedoresService: ProveedoresService;
   let translateService: TranslateService;
+  let storageService: StorageService;
 
   const mockProveedores = [
     { id: 1, nombre: 'Proveedor 1' },
@@ -42,9 +44,7 @@ describe('ImportarProductos', () => {
   beforeEach(async () => {
     // Crear mocks de los servicios
     const productosServiceMock = {
-      registrarProducto: jest.fn(),
-      obtenerProductos: jest.fn(),
-      obtenerProducto: jest.fn()
+      registrarProducto: jest.fn()
     };
 
     const proveedoresServiceMock = {
@@ -53,6 +53,10 @@ describe('ImportarProductos', () => {
 
     const translateServiceMock = {
       instant: jest.fn(key => key)
+    };
+
+    const storageServiceMock = {
+      uploadFile: jest.fn().mockReturnValue(of('https://storage.example.com/image.jpg'))
     };
 
     await TestBed.configureTestingModule({
@@ -64,7 +68,8 @@ describe('ImportarProductos', () => {
       providers: [
         { provide: ProductosService, useValue: productosServiceMock },
         { provide: ProveedoresService, useValue: proveedoresServiceMock },
-        { provide: TranslateService, useValue: translateServiceMock }
+        { provide: TranslateService, useValue: translateServiceMock },
+        { provide: StorageService, useValue: storageServiceMock }
       ]
     }).compileComponents();
 
@@ -72,12 +77,14 @@ describe('ImportarProductos', () => {
     productosService = TestBed.inject(ProductosService);
     proveedoresService = TestBed.inject(ProveedoresService);
     translateService = TestBed.inject(TranslateService);
+    storageService = TestBed.inject(StorageService);
 
     component = new ImportarProductos(
       TestBed.inject(FormBuilder),
       translateService,
       productosService,
-      proveedoresService
+      proveedoresService,
+      storageService
     );
     
     // Mock del ViewChild modalProducto
@@ -87,6 +94,8 @@ describe('ImportarProductos', () => {
     component.inicializarFormulario();
     
     jest.spyOn(component, 'showMessage');
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   it('debería crear el componente', () => {
@@ -265,15 +274,13 @@ describe('ImportarProductos', () => {
         }
       };
       
-      // Crear una implementación directa para el caso de prueba
+      // Crear una implementación directa
       jest.spyOn(component, 'onImagenSeleccionada').mockImplementation((e: any) => {
         component.errorImagen = 'txt_imagen_demasiado_grande';
       });
       
-      // Mock de TranslateService.instant
       jest.spyOn(translateService, 'instant').mockReturnValue('txt_imagen_demasiado_grande');
       
-      // Ejecutar el método
       component.onImagenSeleccionada(event);
       
       // Verificar que se rechazó la imagen
@@ -334,9 +341,10 @@ describe('ImportarProductos', () => {
       // Verificar que no quedan imágenes
       expect(component.imagenSeleccionada.length).toBe(0);
       
-      // Verificar que el formulario ha sido actualizado a null
-      expect(component.formularioProducto.get('imagenes')?.value).toBeNull();
+      expect(Object.keys(component.formularioProducto.get('imagenes')?.value || {}).length).toBe(0);
+      expect(JSON.stringify(component.formularioProducto.get('imagenes')?.value)).toBe('{}');
     });
+    
   });
 
   describe('limpiarSeleccionImagen', () => {
@@ -350,24 +358,21 @@ describe('ImportarProductos', () => {
         }
       ];
       
-      // Establecer el valor en el formulario
       component.formularioProducto.patchValue({
         imagenes: component.imagenSeleccionada[0].archivo
       });
       
-      // Mock para fileInput
       component.fileInput = {
         nativeElement: {
           value: 'test'
         }
       };
       
-      // Limpiar selección
       component.limpiarSeleccionImagen();
       
       // Verificar que se ha limpiado
       expect(component.imagenSeleccionada).toEqual([]);
-      expect(component.formularioProducto.get('imagenes')?.value).toBeNull();
+      expect(component.formularioProducto.get('imagenes')?.value).toBeFalsy();
       expect(component.fileInput.nativeElement.value).toBe('');
     });
   });
@@ -447,7 +452,6 @@ describe('ImportarProductos', () => {
         proveedor: '1'
       });
       
-      // Mock de error del servicio
       const error = {
         status: 400,
         error: {
@@ -542,11 +546,9 @@ it('no debería eliminar imagen si el índice es inválido', () => {
       }
     ];
     
-    // Intentar eliminar con índice negativo
     component.eliminarImagen(-1);
     expect(component.imagenSeleccionada.length).toBe(1);
     
-    // Intentar eliminar con índice fuera de rango
     component.eliminarImagen(5);
     expect(component.imagenSeleccionada.length).toBe(1);
   });
@@ -568,16 +570,13 @@ it('no debería eliminar imagen si el índice es inválido', () => {
       proveedor: '1'
     });
     
-    // Mock de respuesta con error
     jest.spyOn(productosService, 'registrarProducto').mockReturnValue(of({
       error: 'msg_producto_ya_existe'
     }));
     
-    // Guardar producto
     component.guardarProducto();
     tick();
     
-    // Verificar manejo del error
     expect(component.cargando).toBe(false);
     expect(component.showMessage).toHaveBeenCalledWith(
       'msg_producto_ya_existe',
@@ -641,55 +640,56 @@ it('no debería eliminar imagen si el índice es inválido', () => {
 
   // Test para el método onImagenSeleccionada
 it('debería procesar correctamente las imágenes seleccionadas', () => {
-    // Crear un archivo de prueba
-    const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
-    const mockFileList = {
-      0: mockFile,
-      length: 1,
-      item: (index: number) => mockFile
-    };
-    
-    const event = {
-      target: {
-        files: mockFileList
+  // Crear un archivo de prueba
+  const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
+  const mockFileList = {
+    0: mockFile,
+    length: 1,
+    item: (index: number) => mockFile
+  };
+  
+  const event = {
+    target: {
+      files: mockFileList
+    }
+  };
+  
+  // Mock de FileReader
+  const originalFileReader = window.FileReader;
+  const mockFileReader = {
+    onload: null as any,
+    readAsDataURL: function(file: File) {
+      // Ejecutar el callback onload inmediatamente
+      if (this.onload) {
+        this.onload({
+          target: {
+            result: 'data:image/jpeg;base64,test'
+          }
+        } as any);
       }
-    };
-    
-    // Mock de FileReader
-    const originalFileReader = window.FileReader;
-    const mockFileReader = {
-      onload: null as any,
-      readAsDataURL: function(file: File) {
-        // Ejecutar el callback onload inmediatamente
-        if (this.onload) {
-          this.onload({
-            target: {
-              result: 'data:image/jpeg;base64,test'
-            }
-          } as any);
-        }
-      }
-    };
-    
-    // Reemplazar FileReader con nuestro mock
-    window.FileReader = jest.fn(() => mockFileReader) as any;
-    
-    // Espiar los métodos necesarios
-    const patchValueSpy = jest.spyOn(component.formularioProducto, 'patchValue');
-    const formatearTamanioSpy = jest.spyOn(component, 'formatearTamanio').mockReturnValue('100 KB');
-    
-    // Ejecutar el método sin mock de implementación para probar el código real
-    component.onImagenSeleccionada(event);
-    
-    // Verificaciones
-    expect(component.errorImagen).toBeNull();
-    expect(formatearTamanioSpy).toHaveBeenCalled();
-    expect(component.imagenSeleccionada.length).toBeGreaterThan(0);
-    expect(patchValueSpy).toHaveBeenCalledWith({ imagenes: mockFile });
-    
-    // Restaurar FileReader
-    window.FileReader = originalFileReader;
-  });
+    }
+  };
+  
+  // Reemplazar FileReader con nuestro mock
+  window.FileReader = jest.fn(() => mockFileReader) as any;
+  
+  // Espiar el método de subida y el método de formateo
+  const subirImagenSpy = jest.spyOn(component, 'subirImagenACloudStorage').mockImplementation(() => {});
+  const formatearTamanioSpy = jest.spyOn(component, 'formatearTamanio').mockReturnValue('100 KB');
+  
+  // Ejecutar el método real
+  component.onImagenSeleccionada(event);
+  
+  // Verificaciones
+  expect(component.errorImagen).toBeNull();
+  expect(formatearTamanioSpy).toHaveBeenCalled();
+  expect(component.imagenSeleccionada.length).toBeGreaterThan(0);
+  // Verificar que se llamó a subirImagenACloudStorage
+  expect(subirImagenSpy).toHaveBeenCalled();
+  
+  // Restaurar FileReader
+  window.FileReader = originalFileReader;
+});
   
   // Test para verificar el rechazo de formato inválido
   it('debería rechazar imágenes con formato no válido directamente', () => {
@@ -706,13 +706,10 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
       }
     };
     
-    // Mock de translate.instant
     jest.spyOn(translateService, 'instant').mockReturnValue('txt_formato_imagen_no_valido');
     
-    // Mock de limpiarSeleccionImagen
     const limpiarSpy = jest.spyOn(component, 'limpiarSeleccionImagen');
     
-    // Ejecutar el método real
     component.onImagenSeleccionada(event);
     
     // Verificaciones
@@ -737,13 +734,8 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
       }
     };
     
-    // Mock de translate.instant
     jest.spyOn(translateService, 'instant').mockReturnValue('txt_imagen_demasiado_grande');
-    
-    // Mock de limpiarSeleccionImagen
     const limpiarSpy = jest.spyOn(component, 'limpiarSeleccionImagen');
-    
-    // Ejecutar el método real
     component.onImagenSeleccionada(event);
     
     // Verificaciones
@@ -768,27 +760,30 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
       proveedor: '1'
     });
     
-    // Configurar imágenes seleccionadas
+    // Configurar imágenes seleccionadas con URLs públicas
     const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
+    const publicUrl = 'https://storage.example.com/image.jpg';
+    
     component.imagenSeleccionada = [
       {
         archivo: mockFile,
         url: 'data:image/jpeg;base64,test',
-        tamanio: '100 KB'
+        tamanio: '100 KB',
+        publicUrl: publicUrl,
+        uploading: false,
+        uploadProgress: 100
       }
     ];
     
-    // Mock de respuesta del servicio
     jest.spyOn(productosService, 'registrarProducto').mockReturnValue(of({}));
     
-    // Ejecutar el método
     component.guardarProducto();
     tick();
     
     // Verificar que las imágenes se incluyen en los datos
     expect(productosService.registrarProducto).toHaveBeenCalledWith(
       expect.objectContaining({
-        imagenes: [mockFile]
+        imagenes_productos: [publicUrl]
       })
     );
   }));
@@ -815,7 +810,6 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
     jest.spyOn(productosService, 'registrarProducto').mockReturnValue(throwError(() => error));
     jest.spyOn(translateService, 'instant').mockReturnValue('msg_no_tiene_permisos');
     
-    // Ejecutar el método
     component.guardarProducto();
     tick();
     
@@ -841,7 +835,6 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
       proveedor: '1'
     });
     
-    // Mock de error con mensaje personalizado
     const error = { 
       status: 500, 
       error: { 
@@ -850,12 +843,101 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
     };
     jest.spyOn(productosService, 'registrarProducto').mockReturnValue(throwError(() => error));
     
-    // Ejecutar el método
     component.guardarProducto();
     tick();
     
     // Verificaciones
     expect(component.cargando).toBe(false);
     expect(component.showMessage).toHaveBeenCalledWith('Error personalizado del servidor', 'error');
+  }));
+
+  it('debería mostrar advertencia si hay imágenes cargándose', fakeAsync(() => {
+    // Configurar formulario válido
+    component.inicializarFormulario();
+    component.formularioProducto.setValue({
+      nombre: 'Producto Test',
+      descripcion: 'Descripción de prueba',
+      precioUnitario: '10.99',
+      tiempoEntrega: '1-3 días',
+      condicionesAlmacenamiento: 'Temperatura ambiente',
+      fechaVencimiento: '2025-12-31',
+      estado: 'Activo',
+      inventarioInicial: '100',
+      imagenes: null,
+      proveedor: '1'
+    });
+    
+    component.imagenSeleccionada = [
+      {
+        archivo: new File([''], 'test.jpg', { type: 'image/jpeg' }),
+        url: 'data:image/jpeg;base64,test',
+        tamanio: '100 KB',
+        uploading: true,
+        uploadProgress: 50
+      }
+    ];
+    
+    jest.spyOn(translateService, 'instant').mockReturnValue('txt_esperar_subida_imagenes');
+    
+    component.guardarProducto();
+    
+    // Verificar que se muestra mensaje de advertencia
+    expect(component.showMessage).toHaveBeenCalledWith(
+      'txt_esperar_subida_imagenes',
+      'warning'
+    );
+  }));
+
+  it('debería subir imagen a Cloud Storage correctamente', fakeAsync(() => {
+    const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
+    
+    // Mock de respuesta del storage service
+    const publicUrl = 'https://storage.example.com/image.jpg';
+    jest.spyOn(storageService, 'uploadFile').mockReturnValue(of(publicUrl));
+    
+    component.imagenSeleccionada = [
+      {
+        archivo: mockFile,
+        url: 'data:image/jpeg;base64,test',
+        tamanio: '100 KB',
+        uploading: true,
+        uploadProgress: 0
+      }
+    ];
+    
+    component.subirImagenACloudStorage(mockFile, 0);
+    tick();
+    
+    // Verificar que se actualizó la imagen
+    expect(storageService.uploadFile).toHaveBeenCalledWith(mockFile);
+    expect(component.imagenSeleccionada[0].publicUrl).toBe(publicUrl);
+    expect(component.imagenSeleccionada[0].uploading).toBe(false);
+    expect(component.imagenSeleccionada[0].uploadProgress).toBe(100);
+  }));
+  
+  it('debería manejar errores al subir imagen a Cloud Storage', fakeAsync(() => {
+    const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
+    
+    jest.spyOn(storageService, 'uploadFile').mockReturnValue(throwError(() => new Error('Upload error')));
+    
+    jest.spyOn(translateService, 'instant').mockReturnValue('txt_error_subir_imagen');
+    
+    component.imagenSeleccionada = [
+      {
+        archivo: mockFile,
+        url: 'data:image/jpeg;base64,test',
+        tamanio: '100 KB',
+        uploading: true,
+        uploadProgress: 0
+      }
+    ];
+    
+    component.subirImagenACloudStorage(mockFile, 0);
+    tick();
+    
+    // Verificar que se manejó el error
+    expect(component.imagenSeleccionada[0].uploading).toBe(false);
+    expect(component.imagenSeleccionada[0].uploadError).toBe('txt_error_subir_imagen');
+    expect(component.errorImagen).toBe('txt_error_subir_imagen');
   }));
 });
