@@ -261,6 +261,9 @@
     "txt_disponible": "Available",
     "txt_sin_stock": "Out of stock",
     "txt_suspended": "Suspended",
-    "txt_approved": "Approved"
+    "txt_approved": "Approved",
+    "txt_subiendo": "Uploading...",
+    "txt_esperar_subida_imagenes": "Please wait while the images are uploaded",
+    "txt_no_puede_eliminar_imagen_subiendo": "You cannot delete an image while it is uploading"
     
 }
