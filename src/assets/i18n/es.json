@@ -233,5 +233,9 @@
     "txt_disponible": "Disponible",
     "txt_sin_stock": "Sin stock",
     "txt_suspended": "Suspendido", 
-    "txt_approved": "Aprobado"
+    "txt_approved": "Aprobado",
+    "txt_subiendo": "Subiendo...",
+    "txt_error_subir_imagen": "Vuelve a intentar subir la imagen",
+    "txt_esperar_subida_imagenes": "Por favor, espera a que terminen de subirse las imágenes",
+    "txt_no_puede_eliminar_imagen_subiendo": "No puedes eliminar una imagen que se está subiendo"
 }
