@@ -39,6 +39,7 @@ export class LoginPage {
   submitted: boolean = false;
   emailTouched = false;
   passwordTouched = false;
+  isEmailValid = true;
 
   constructor(
     public translate: TranslateService,
@@ -82,7 +83,7 @@ export class LoginPage {
         }
       });
     } else {
-      this.errorMessage = 'Credenciales incorrectas o error de autenticación.';
+      this.errorMessage = this.translate.instant('msg_credenciales_incorrectas');
     }
   }
 
@@ -106,6 +107,8 @@ export class LoginPage {
 
   onEmailBlur() {
     this.emailTouched = true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    this.isEmailValid = emailRegex.test(this.email);
   }
 
   onPasswordBlur() {
