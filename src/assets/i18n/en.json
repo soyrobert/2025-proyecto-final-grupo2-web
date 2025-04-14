@@ -223,7 +223,7 @@
     "txt_estado": "Status",
     "txt_seleccione_estado": "Select the status",
     "txt_por_favor_seleccione_estado": "Please select the status",
-    "txt_activo": "Active",
+    "txt_activo": "Available",
     "txt_inactivo": "Inactive",
     "txt_agotado": "Out of stock",
     "txt_inventario_inicial": "Initial inventory",
