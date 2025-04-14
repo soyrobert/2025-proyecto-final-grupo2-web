@@ -163,7 +163,7 @@ export class ImportarProductos implements OnInit {
   }
 
   /**
-   * Sube una imagen a Cloud Storage
+   * Sube una imagen a Cloud Storage y almacena solo la URL base
    * @param file Archivo de imagen
    * @param index Índice en el array de imágenes
    */
@@ -174,9 +174,13 @@ export class ImportarProductos implements OnInit {
       next: (publicUrl) => {
         console.log(`Imagen ${index + 1} subida exitosamente a: ${publicUrl}`);
         
+        // Extraer solo la URL base sin los parámetros de query
+        const urlBase = publicUrl.split('?')[0];
+        console.log(`URL base para almacenamiento: ${urlBase}`);
+        
         // Actualizar la imagen con la URL pública
         if (index < this.imagenSeleccionada.length) {
-          this.imagenSeleccionada[index].publicUrl = publicUrl;
+          this.imagenSeleccionada[index].publicUrl = urlBase; // Guardar solo la URL base
           this.imagenSeleccionada[index].uploading = false;
           this.imagenSeleccionada[index].uploadProgress = 100;
         }
