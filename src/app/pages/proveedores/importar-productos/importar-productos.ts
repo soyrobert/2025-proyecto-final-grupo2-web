@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -41,6 +41,8 @@ interface ImagenPreview {
 export class ImportarProductos implements OnInit {
   @ViewChild('modalProducto') modalProducto!: ModalComponent;
   @ViewChild('fileInput') fileInput: any;
+  @ViewChild('excelFileInput') excelFileInput!: ElementRef;
+  @ViewChild('dropZone') dropZone!: ElementRef;
   
   formularioProducto!: FormGroup;
   cargando: boolean = false;
@@ -54,6 +56,20 @@ export class ImportarProductos implements OnInit {
   maxTamanioImagen: number = 5 * 1024 * 1024; // 5MB en bytes
   formatosPermitidos: string[] = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   
+  // Configuración para la importación masiva
+  archivoExcelSeleccionado: File | null = null;
+  nombreArchivoExcel: string = '';
+  tamanioArchivoExcel: string = '';
+  errorArchivoExcel: string | null = null;
+  maxTamanioExcel: number = 5 * 1024 * 1024;
+  formatosExcelPermitidos: string[] = [
+    'text/csv',
+    'application/csv',
+    'application/vnd.ms-excel'
+  ];
+  subiendoExcel: boolean = false;
+  progresoSubidaExcel: number = 0;
+  
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -66,6 +82,61 @@ export class ImportarProductos implements OnInit {
 
   ngOnInit(): void {
     this.cargarProveedores();
+  }
+
+  ngAfterViewInit(): void {
+    this.inicializarDropZone();
+  }
+
+  /**
+   * Inicializa el área de arrastrar y soltar para archivos CSV
+  */
+  inicializarDropZone(): void {
+    if (this.dropZone && this.dropZone.nativeElement) {
+      const dropZoneElement = this.dropZone.nativeElement;
+      
+      // Evento para cuando se arrastra un archivo sobre la zona
+      dropZoneElement.addEventListener('dragover', (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZoneElement.classList.add('border-primary');
+      });
+      
+      // Eventos para cuando se sale de la zona
+      dropZoneElement.addEventListener('dragleave', (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZoneElement.classList.remove('border-primary');
+      });
+      
+      // Evento para cuando se suelta un archivo
+      dropZoneElement.addEventListener('drop', (e: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZoneElement.classList.remove('border-primary');
+        
+        if (e.dataTransfer.files.length) {
+          const file = e.dataTransfer.files[0];
+          // Validar la extensión antes de procesar
+          const extension = file.name.split('.').pop()?.toLowerCase();
+          if (extension !== 'csv') {
+            this.showMessage(
+              this.translate.instant('txt_archivo_no_compatible'),
+              'error'
+            );
+            return;
+          }
+          this.procesarArchivoExcel(file);
+        }
+      });
+      
+      // Evento para hacer clic en la zona
+      dropZoneElement.addEventListener('click', () => {
+        if (this.excelFileInput) {
+          this.excelFileInput.nativeElement.click();
+        }
+      });
+    }
   }
 
   cargarProveedores(): void {
@@ -163,6 +234,55 @@ export class ImportarProductos implements OnInit {
   }
 
   /**
+   * Maneja la selección de archivos CSV
+   * @param event Evento de cambio del input file
+   */
+  onExcelSeleccionado(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.procesarArchivoExcel(file);
+    }
+  }
+
+  /**
+   * Procesa un archivo seleccionado validando que sea CSV
+   * @param file Archivo a procesar
+   */
+  procesarArchivoExcel(file: File): void {
+    this.errorArchivoExcel = null;
+    
+    // Verificar la extensión del archivo
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    
+    // Validar formato por extensión y tipo MIME
+    if (extension !== 'csv' || !this.formatosExcelPermitidos.includes(file.type)) {
+      this.errorArchivoExcel = this.translate.instant('txt_formato_csv_no_valido');
+      this.showMessage(
+        this.translate.instant('txt_seleccionar_solo_csv'),
+        'warning'
+      );
+      this.limpiarSeleccionExcel();
+      return;
+    }
+    
+    // Validar tamaño
+    if (file.size > this.maxTamanioExcel) {
+      this.errorArchivoExcel = this.translate.instant('txt_csv_demasiado_grande');
+      this.showMessage(
+        this.translate.instant('txt_csv_excede_tamano_permitido', {tamano: this.formatearTamanio(this.maxTamanioExcel)}),
+        'warning'
+      );
+      this.limpiarSeleccionExcel();
+      return;
+    }
+    
+    // Actualizar información del archivo seleccionado
+    this.archivoExcelSeleccionado = file;
+    this.nombreArchivoExcel = file.name;
+    this.tamanioArchivoExcel = this.formatearTamanio(file.size);
+  }
+
+  /**
    * Sube una imagen a Cloud Storage y almacena solo la URL base
    * @param file Archivo de imagen
    * @param index Índice en el array de imágenes
@@ -180,7 +300,7 @@ export class ImportarProductos implements OnInit {
         
         // Actualizar la imagen con la URL pública
         if (index < this.imagenSeleccionada.length) {
-          this.imagenSeleccionada[index].publicUrl = urlBase; // Guardar solo la URL base
+          this.imagenSeleccionada[index].publicUrl = urlBase;
           this.imagenSeleccionada[index].uploading = false;
           this.imagenSeleccionada[index].uploadProgress = 100;
         }
@@ -194,6 +314,90 @@ export class ImportarProductos implements OnInit {
         }
         
         this.errorImagen = this.translate.instant('txt_error_subir_imagen');
+      }
+    });
+  }
+
+  /**
+   * Sube el archivo CSV a Cloud Storage y luego inicia la importación
+   */
+  subirArchivoExcel(): void {
+    if (!this.archivoExcelSeleccionado) {
+      this.showMessage(
+        this.translate.instant('txt_seleccionar_archivo_csv'),
+        'warning'
+      );
+      return;
+    }
+    
+    this.subiendoExcel = true;
+    this.progresoSubidaExcel = 0;
+    
+    this.storageService.uploadCsvFile(this.archivoExcelSeleccionado).subscribe({
+      next: (publicUrl) => {
+        console.log(`Archivo CSV subido exitosamente a: ${publicUrl}`);
+        
+        const urlBase = publicUrl.split('?')[0];
+        
+        // Iniciar la importación masiva
+        this.importarProductosMasivamente(urlBase);
+      },
+      error: (error) => {
+        console.error('Error al subir archivo CSV:', error);
+        this.subiendoExcel = false;
+        this.progresoSubidaExcel = 0;
+        
+        this.errorArchivoExcel = this.translate.instant('txt_error_subir_csv');
+        this.showMessage(
+          this.translate.instant('txt_error_subir_csv'),
+          'error'
+        );
+      }
+    });
+  }
+
+  /**
+   * Importa productos masivamente usando la URL del CSV
+   * @param csvUrl URL del archivo CSV en Cloud Storage
+   */
+  importarProductosMasivamente(csvUrl: string): void {
+    this.progresoSubidaExcel = 50;
+    
+    this.productosService.importarProductosMasivamente(csvUrl).subscribe({
+      next: (respuesta) => {
+        this.subiendoExcel = false;
+        this.progresoSubidaExcel = 100;
+        
+        // Mostrar mensaje de éxito con el número de productos importados
+        const numProductos = respuesta.productos_importados || 0;
+        const mensaje = this.translate.instant('txt_productos_importados_exitosamente', { cantidad: numProductos });
+        
+        this.showMessage(mensaje, 'success');
+        
+        setTimeout(() => {
+          this.limpiarSeleccionExcel();
+          this.progresoSubidaExcel = 0;
+        }, 3000);
+      },
+      error: (error) => {
+        console.error('Error al importar productos:', error);
+        this.subiendoExcel = false;
+        
+        let errorMsg = this.translate.instant('txt_error_desconocido');
+        
+        if (error.status === 400 && error.error.detalles) {
+          errorMsg = Object.values(error.error.detalles).join(', ');
+        } else if (error.status === 413) {
+          errorMsg = this.translate.instant('msg_archivo_muy_grande');
+        } else if (error.status === 403) {
+          errorMsg = this.translate.instant('msg_no_tiene_permisos');
+        } else if (error.status === 0) {
+          errorMsg = this.translate.instant('msg_error_conexion');
+        } else if (error.error && error.error.message) {
+          errorMsg = error.error.message;
+        }
+        
+        this.showMessage(errorMsg, 'error');
       }
     });
   }
@@ -228,6 +432,20 @@ export class ImportarProductos implements OnInit {
     
     if (this.fileInput) {
       this.fileInput.nativeElement.value = '';
+    }
+  }
+
+  /**
+   * Limpia la selección del archivo Excel
+   */
+  limpiarSeleccionExcel(): void {
+    this.archivoExcelSeleccionado = null;
+    this.nombreArchivoExcel = '';
+    this.tamanioArchivoExcel = '';
+    this.errorArchivoExcel = null;
+    
+    if (this.excelFileInput) {
+      this.excelFileInput.nativeElement.value = '';
     }
   }
 
