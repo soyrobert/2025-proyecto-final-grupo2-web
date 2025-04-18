@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - 'main'
-      - 'develop'
-      - 'feat/*'
+      # - 'develop'
+      # - 'feat/*'
 
 jobs:
   deploy:
