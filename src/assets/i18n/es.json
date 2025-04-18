@@ -267,8 +267,11 @@
     "txt_no_productos_encontrados": "No se encontraron productos con los filtros aplicados",
     "txt_error_cargar_productos": "Error al cargar los productos. Por favor, inténtelo de nuevo más tarde.",
     "txt_en_stock": "En stock",
-    "txt_discontinued": "Discontinuado",
     "txt_estado_en_stock": "En stock",
     "txt_estado_agotado": "Agotado",
-    "txt_estado_discontinued": "Discontinuado"
+    "txt_produccion": "En producción",
+    "txt_discontinued": "Discontinuado", 
+    "txt_en_produccion": "En producción", 
+    "txt_estado_discontinued": "Discontinuado",
+    "txt_estado_en_produccion": "En producción"
 }

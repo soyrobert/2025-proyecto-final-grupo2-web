@@ -17,7 +17,7 @@ export class LogisticaHome implements OnInit {
   searchStatus = '';
   
   // Estados disponibles para el filtro
-  statusOptions = ['txt_todos', 'txt_en_stock', 'txt_agotado', 'txt_discontinued'];
+  statusOptions = ['txt_todos', 'txt_en_stock', 'txt_agotado', 'txt_en_produccion'];
   
   // Variables de paginación
   currentPage = 1;
@@ -57,8 +57,8 @@ export class LogisticaHome implements OnInit {
         case 'txt_agotado':
           apiStatus = 'agotado';
           break;
-        case 'txt_discontinued':
-          apiStatus = 'discontinued';
+        case 'txt_en_produccion':
+          apiStatus = 'en_produccion';
           break;
       }
     }
@@ -118,7 +118,7 @@ export class LogisticaHome implements OnInit {
         return 'bg-success';
       case 'agotado':
         return 'bg-danger';
-      case 'discontinued':
+      case 'en_produccion':
         return 'bg-warning';
       default:
         return 'bg-primary';
