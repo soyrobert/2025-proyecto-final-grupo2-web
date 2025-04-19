@@ -5,7 +5,7 @@ on:
     branches:
       - 'main'
       - 'develop'
-      # - 'feat/*'
+      - 'feat/*'
 
 jobs:
   deploy:
