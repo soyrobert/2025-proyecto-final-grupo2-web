@@ -142,7 +142,7 @@ export class LogisticaHome implements OnInit {
   formatDate(dateString: string): string {
     if (!dateString) return '';
     
-    const date = new Date(dateString);
+    const date = new Date(`${dateString}T00:00:00`);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
