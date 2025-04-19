@@ -38,10 +38,10 @@ export class StorageService {
   /**
    * Obtiene una URL firmada para subir un archivo
    */
-  getSignedUrl(fileName: string, contentType: string): Observable<SignedUrlResponse> {
+  getSignedUrl(fileName: string, contentType: string, fileType?: string): Observable<SignedUrlResponse> {
     return this.http.post<SignedUrlResponse>(
       this.apiUrl,
-      { fileName, contentType },
+      { fileName, contentType, fileType },
       { headers: this.getHeaders() }
     );
   }
@@ -97,4 +97,35 @@ export class StorageService {
       })
     );
   }
+
+  /**
+   * Sube un archivo CSV para importación masiva
+   * @param file Archivo CSV a subir
+  */
+  uploadCsvFile(file: File): Observable<string> {
+    console.log(`Iniciando subida de archivo CSV: ${file.name}, tipo: ${file.type}, tamaño: ${file.size} bytes`);
+    
+    return this.getSignedUrl(file.name, file.type, 'csv_import').pipe(
+      switchMap(response => {
+        console.log('URL firmada obtenida para CSV:', response.signedUrl.substring(0, 50) + '...');
+        console.log('URL pública CSV será:', response.publicUrl);
+        
+        return this.uploadFileWithSignedUrl(response.signedUrl, file).pipe(
+          map(success => {
+            if (success) {
+              console.log('Archivo CSV subido exitosamente a:', response.publicUrl);
+              return response.publicUrl;
+            }
+            console.error('Falló la subida del archivo CSV');
+            throw new Error('Failed to upload CSV file');
+          })
+        );
+      }),
+      catchError(error => {
+        console.error('Error en el proceso de subida de CSV:', error);
+        throw error;
+      })
+    );
+  }
+  
 }

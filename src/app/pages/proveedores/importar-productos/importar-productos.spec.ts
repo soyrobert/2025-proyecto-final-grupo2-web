@@ -44,7 +44,8 @@ describe('ImportarProductos', () => {
   beforeEach(async () => {
     // Crear mocks de los servicios
     const productosServiceMock = {
-      registrarProducto: jest.fn()
+      registrarProducto: jest.fn().mockReturnValue(of({})),
+      importarProductosMasivamente: jest.fn().mockReturnValue(of({ productos_importados: 10 }))
     };
 
     const proveedoresServiceMock = {
@@ -56,7 +57,8 @@ describe('ImportarProductos', () => {
     };
 
     const storageServiceMock = {
-      uploadFile: jest.fn().mockReturnValue(of('https://storage.example.com/image.jpg'))
+      uploadFile: jest.fn().mockReturnValue(of('https://storage.example.com/image.jpg')),
+      uploadCsvFile: jest.fn().mockReturnValue(of('https://storage.example.com/data.csv'))
     };
 
     await TestBed.configureTestingModule({
@@ -188,29 +190,22 @@ describe('ImportarProductos', () => {
         }
       };
       
-      // Mockar el FormData que se usará
       const patchValueSpy = jest.spyOn(component.formularioProducto, 'patchValue');
       
-      // Mock de FileReader usando jest.fn()
       const originalFileReader = window.FileReader;
       
-      // Mock simple de FileReader
       const mockFileReaderInstance = {
         readAsDataURL: jest.fn(),
         result: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD'
       };
       
-      // Mock del constructor de FileReader
       window.FileReader = jest.fn(() => mockFileReaderInstance) as any;
       
-      // Redefinimos URL.createObjectURL para devolver una URL de prueba
       const originalCreateObjectURL = window.URL.createObjectURL;
       window.URL.createObjectURL = jest.fn().mockReturnValue('blob:test');
       
-      // Simular el comportamiento de Image en el navegador
       const formatearTamanioSpy = jest.spyOn(component, 'formatearTamanio').mockReturnValue('100 KB');
       
-      // Hacer una implementación manual en lugar de usar FileReader
       jest.spyOn(component, 'onImagenSeleccionada').mockImplementation((e: any) => {
         const file = e.target.files[0];
         
@@ -226,15 +221,12 @@ describe('ImportarProductos', () => {
         });
       });
       
-      // Ejecutar el método
       component.onImagenSeleccionada(event);
       
-      // Verificaciones
       expect(component.errorImagen).toBeNull();
       expect(component.imagenSeleccionada.length).toBe(1);
       expect(patchValueSpy).toHaveBeenCalled();
       
-      // Restaurar las funciones originales
       window.FileReader = originalFileReader;
       window.URL.createObjectURL = originalCreateObjectURL;
       jest.restoreAllMocks();
@@ -253,13 +245,10 @@ describe('ImportarProductos', () => {
         component.errorImagen = 'txt_formato_imagen_no_valido';
       });
       
-      // Mock de TranslateService.instant
       jest.spyOn(translateService, 'instant').mockReturnValue('txt_formato_imagen_no_valido');
       
-      // Ejecutar el método
       component.onImagenSeleccionada(event);
       
-      // Verificar que se rechazó la imagen
       expect(component.errorImagen).toBe('txt_formato_imagen_no_valido');
     });
 
@@ -274,7 +263,6 @@ describe('ImportarProductos', () => {
         }
       };
       
-      // Crear una implementación directa
       jest.spyOn(component, 'onImagenSeleccionada').mockImplementation((e: any) => {
         component.errorImagen = 'txt_imagen_demasiado_grande';
       });
@@ -304,19 +292,15 @@ describe('ImportarProductos', () => {
         }
       ];
       
-      // Establecer el valor en el formulario
       component.formularioProducto.patchValue({
         imagenes: component.imagenSeleccionada[0].archivo
       });
       
-      // Eliminar la primera imagen
       component.eliminarImagen(0);
       
-      // Verificar que la imagen ha sido eliminada
       expect(component.imagenSeleccionada.length).toBe(1);
       expect(component.imagenSeleccionada[0].archivo.name).toBe('test2.jpg');
       
-      // Verificar que el formulario ha sido actualizado
       expect(component.formularioProducto.get('imagenes')?.value).toEqual(component.imagenSeleccionada[0].archivo);
     });
 
@@ -330,12 +314,10 @@ describe('ImportarProductos', () => {
         }
       ];
       
-      // Establecer el valor en el formulario
       component.formularioProducto.patchValue({
         imagenes: component.imagenSeleccionada[0].archivo
       });
       
-      // Eliminar la única imagen
       component.eliminarImagen(0);
       
       // Verificar que no quedan imágenes
@@ -349,7 +331,6 @@ describe('ImportarProductos', () => {
 
   describe('limpiarSeleccionImagen', () => {
     it('debería limpiar las imágenes seleccionadas', () => {
-      // Configurar imágenes de prueba
       component.imagenSeleccionada = [
         {
           archivo: new File([''], 'test.jpg', { type: 'image/jpeg' }),
@@ -389,13 +370,10 @@ describe('ImportarProductos', () => {
 
   describe('guardarProducto', () => {
     it('debería marcar todos los campos como touched si el formulario es inválido', () => {
-      // Hacer que el formulario sea inválido
       component.inicializarFormulario();
       
-      // Espiar métodos
       const markAsTouchedSpy = jest.spyOn(component.formularioProducto.controls['nombre'], 'markAsTouched');
       
-      // Intentar guardar
       component.guardarProducto();
       
       // Verificar que se marcaron los campos como touched
@@ -419,10 +397,8 @@ describe('ImportarProductos', () => {
         proveedor: '1'
       });
       
-      // Mock de la respuesta del servicio
       jest.spyOn(productosService, 'registrarProducto').mockReturnValue(of({}));
       
-      // Guardar producto
       component.guardarProducto();
       tick();
       
@@ -462,7 +438,6 @@ describe('ImportarProductos', () => {
       };
       jest.spyOn(productosService, 'registrarProducto').mockReturnValue(throwError(() => error));
       
-      // Guardar producto
       component.guardarProducto();
       tick();
       
@@ -491,14 +466,12 @@ describe('ImportarProductos', () => {
         proveedor: '1'
       });
       
-      // Mock de error del servicio
       const error = {
         status: 409
       };
       jest.spyOn(productosService, 'registrarProducto').mockReturnValue(throwError(() => error));
       jest.spyOn(translateService, 'instant').mockReturnValue('msg_producto_ya_existe');
       
-      // Guardar producto
       component.guardarProducto();
       tick();
       
@@ -536,21 +509,21 @@ describe('ImportarProductos', () => {
   });
 
   // Test para el método eliminarImagen con índice inválido
-it('no debería eliminar imagen si el índice es inválido', () => {
-    // Configurar imágenes de prueba
-    component.imagenSeleccionada = [
-      {
-        archivo: new File([''], 'test1.jpg', { type: 'image/jpeg' }),
-        url: 'data:image/jpeg;base64,1111',
-        tamanio: '100 KB'
-      }
-    ];
-    
-    component.eliminarImagen(-1);
-    expect(component.imagenSeleccionada.length).toBe(1);
-    
-    component.eliminarImagen(5);
-    expect(component.imagenSeleccionada.length).toBe(1);
+  it('no debería eliminar imagen si el índice es inválido', () => {
+      // Configurar imágenes de prueba
+      component.imagenSeleccionada = [
+        {
+          archivo: new File([''], 'test1.jpg', { type: 'image/jpeg' }),
+          url: 'data:image/jpeg;base64,1111',
+          tamanio: '100 KB'
+        }
+      ];
+      
+      component.eliminarImagen(-1);
+      expect(component.imagenSeleccionada.length).toBe(1);
+      
+      component.eliminarImagen(5);
+      expect(component.imagenSeleccionada.length).toBe(1);
   });
   
   // Test para respuesta de error cuando el producto ya existe
@@ -627,7 +600,6 @@ it('no debería eliminar imagen si el índice es inválido', () => {
       proveedor: '1'
     });
     
-    // Mock de error de conexión
     const error = { status: 0 };
     jest.spyOn(productosService, 'registrarProducto').mockReturnValue(throwError(() => error));
     jest.spyOn(translateService, 'instant').mockReturnValue('msg_error_conexion');
@@ -639,57 +611,49 @@ it('no debería eliminar imagen si el índice es inválido', () => {
   }));
 
   // Test para el método onImagenSeleccionada
-it('debería procesar correctamente las imágenes seleccionadas', () => {
-  // Crear un archivo de prueba
-  const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
-  const mockFileList = {
-    0: mockFile,
-    length: 1,
-    item: (index: number) => mockFile
-  };
-  
-  const event = {
-    target: {
-      files: mockFileList
-    }
-  };
-  
-  // Mock de FileReader
-  const originalFileReader = window.FileReader;
-  const mockFileReader = {
-    onload: null as any,
-    readAsDataURL: function(file: File) {
-      // Ejecutar el callback onload inmediatamente
-      if (this.onload) {
-        this.onload({
-          target: {
-            result: 'data:image/jpeg;base64,test'
-          }
-        } as any);
+  it('debería procesar correctamente las imágenes seleccionadas', () => {
+    // Crear un archivo de prueba
+    const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
+    const mockFileList = {
+      0: mockFile,
+      length: 1,
+      item: (index: number) => mockFile
+    };
+    
+    const event = {
+      target: {
+        files: mockFileList
       }
-    }
-  };
-  
-  // Reemplazar FileReader con nuestro mock
-  window.FileReader = jest.fn(() => mockFileReader) as any;
-  
-  // Espiar el método de subida y el método de formateo
-  const subirImagenSpy = jest.spyOn(component, 'subirImagenACloudStorage').mockImplementation(() => {});
-  const formatearTamanioSpy = jest.spyOn(component, 'formatearTamanio').mockReturnValue('100 KB');
-  
-  // Ejecutar el método real
-  component.onImagenSeleccionada(event);
-  
-  // Verificaciones
-  expect(component.errorImagen).toBeNull();
-  expect(formatearTamanioSpy).toHaveBeenCalled();
-  expect(component.imagenSeleccionada.length).toBeGreaterThan(0);
-  // Verificar que se llamó a subirImagenACloudStorage
-  expect(subirImagenSpy).toHaveBeenCalled();
-  
-  // Restaurar FileReader
-  window.FileReader = originalFileReader;
-});
+    };
+    
+    const originalFileReader = window.FileReader;
+    const mockFileReader = {
+      onload: null as any,
+      readAsDataURL: function(file: File) {
+        if (this.onload) {
+          this.onload({
+            target: {
+              result: 'data:image/jpeg;base64,test'
+            }
+          } as any);
+        }
+      }
+    };
+    
+    window.FileReader = jest.fn(() => mockFileReader) as any;
+    
+    const subirImagenSpy = jest.spyOn(component, 'subirImagenACloudStorage').mockImplementation(() => {});
+    const formatearTamanioSpy = jest.spyOn(component, 'formatearTamanio').mockReturnValue('100 KB');
+    
+    component.onImagenSeleccionada(event);
+    
+    expect(component.errorImagen).toBeNull();
+    expect(formatearTamanioSpy).toHaveBeenCalled();
+    expect(component.imagenSeleccionada.length).toBeGreaterThan(0);
+    expect(subirImagenSpy).toHaveBeenCalled();
+    
+    window.FileReader = originalFileReader;
+  });
   
   // Test para verificar el rechazo de formato inválido
   it('debería rechazar imágenes con formato no válido directamente', () => {
@@ -805,7 +769,6 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
       proveedor: '1'
     });
     
-    // Mock de error 403
     const error = { status: 403 };
     jest.spyOn(productosService, 'registrarProducto').mockReturnValue(throwError(() => error));
     jest.spyOn(translateService, 'instant').mockReturnValue('msg_no_tiene_permisos');
@@ -813,7 +776,6 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
     component.guardarProducto();
     tick();
     
-    // Verificaciones
     expect(component.cargando).toBe(false);
     expect(component.showMessage).toHaveBeenCalledWith('msg_no_tiene_permisos', 'error');
   }));
@@ -891,7 +853,6 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
   it('debería subir imagen a Cloud Storage correctamente', fakeAsync(() => {
     const mockFile = new File([''], 'test.jpg', { type: 'image/jpeg' });
     
-    // Mock de respuesta del storage service
     const publicUrl = 'https://storage.example.com/image.jpg';
     jest.spyOn(storageService, 'uploadFile').mockReturnValue(of(publicUrl));
     
@@ -940,4 +901,157 @@ it('debería procesar correctamente las imágenes seleccionadas', () => {
     expect(component.imagenSeleccionada[0].uploadError).toBe('txt_error_subir_imagen');
     expect(component.errorImagen).toBe('txt_error_subir_imagen');
   }));
+
+  // Agregar aquí el nuevo grupo de tests para importación de CSV
+  describe('Importación masiva de CSV', () => {
+    beforeEach(() => {
+      component.excelFileInput = {
+        nativeElement: {
+          value: '',
+          click: jest.fn()
+        }
+      };
+
+      component.dropZone = {
+        nativeElement: document.createElement('div')
+      };
+
+      jest.spyOn(component, 'limpiarSeleccionExcel');
+      jest.spyOn(component, 'procesarArchivoExcel');
+      jest.spyOn(component, 'subirArchivoExcel');
+      jest.spyOn(component, 'importarProductosMasivamente');
+    });
+
+    // Test para procesar un archivo CSV válido
+    it('debería procesar correctamente un archivo CSV válido', () => {
+      const csvFile = new File(['nombre,descripcion,precio'], 'test.csv', { type: 'text/csv' });
+      
+      jest.spyOn(component, 'formatearTamanio').mockReturnValue('10 KB');
+      
+      component.procesarArchivoExcel(csvFile);
+      
+      expect(component.archivoExcelSeleccionado).toBe(csvFile);
+      expect(component.nombreArchivoExcel).toBe('test.csv');
+      expect(component.tamanioArchivoExcel).toBe('10 KB');
+      expect(component.errorArchivoExcel).toBeNull();
+    });
+
+    // Test para el método onExcelSeleccionado
+    it('debería llamar a procesarArchivoExcel cuando se selecciona un archivo', () => {
+      const csvFile = new File(['data'], 'test.csv', { type: 'text/csv' });
+      const event = {
+        target: {
+          files: [csvFile]
+        }
+      };
+      
+      component.onExcelSeleccionado(event);
+      
+      expect(component.procesarArchivoExcel).toHaveBeenCalledWith(csvFile);
+    });
+
+    // Test para limpiarSeleccionExcel
+    it('debería limpiar la selección de archivo CSV', () => {
+      component.archivoExcelSeleccionado = new File(['data'], 'test.csv', { type: 'text/csv' });
+      component.nombreArchivoExcel = 'test.csv';
+      component.tamanioArchivoExcel = '10 KB';
+      component.errorArchivoExcel = 'error previo';
+      
+      component.limpiarSeleccionExcel();
+      
+      expect(component.archivoExcelSeleccionado).toBeNull();
+      expect(component.nombreArchivoExcel).toBe('');
+      expect(component.tamanioArchivoExcel).toBe('');
+      expect(component.errorArchivoExcel).toBeNull();
+      expect(component.excelFileInput.nativeElement.value).toBe('');
+    });
+
+    // Test para subirArchivoExcel - sin archivo seleccionado
+    it('debería mostrar un mensaje si no hay archivo seleccionado al intentar subir', () => {
+      component.archivoExcelSeleccionado = null;
+      
+      jest.spyOn(translateService, 'instant').mockReturnValue('txt_seleccionar_archivo_csv');
+      component.subirArchivoExcel();
+      
+      expect(component.showMessage).toHaveBeenCalledWith('txt_seleccionar_archivo_csv', 'warning');
+      expect(storageService.uploadCsvFile).not.toHaveBeenCalled();
+    });
+
+    // Test para importarProductosMasivamente - error
+    it('debería manejar errores al importar productos masivamente', fakeAsync(() => {
+      const error = { status: 400, error: { detalles: { error: 'Error en CSV' } } };
+      jest.spyOn(productosService, 'importarProductosMasivamente').mockReturnValue(throwError(() => error));
+      
+      component.importarProductosMasivamente('https://storage.example.com/data.csv');
+      tick();
+
+      expect(component.subiendoExcel).toBe(false);
+      expect(component.showMessage).toHaveBeenCalledWith('Error en CSV', 'error');
+    }));
+
+    // Test para ngAfterViewInit
+    it('debería llamar a inicializarDropZone en ngAfterViewInit', () => {
+      jest.spyOn(component, 'inicializarDropZone');
+      
+      component.ngAfterViewInit();
+      expect(component.inicializarDropZone).toHaveBeenCalled();
+    });
+
+    // Test para verificar la llamada correcta a ProductosService.importarProductosMasivamente
+    it('debería llamar a productosService.importarProductosMasivamente con la URL correcta', fakeAsync(() => {
+      const testUrl = 'https://storage.example.com/data.csv';
+  
+      component.importarProductosMasivamente(testUrl);
+      tick();
+      
+      expect(productosService.importarProductosMasivamente).toHaveBeenCalledWith(testUrl);
+    }));
+
+    // Test para manejar casos especiales de errores en importarProductosMasivamente
+    it('debería manejar diferentes tipos de errores en importarProductosMasivamente', fakeAsync(() => {
+      const testCases = [
+        { 
+          errorObj: { status: 413 }, 
+          expectedMsg: 'msg_archivo_muy_grande' 
+        },
+        { 
+          errorObj: { status: 403 }, 
+          expectedMsg: 'msg_no_tiene_permisos' 
+        },
+        { 
+          errorObj: { status: 0 }, 
+          expectedMsg: 'msg_error_conexion' 
+        },
+        { 
+          errorObj: { error: { message: 'Error personalizado' } }, 
+          expectedMsg: 'Error personalizado' 
+        },
+        { 
+          errorObj: {}, 
+          expectedMsg: 'txt_error_desconocido' 
+        }
+      ];
+      
+      // Probar cada caso
+      for (const testCase of testCases) {
+        jest.clearAllMocks();
+        
+        jest.spyOn(translateService, 'instant').mockImplementation((key) => {
+          if (key === testCase.expectedMsg) {
+            return testCase.expectedMsg;
+          }
+          return 'txt_error_desconocido';
+        });
+        
+        jest.spyOn(productosService, 'importarProductosMasivamente')
+          .mockReturnValue(throwError(() => testCase.errorObj));
+        
+        component.importarProductosMasivamente('https://storage.example.com/data.csv');
+        tick();
+        
+        expect(component.showMessage).toHaveBeenCalledWith(testCase.expectedMsg, 'error');
+      }
+    }));
+  });
+
 });

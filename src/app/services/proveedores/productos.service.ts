@@ -50,6 +50,20 @@ export class ProductosService {
   }
 
   /**
+ * Importa productos masivamente desde un archivo CSV
+ * @param csvUrl URL del archivo CSV subido al Storage
+ */
+  importarProductosMasivamente(csvUrl: string): Observable<any> {
+    const data = {
+      filepath: csvUrl
+    };
+    
+    return this.http.post(`${this.apiUrl}/importar-masivamente`, data, { 
+      headers: this.getHeaders() 
+    });
+  }
+
+  /**
    * Obtiene todos los productos registrados
    */
   obtenerProductos(): Observable<any> {
