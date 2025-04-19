@@ -286,6 +286,18 @@
     "txt_seleccionar_solo_csv": "Please select only CSV files for bulk import.",
     "txt_csv_excede_tamano_permitido": "The selected file exceeds the maximum allowed size of {{tamano}}.",
     "txt_solo_archivos_csv": "Only CSV files with comma-separated data are accepted.",
-    "txt_archivo_no_compatible": "The selected file is not compatible. Please use a valid CSV file."
+    "txt_archivo_no_compatible": "The selected file is not compatible. Please use a valid CSV file.",
+    "txt_aplicar_filtros": "Apply filters",
+    "txt_reintentar": "Retry",
+    "txt_no_productos_encontrados": "No products found with the applied filters",
+    "txt_error_cargar_productos": "Error loading products. Please try again later.",
+    "txt_en_stock": "In stock",
+    "txt_estado_en_stock": "In stock",
+    "txt_estado_agotado": "Out of stock",
+    "txt_produccion": "In production",
+    "txt_discontinued": "Discontinued",  
+    "txt_en_produccion": "In production", 
+    "txt_estado_discontinued": "Discontinued", 
+    "txt_estado_en_produccion": "In production"
     
 }

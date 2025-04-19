@@ -15,25 +15,53 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>
         <label for="searchCode" class="block text-sm font-medium mb-1">{{ 'txt_codigo' | translate }}</label>
-        <input id="searchCode" [(ngModel)]="searchCode" (input)="applyFilters()" type="text" class="form-input w-full" placeholder="{{ 'txt_buscar_por_codigo' | translate }}" />
+        <input id="searchCode" [(ngModel)]="searchCode" type="text" class="form-input w-full" placeholder="{{ 'txt_buscar_por_codigo' | translate }}" />
       </div>
       <div>
         <label for="searchName" class="block text-sm font-medium mb-1">{{ 'name' | translate }}</label>
-        <input id="searchName" [(ngModel)]="searchName" (input)="applyFilters()" type="text" class="form-input w-full" placeholder="{{ 'txt_buscar_por_nombre' | translate }}" />
+        <input id="searchName" [(ngModel)]="searchName" type="text" class="form-input w-full" placeholder="{{ 'txt_buscar_por_nombre' | translate }}" />
       </div>
       <div>
         <label for="searchStatus" class="block text-sm font-medium mb-1">{{ 'txt_estado' | translate }}</label>
-        <select id="searchStatus" [(ngModel)]="searchStatus" (change)="applyFilters()" class="form-select w-full">
+        <select id="searchStatus" [(ngModel)]="searchStatus" class="form-select w-full">
           <option *ngFor="let option of statusOptions" [value]="option">{{ option | translate }}</option>
         </select>
       </div>
+    </div>
+    
+    <div class="mt-4 flex justify-end">
+      <button type="button" class="btn btn-primary" (click)="applyFilters()">
+        {{ 'txt_aplicar_filtros' | translate }}
+      </button>
     </div>
   </div>
 
   <!-- Table Panel -->
   <div class="panel mt-6 pb-0">
+    <div class="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
+      <h5 class="text-lg font-semibold dark:text-white-light">{{ 'txt_productos' | translate }}</h5>
+    </div>
 
-    <div class="datatable">
+    <!-- Loading indicator -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-10">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+    </div>
+
+    <!-- Error message -->
+    <div *ngIf="hasError" class="bg-danger-light border-l-3 border-danger p-4 mb-4 text-danger">
+      <p>{{ errorMessage }}</p>
+      <button class="btn btn-sm btn-outline-danger mt-2" (click)="loadProducts()">
+        {{ 'txt_reintentar' | translate }}
+      </button>
+    </div>
+
+    <!-- No results -->
+    <div *ngIf="!isLoading && !hasError && products.length === 0" class="text-center py-8">
+      <p class="text-gray-500 dark:text-gray-400">{{ 'txt_no_productos_encontrados' | translate }}</p>
+    </div>
+
+    <!-- Data table -->
+    <div *ngIf="!isLoading && !hasError && products.length > 0" class="datatable">
       <table class="whitespace-nowrap table-hover">
         <thead>
           <tr>
@@ -43,50 +71,81 @@
             <th>{{ 'txt_fecha_vencimiento' | translate }}</th>
             <th>{{ 'txt_cantidad' | translate }}</th>
             <th>{{ 'txt_estado' | translate }}</th>
-            <th>{{ 'txt_ubicacion' | translate }}</th>
+            <th>{{ 'txt_proveedor' | translate }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let product of filteredProducts">
-            <td>{{ product.codigo }}</td>
+          <tr *ngFor="let product of products">
+            <td>{{ product.id }}</td>
             <td>{{ product.nombre }}</td>
-            <td>{{ formatCurrency(product.precioUnitario) }}</td>
-            <td>{{ product.fechaVencimiento }}</td>
-            <td>{{ product.cantidad }}</td>
+            <td>{{ formatCurrency(product.precio) }}</td>
+            <td>{{ formatDate(product.fecha_vencimiento) }}</td>
+            <td>{{ product.inventario_inicial }}</td>
             <td>
-              <span class="badge" [ngClass]="getStatusClass(product.estado)">{{ product.estado | translate }}</span>
+              <span class="badge" [ngClass]="getStatusClass(product.estado)">
+                {{ 'txt_estado_' + product.estado | translate }}
+              </span>
             </td>
-            <td>{{ product.ubicacion }}</td>
+            <td>{{ product.proveedor }}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <!-- Pagination -->
-    <div class="flex items-center justify-between mt-5 p-5">
-      <div>{{ 'txt_mostrando_productos' | translate: {start: 1, end: 10, total: 90} }}</div>
+    <div *ngIf="totalPages > 0" class="flex items-center justify-between mt-5 p-5">
+      <div>
+        {{ 'txt_mostrando_productos' | translate: {start: (currentPage-1)*itemsPerPage+1, end: currentPage*itemsPerPage > totalItems ? totalItems : currentPage*itemsPerPage, total: totalItems} }}
+      </div>
       <div>
         <div class="flex items-center gap-1">
-          <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
+          <!-- First page -->
+          <button type="button" [disabled]="currentPage === 1" 
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+                  class="p-1 rounded border border-gray-300 dark:border-gray-600"
+                  (click)="goToPage(1)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
               <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
               <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
-          <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
+          
+          <!-- Previous page -->
+          <button type="button" [disabled]="currentPage === 1"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+                  class="p-1 rounded border border-gray-300 dark:border-gray-600"
+                  (click)="goToPage(currentPage - 1)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
               <path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
-          <button type="button" class="p-1 px-2 rounded bg-primary text-white">1</button>
-          <button type="button" class="p-1 px-2 rounded border border-gray-300 dark:border-gray-600">2</button>
-          <button type="button" class="p-1 px-2 rounded border border-gray-300 dark:border-gray-600">3</button>
-          <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
+          
+          <!-- Page numbers -->
+          <ng-container *ngFor="let page of [].constructor(totalPages > 5 ? 5 : totalPages); let i = index">
+            <button 
+              type="button" 
+              [ngClass]="{'bg-primary text-white': currentPage === getCurrentPageNumber(i), 'border border-gray-300 dark:border-gray-600': currentPage !== getCurrentPageNumber(i)}"
+              class="p-1 px-2 rounded" 
+              (click)="goToPage(getCurrentPageNumber(i))">
+              {{ getCurrentPageNumber(i) }}
+            </button>
+          </ng-container>
+          
+          <!-- Next page -->
+          <button type="button" [disabled]="currentPage === totalPages"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+                  class="p-1 rounded border border-gray-300 dark:border-gray-600"
+                  (click)="goToPage(currentPage + 1)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
               <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
-          <button type="button" class="p-1 rounded border border-gray-300 dark:border-gray-600">
+          
+          <!-- Last page -->
+          <button type="button" [disabled]="currentPage === totalPages"
+                  [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+                  class="p-1 rounded border border-gray-300 dark:border-gray-600"
+                  (click)="goToPage(totalPages)">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
               <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
               <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />

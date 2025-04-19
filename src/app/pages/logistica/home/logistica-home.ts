@@ -2,16 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-
-interface Product {
-  codigo: string;
-  nombre: string;
-  precioUnitario: number;
-  fechaVencimiento: string;
-  cantidad: number;
-  estado: string;
-  ubicacion: string;
-}
+import { LogisticaService, Product, ProductsResponse } from '../../../services/logistica/logistica.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   standalone: true,
@@ -24,139 +16,161 @@ export class LogisticaHome implements OnInit {
   searchName = '';
   searchStatus = '';
   
-  constructor(private translate: TranslateService) {}
+  // Estados disponibles para el filtro
+  statusOptions = ['txt_todos', 'txt_en_stock', 'txt_agotado', 'txt_en_produccion'];
   
-  statusOptions = ['txt_todos', 'txt_disponible', 'txt_sin_stock', 'txt_suspended', 'txt_approved'];
+  // Variables de paginación
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalItems = 0;
+  totalPages = 0;
   
-  products: Product[] = [
-    {
-      codigo: '1001',
-      nombre: 'It is a long established',
-      precioUnitario: 30000.00,
-      fechaVencimiento: '20/02/2025',
-      cantidad: 102,
-      estado: 'txt_disponible',
-      ubicacion: 'Bodega 1'
-    },
-    {
-      codigo: '1002',
-      nombre: 'Where can I get some',
-      precioUnitario: 4500.00,
-      fechaVencimiento: '15/05/2025',
-      cantidad: 68,
-      estado: 'txt_sin_stock',
-      ubicacion: 'Bodega 2'
-    },
-    {
-      codigo: '1003',
-      nombre: 'All the Lorem ipsum generators',
-      precioUnitario: 24000.00,
-      fechaVencimiento: '12/09/2025',
-      cantidad: 56,
-      estado: 'txt_suspended',
-      ubicacion: 'Bodega 2'
-    },
-    {
-      codigo: '1004',
-      nombre: 'The standard chunk',
-      precioUnitario: 120000.00,
-      fechaVencimiento: '04/11/2025',
-      cantidad: 203,
-      estado: 'txt_suspended',
-      ubicacion: 'Bodega 4'
-    },
-    {
-      codigo: '1005',
-      nombre: 'All the Lorem Ipsum',
-      precioUnitario: 3000.00,
-      fechaVencimiento: '18/10/2025',
-      cantidad: 45,
-      estado: 'txt_approved',
-      ubicacion: 'Bodega 2'
-    },
-    {
-      codigo: '1006',
-      nombre: 'All the Lorem Ipsum',
-      precioUnitario: 3000.00,
-      fechaVencimiento: '18/10/2025',
-      cantidad: 45,
-      estado: 'txt_approved',
-      ubicacion: 'Bodega 3'
-    },
-    {
-      codigo: '1007',
-      nombre: 'All the Lorem Ipsum',
-      precioUnitario: 3000.00,
-      fechaVencimiento: '18/10/2025',
-      cantidad: 45,
-      estado: 'txt_approved',
-      ubicacion: 'Bodega 2'
-    },
-    {
-      codigo: '1008',
-      nombre: 'All the Lorem Ipsum',
-      precioUnitario: 3000.00,
-      fechaVencimiento: '18/10/2025',
-      cantidad: 45,
-      estado: 'txt_approved',
-      ubicacion: 'Bodega 4'
-    },
-    {
-      codigo: '1009',
-      nombre: 'All the Lorem Ipsum',
-      precioUnitario: 3000.00,
-      fechaVencimiento: '18/10/2025',
-      cantidad: 45,
-      estado: 'txt_approved',
-      ubicacion: 'Bodega 4'
-    },
-    {
-      codigo: '1010',
-      nombre: 'All the Lorem Ipsum',
-      precioUnitario: 3000.00,
-      fechaVencimiento: '18/10/2025',
-      cantidad: 45,
-      estado: 'txt_approved',
-      ubicacion: 'Bodega 2'
-    }
-  ];
-
-  filteredProducts: Product[] = [];
-
+  // Variables de estado
+  isLoading = false;
+  hasError = false;
+  errorMessage = '';
+  
+  products: Product[] = [];
+  
+  constructor(
+    private translate: TranslateService,
+    private logisticaService: LogisticaService
+  ) {}
+  
   ngOnInit(): void {
-    this.filteredProducts = [...this.products];
+    this.loadProducts();
   }
-
-  applyFilters(): void {
-    this.filteredProducts = this.products.filter(product => {
-      return (
-        (this.searchCode === '' || product.codigo.toLowerCase().includes(this.searchCode.toLowerCase())) &&
-        (this.searchName === '' || product.nombre.toLowerCase().includes(this.searchName.toLowerCase())) &&
-        (this.searchStatus === '' || this.searchStatus === 'txt_todos' || product.estado === this.searchStatus)
-      );
+  
+  /**
+   * Carga los productos desde la API
+   */
+  loadProducts(): void {
+    this.isLoading = true;
+    this.hasError = false;
+    
+    let apiStatus = '';
+    if (this.searchStatus && this.searchStatus !== 'txt_todos') {
+      switch (this.searchStatus) {
+        case 'txt_en_stock':
+          apiStatus = 'en_stock';
+          break;
+        case 'txt_agotado':
+          apiStatus = 'agotado';
+          break;
+        case 'txt_en_produccion':
+          apiStatus = 'en_produccion';
+          break;
+      }
+    }
+    
+    this.logisticaService.getProducts(
+      this.currentPage,
+      this.itemsPerPage,
+      this.searchName,
+      this.searchCode,
+      apiStatus
+    )
+    .pipe(
+      finalize(() => {
+        this.isLoading = false;
+      })
+    )
+    .subscribe({
+      next: (response: ProductsResponse) => {
+        this.products = response.products;
+        this.totalItems = response.total;
+        this.totalPages = response.total_pages;
+      },
+      error: (error) => {
+        this.hasError = true;
+        this.errorMessage = error.message || this.translate.instant('txt_error_cargar_productos');
+      }
     });
   }
-
+  
+  /**
+   * Aplica los filtros y recarga los productos
+   */
+  applyFilters(): void {
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+  
+  /**
+   * Cambia a la página especificada
+   * @param page Número de página
+   */
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      this.loadProducts();
+    }
+  }
+  
+  /**
+   * Obtiene la clase CSS según el estado del producto
+   * @param status Estado del producto
+   * @returns Clase CSS correspondiente
+   */
   getStatusClass(status: string): string {
     switch (status) {
-      case 'Disponible':
-      case 'txt_disponible':
-        return 'bg-primary';
-      case 'Sin stock':
-      case 'txt_sin_stock':
-        return 'bg-danger';
-      case 'Suspended':
-      case 'txt_suspended':
-        return 'bg-warning';
-      case 'Approved':
-      case 'txt_approved':
+      case 'en_stock':
         return 'bg-success';
+      case 'agotado':
+        return 'bg-danger';
+      case 'en_produccion':
+        return 'bg-warning';
       default:
         return 'bg-primary';
     }
   }
-
+  
+  /**
+   * Formatea un valor numérico como moneda
+   * @param value Valor a formatear
+   * @returns Valor formateado como moneda
+   */
   formatCurrency(value: number): string {
     return '$' + value.toLocaleString('es-CO');
+  }
+  
+  /**
+   * Formatea una fecha ISO a formato DD/MM/YYYY
+   * @param dateString Fecha en formato ISO
+   * @returns Fecha formateada
+   */
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${day}/${month}/${year}`;
+  }
+
+  /**
+   * Calcula el número de página actual para los botones de paginación
+   * @param index Índice del botón
+   * @returns Número de página
+  */
+  getCurrentPageNumber(index: number): number {
+    if (this.totalPages <= 5) {
+      return index + 1;
+    }
+    
+    // Si estamos en las primeras 3 páginas
+    if (this.currentPage <= 3) {
+      return index + 1;
+    }
+    
+    // Si estamos en las últimas 3 páginas
+    if (this.currentPage >= this.totalPages - 2) {
+      return this.totalPages - 4 + index;
+    }
+    
+    // Si estamos en medio, mostrar 2 páginas antes y 2 después
+    return this.currentPage - 2 + index;
   }
 }
