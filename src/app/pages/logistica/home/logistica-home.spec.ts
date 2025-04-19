@@ -212,7 +212,7 @@ describe('LogisticaHome', () => {
 
   describe('formatDate', () => {
     it('deberia formatear la fecha correctamente', () => {
-      expect(component.formatDate('2023-12-31')).toBe('30/12/2023');
+      expect(component.formatDate('2023-12-31')).toBe('31/12/2023');
     });
 
     it('deberia manejar fecha vacía', () => {
