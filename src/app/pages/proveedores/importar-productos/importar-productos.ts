@@ -25,6 +25,38 @@ interface ImagenPreview {
   uploadError?: string; // Error si ocurre
 }
 
+/**
+ * Interfaz para el resultado de un producto individual en la importación
+ */
+interface ResultadoProducto {
+  indice: number;
+  status: 'success' | 'error';
+  producto: {
+    id?: number;
+    nombre: string;
+    descripcion: string;
+    tiempo_entrega: string;
+    precio: number;
+    condiciones_almacenamiento: string;
+    fecha_vencimiento: string;
+    estado: string;
+    inventario_inicial: number;
+    imagenes_productos: Array<{ id?: number; imagen_url: string } | string>;
+    proveedor: string | number;
+  };
+  error?: string;
+}
+
+/**
+ * Interfaz para la respuesta de importación masiva
+ */
+interface RespuestaImportacion {
+  exitosos: number;
+  fallidos: number;
+  resultados: ResultadoProducto[];
+  total: number;
+}
+
 @Component({
   standalone: true,
   selector: 'app-proveedores-productos',
@@ -43,19 +75,19 @@ export class ImportarProductos implements OnInit {
   @ViewChild('fileInput') fileInput: any;
   @ViewChild('excelFileInput') excelFileInput!: ElementRef;
   @ViewChild('dropZone') dropZone!: ElementRef;
-  
+
   formularioProducto!: FormGroup;
   cargando: boolean = false;
   proveedores: Proveedor[] = [];
   cargandoProveedores: boolean = false;
   errorProveedores: string | null = null;
-  
+
   // Configuración para las imágenes
   imagenSeleccionada: ImagenPreview[] = [];
   errorImagen: string | null = null;
   maxTamanioImagen: number = 5 * 1024 * 1024; // 5MB en bytes
   formatosPermitidos: string[] = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-  
+
   // Configuración para la importación masiva
   archivoExcelSeleccionado: File | null = null;
   nombreArchivoExcel: string = '';
@@ -69,7 +101,7 @@ export class ImportarProductos implements OnInit {
   ];
   subiendoExcel: boolean = false;
   progresoSubidaExcel: number = 0;
-  
+
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -94,27 +126,27 @@ export class ImportarProductos implements OnInit {
   inicializarDropZone(): void {
     if (this.dropZone && this.dropZone.nativeElement) {
       const dropZoneElement = this.dropZone.nativeElement;
-      
+
       // Evento para cuando se arrastra un archivo sobre la zona
       dropZoneElement.addEventListener('dragover', (e: Event) => {
         e.preventDefault();
         e.stopPropagation();
         dropZoneElement.classList.add('border-primary');
       });
-      
+
       // Eventos para cuando se sale de la zona
       dropZoneElement.addEventListener('dragleave', (e: Event) => {
         e.preventDefault();
         e.stopPropagation();
         dropZoneElement.classList.remove('border-primary');
       });
-      
+
       // Evento para cuando se suelta un archivo
       dropZoneElement.addEventListener('drop', (e: any) => {
         e.preventDefault();
         e.stopPropagation();
         dropZoneElement.classList.remove('border-primary');
-        
+
         if (e.dataTransfer.files.length) {
           const file = e.dataTransfer.files[0];
           // Validar la extensión antes de procesar
@@ -129,7 +161,7 @@ export class ImportarProductos implements OnInit {
           this.procesarArchivoExcel(file);
         }
       });
-      
+
       // Evento para hacer clic en la zona
       dropZoneElement.addEventListener('click', () => {
         if (this.excelFileInput) {
@@ -177,7 +209,7 @@ export class ImportarProductos implements OnInit {
     if (this.proveedores.length === 0 && !this.cargandoProveedores) {
       this.cargarProveedores();
     }
-    
+
     this.inicializarFormulario();
     this.imagenSeleccionada = [];
     this.errorImagen = null;
@@ -191,19 +223,19 @@ export class ImportarProductos implements OnInit {
   onImagenSeleccionada(event: any): void {
     this.errorImagen = null;
     const files = event.target.files;
-    
+
     if (files && files.length > 0) {
       // Validar cada archivo seleccionado
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        
+
         // Validar formato
         if (!this.formatosPermitidos.includes(file.type)) {
           this.errorImagen = this.translate.instant('txt_formato_imagen_no_valido');
           this.limpiarSeleccionImagen();
           return;
         }
-        
+
         // Validar tamaño
         if (file.size > this.maxTamanioImagen) {
           this.errorImagen = this.translate.instant('txt_imagen_demasiado_grande');
@@ -221,10 +253,10 @@ export class ImportarProductos implements OnInit {
             uploading: true,
             uploadProgress: 0
           };
-          
+
           this.imagenSeleccionada.push(nuevaImagen);
           const index = this.imagenSeleccionada.length - 1;
-          
+
           // Iniciar la subida a Cloud Storage
           this.subirImagenACloudStorage(file, index);
         };
@@ -250,10 +282,10 @@ export class ImportarProductos implements OnInit {
    */
   procesarArchivoExcel(file: File): void {
     this.errorArchivoExcel = null;
-    
+
     // Verificar la extensión del archivo
     const extension = file.name.split('.').pop()?.toLowerCase();
-    
+
     // Validar formato por extensión y tipo MIME
     if (extension !== 'csv' || !this.formatosExcelPermitidos.includes(file.type)) {
       this.errorArchivoExcel = this.translate.instant('txt_formato_csv_no_valido');
@@ -264,7 +296,7 @@ export class ImportarProductos implements OnInit {
       this.limpiarSeleccionExcel();
       return;
     }
-    
+
     // Validar tamaño
     if (file.size > this.maxTamanioExcel) {
       this.errorArchivoExcel = this.translate.instant('txt_csv_demasiado_grande');
@@ -275,7 +307,7 @@ export class ImportarProductos implements OnInit {
       this.limpiarSeleccionExcel();
       return;
     }
-    
+
     // Actualizar información del archivo seleccionado
     this.archivoExcelSeleccionado = file;
     this.nombreArchivoExcel = file.name;
@@ -289,15 +321,15 @@ export class ImportarProductos implements OnInit {
    */
   subirImagenACloudStorage(file: File, index: number): void {
     console.log(`Iniciando subida de imagen ${index + 1}: ${file.name}`);
-    
+
     this.storageService.uploadFile(file).subscribe({
       next: (publicUrl) => {
         console.log(`Imagen ${index + 1} subida exitosamente a: ${publicUrl}`);
-        
+
         // Extraer solo la URL base sin los parámetros de query
         const urlBase = publicUrl.split('?')[0];
         console.log(`URL base para almacenamiento: ${urlBase}`);
-        
+
         // Actualizar la imagen con la URL pública
         if (index < this.imagenSeleccionada.length) {
           this.imagenSeleccionada[index].publicUrl = urlBase;
@@ -307,12 +339,12 @@ export class ImportarProductos implements OnInit {
       },
       error: (error) => {
         console.error(`Error al subir imagen ${index + 1}:`, error);
-        
+
         if (index < this.imagenSeleccionada.length) {
           this.imagenSeleccionada[index].uploading = false;
           this.imagenSeleccionada[index].uploadError = this.translate.instant('txt_error_subir_imagen');
         }
-        
+
         this.errorImagen = this.translate.instant('txt_error_subir_imagen');
       }
     });
@@ -329,16 +361,16 @@ export class ImportarProductos implements OnInit {
       );
       return;
     }
-    
+
     this.subiendoExcel = true;
     this.progresoSubidaExcel = 0;
-    
+
     this.storageService.uploadCsvFile(this.archivoExcelSeleccionado).subscribe({
       next: (publicUrl) => {
         console.log(`Archivo CSV subido exitosamente a: ${publicUrl}`);
-        
+
         const urlBase = publicUrl.split('?')[0];
-        
+
         // Iniciar la importación masiva
         this.importarProductosMasivamente(urlBase);
       },
@@ -346,7 +378,7 @@ export class ImportarProductos implements OnInit {
         console.error('Error al subir archivo CSV:', error);
         this.subiendoExcel = false;
         this.progresoSubidaExcel = 0;
-        
+
         this.errorArchivoExcel = this.translate.instant('txt_error_subir_csv');
         this.showMessage(
           this.translate.instant('txt_error_subir_csv'),
@@ -362,29 +394,58 @@ export class ImportarProductos implements OnInit {
    */
   importarProductosMasivamente(csvUrl: string): void {
     this.progresoSubidaExcel = 50;
-    
+
     this.productosService.importarProductosMasivamente(csvUrl).subscribe({
-      next: (respuesta) => {
+      next: (respuesta: RespuestaImportacion) => {
         this.subiendoExcel = false;
         this.progresoSubidaExcel = 100;
-        
-        // Mostrar mensaje de éxito con el número de productos importados
-        const numProductos = respuesta.productos_importados || 0;
-        const mensaje = this.translate.instant('txt_productos_importados_exitosamente', { cantidad: numProductos });
-        
-        this.showMessage(mensaje, 'success');
-        
+
+        // Extraer información de la respuesta
+        const exitosos = respuesta.exitosos || 0;
+        const fallidos = respuesta.fallidos || 0;
+        const total = respuesta.total || 0;
+        const resultados = respuesta.resultados || [];
+
+        let mensaje = this.translate.instant('txt_productos_importados_resumen', {
+          exitosos: exitosos,
+          fallidos: fallidos,
+          total: total
+        });
+
+        if (fallidos > 0) {
+          this.showMessage(mensaje, exitosos > 0 ? 'success' : 'warning');
+
+          const productosFallidos = resultados
+            .filter((r: ResultadoProducto) => r.status === 'error')
+            .map((r: ResultadoProducto) => `${r.producto.nombre}: ${r.error}`);
+
+          if (productosFallidos.length > 0) {
+            Swal.fire({
+              title: this.translate.instant('txt_resultado_importacion'),
+              html: `
+                <div>
+                  <p>${mensaje}</p>
+                </div>
+              `,
+              icon: exitosos > 0 ? 'info' : 'warning',
+              confirmButtonText: this.translate.instant('btn_aceptar')
+            });
+          }
+        } else {
+          this.showMessage(mensaje, 'success');
+        }
+
         setTimeout(() => {
           this.limpiarSeleccionExcel();
           this.progresoSubidaExcel = 0;
         }, 3000);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error al importar productos:', error);
         this.subiendoExcel = false;
-        
+
         let errorMsg = this.translate.instant('txt_error_desconocido');
-        
+
         if (error.status === 400 && error.error.detalles) {
           errorMsg = Object.values(error.error.detalles).join(', ');
         } else if (error.status === 413) {
@@ -396,7 +457,7 @@ export class ImportarProductos implements OnInit {
         } else if (error.error && error.error.message) {
           errorMsg = error.error.message;
         }
-        
+
         this.showMessage(errorMsg, 'error');
       }
     });
@@ -416,7 +477,7 @@ export class ImportarProductos implements OnInit {
         );
         return;
       }
-      
+
       this.imagenSeleccionada.splice(index, 1);
     }
   }
@@ -429,7 +490,7 @@ export class ImportarProductos implements OnInit {
     this.formularioProducto.patchValue({
       imagenes: null
     });
-    
+
     if (this.fileInput) {
       this.fileInput.nativeElement.value = '';
     }
@@ -443,7 +504,7 @@ export class ImportarProductos implements OnInit {
     this.nombreArchivoExcel = '';
     this.tamanioArchivoExcel = '';
     this.errorArchivoExcel = null;
-    
+
     if (this.excelFileInput) {
       this.excelFileInput.nativeElement.value = '';
     }
@@ -455,11 +516,11 @@ export class ImportarProductos implements OnInit {
    */
   formatearTamanio(bytes: number): string {
     if (bytes === 0) return '0 B';
-    
+
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
@@ -474,7 +535,7 @@ export class ImportarProductos implements OnInit {
       });
       return;
     }
-  
+
     // Verificar si hay imágenes aún subiéndose
     const imagenesSubiendo = this.imagenSeleccionada.some(img => img.uploading);
     if (imagenesSubiendo) {
@@ -484,20 +545,20 @@ export class ImportarProductos implements OnInit {
       );
       return;
     }
-  
+
     this.cargando = true;
-  
+
     // Preparar los datos del producto
     const datosProducto = {...this.formularioProducto.value};
-    
+
     if (this.imagenSeleccionada.length > 0) {
       // Filtrar solo las imágenes que se subieron exitosamente
       const imagenesValidas = this.imagenSeleccionada
         .filter(img => img.publicUrl && !img.uploading && !img.uploadError)
         .map(img => img.publicUrl);
-      
+
       datosProducto.imagenes_productos = imagenesValidas;
-      
+
       if (datosProducto.imagenes) {
         delete datosProducto.imagenes;
       }
@@ -526,9 +587,9 @@ export class ImportarProductos implements OnInit {
         },
         error: (error) => {
           this.cargando = false;
-          
+
           let errorMsg = this.translate.instant('txt_error_desconocido');
-          
+
           if (error.status === 400 && error.error.detalles) {
             errorMsg = Object.values(error.error.detalles).join(', ');
           } else if (error.status === 409) {
@@ -542,7 +603,7 @@ export class ImportarProductos implements OnInit {
           } else if (error.error.message) {
             errorMsg = error.error.message;
           }
-          
+
           this.showMessage(errorMsg, 'error');
         }
       });
@@ -564,7 +625,7 @@ export class ImportarProductos implements OnInit {
         container: 'toast'
       }
     });
-    
+
     toast.fire({
       icon: type,
       title: msg,
