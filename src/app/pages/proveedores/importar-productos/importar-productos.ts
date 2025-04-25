@@ -428,7 +428,11 @@ export class ImportarProductos implements OnInit {
                 </div>
               `,
               icon: exitosos > 0 ? 'info' : 'warning',
-              confirmButtonText: this.translate.instant('btn_aceptar')
+              confirmButtonText: `<i class="fa fa-check"></i> ${this.translate.instant('btn_aceptar')}`,
+              customClass: {
+                confirmButton: 'btn btn-primary'
+              },
+              buttonsStyling: false
             });
           }
         } else {
