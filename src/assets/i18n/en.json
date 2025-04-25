@@ -295,9 +295,14 @@
     "txt_estado_en_stock": "In stock",
     "txt_estado_agotado": "Out of stock",
     "txt_produccion": "In production",
-    "txt_discontinued": "Discontinued",  
-    "txt_en_produccion": "In production", 
-    "txt_estado_discontinued": "Discontinued", 
-    "txt_estado_en_produccion": "In production"
-    
+    "txt_discontinued": "Discontinued",
+    "txt_en_produccion": "In production",
+    "txt_estado_discontinued": "Discontinued",
+    "txt_estado_en_produccion": "In production",
+    "txt_productos_importados_resumen": "Import completed: {{exitosos}} successful, {{fallidos}} failed out of {{total}} products",
+    "txt_productos_importados_sin_exitosos": "No products could be imported. Please check the CSV file.",
+    "txt_resultado_importacion": "Import Result",
+    "btn_aceptar": "Accept",
+    "txt_productos_con_errores": "Products with errors"
+
 }
