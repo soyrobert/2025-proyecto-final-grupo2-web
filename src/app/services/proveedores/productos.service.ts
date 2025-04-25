@@ -3,6 +3,37 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+/**
+ * Interfaz para el resultado de un producto individual en la importación
+ */
+interface ResultadoProducto {
+  indice: number;
+  status: 'success' | 'error';
+  producto: {
+    id?: number;
+    nombre: string;
+    descripcion: string;
+    tiempo_entrega: string;
+    precio: number;
+    condiciones_almacenamiento: string;
+    fecha_vencimiento: string;
+    estado: string;
+    inventario_inicial: number;
+    imagenes_productos: Array<{ id?: number; imagen_url: string } | string>;
+    proveedor: string | number;
+  };
+  error?: string;
+}
+
+/**
+ * Interfaz para la respuesta de importación masiva
+ */
+interface RespuestaImportacion {
+  exitosos: number;
+  fallidos: number;
+  resultados: ResultadoProducto[];
+  total: number;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -42,24 +73,24 @@ export class ProductosService {
       fecha_vencimiento: producto.fechaVencimiento,
       estado: this.mapearEstado(producto.estado),
       inventario_inicial: parseInt(producto.inventarioInicial, 10),
-      imagenes_productos: producto.imagenes_productos || [], 
+      imagenes_productos: producto.imagenes_productos || [],
       proveedor: producto.proveedor
     };
-  
+
     return this.http.post(this.apiUrl, productoData, { headers: this.getHeaders() });
   }
 
   /**
- * Importa productos masivamente desde un archivo CSV
- * @param csvUrl URL del archivo CSV subido al Storage
- */
-  importarProductosMasivamente(csvUrl: string): Observable<any> {
+   * Importa productos masivamente desde un archivo CSV
+   * @param csvUrl URL del archivo CSV subido al Storage
+   */
+  importarProductosMasivamente(csvUrl: string): Observable<RespuestaImportacion> {
     const data = {
       filepath: csvUrl
     };
-    
-    return this.http.post(`${this.apiUrl}/importar-masivamente`, data, { 
-      headers: this.getHeaders() 
+
+    return this.http.post<RespuestaImportacion>(`${this.apiUrl}/importar-masivamente`, data, {
+      headers: this.getHeaders()
     });
   }
 

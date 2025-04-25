@@ -231,7 +231,7 @@
     "txt_todos": "Todos",
     "txt_disponible": "Disponible",
     "txt_sin_stock": "Sin stock",
-    "txt_suspended": "Suspendido", 
+    "txt_suspended": "Suspendido",
     "txt_approved": "Aprobado",
     "txt_subiendo": "Subiendo...",
     "txt_error_subir_imagen": "Vuelve a intentar subir la imagen",
@@ -270,8 +270,13 @@
     "txt_estado_en_stock": "En stock",
     "txt_estado_agotado": "Agotado",
     "txt_produccion": "En producción",
-    "txt_discontinued": "Discontinuado", 
-    "txt_en_produccion": "En producción", 
+    "txt_discontinued": "Discontinuado",
+    "txt_en_produccion": "En producción",
     "txt_estado_discontinued": "Discontinuado",
-    "txt_estado_en_produccion": "En producción"
+    "txt_estado_en_produccion": "En producción",
+    "txt_productos_importados_resumen": "Importación completada: {{exitosos}} exitosos, {{fallidos}} fallidos de un total de {{total}} productos",
+    "txt_productos_importados_sin_exitosos": "No se pudo importar ningún producto. Revise el archivo CSV.",
+    "txt_resultado_importacion": "Resultado de la importación",
+    "btn_aceptar": "Aceptar",
+    "txt_productos_con_errores": "Productos con errores"
 }
