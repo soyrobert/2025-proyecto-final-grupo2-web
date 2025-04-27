@@ -303,6 +303,7 @@
     "txt_productos_importados_sin_exitosos": "No products could be imported. Please check the CSV file.",
     "txt_resultado_importacion": "Import Result",
     "btn_aceptar": "Accept",
-    "txt_productos_con_errores": "Products with errors"
+    "txt_productos_con_errores": "Products with errors",
+    "txt_limpiar_filtros": "Clear filters"
 
 }
