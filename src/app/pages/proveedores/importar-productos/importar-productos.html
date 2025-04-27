@@ -23,14 +23,14 @@
                 <p>{{ 'txt_intrucciones_de_uso_guia' | translate }}</p> -->
                 <h3 class="text-lg font-semibold dark:text-white-light">{{ 'txt_importacion_masiva' | translate }}</h3>
                 <p>{{ 'txt_importacion_masiva_descripcion' | translate }}</p>
-                
+
                 <!-- Área para importación masiva -->
                 <div class="mt-6 flex justify-center flex-col mt-16">
-                    
+
                     <!-- Añadir mensajes claros sobre los formatos aceptados -->
                     <div #dropZone class="w-3/5 mx-auto border-2 bg-gray-100 border-dashed border-gray-400 rounded-lg p-14 text-center cursor-pointer hover:border-primary transition-colors duration-300 mb-4">
                         <input #excelFileInput type="file" class="hidden" accept=".csv" (change)="onExcelSeleccionado($event)" />
-                        
+
                         <div *ngIf="!archivoExcelSeleccionado">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -45,7 +45,7 @@
                                 {{ 'txt_solo_archivos_csv' | translate }}
                             </p>
                         </div>
-                        
+
                         <!-- Información del archivo seleccionado -->
                         <div *ngIf="archivoExcelSeleccionado" class="flex flex-col items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,7 +53,7 @@
                             </svg>
                             <p class="font-medium text-gray-800 mt-2">{{ nombreArchivoExcel }}</p>
                             <p class="text-sm text-gray-500">{{ tamanioArchivoExcel }}</p>
-                            
+
                             <div class="mt-3 flex space-x-3">
                                 <button type="button" class="text-sm text-red-500 hover:text-red-700" (click)="limpiarSeleccionExcel()">
                                     {{ 'btn_eliminar' | translate }}
@@ -69,10 +69,10 @@
                         </svg>
                         {{ errorArchivoExcel }}
                     </div>
-                    
+
                     <!-- Botón para subir archivo -->
                     <div class="flex justify-center">
-                        <button type="button" class="btn btn-primary" 
+                        <button type="button" class="btn btn-primary"
                                 [disabled]="!archivoExcelSeleccionado || subiendoExcel"
                                 (click)="subirArchivoExcel()">
                             <svg *ngIf="subiendoExcel" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@
                             {{ subiendoExcel ? ('txt_subiendo' | translate) : ('btn_subir_datos' | translate) }}
                         </button>
                     </div>
-                    
+
                     <!-- Barra de progreso -->
                     <div *ngIf="subiendoExcel || progresoSubidaExcel > 0" class="mt-4">
                         <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
@@ -107,9 +107,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
                 <div>
                     <label for="nombre" class="block text-sm font-medium mb-1">{{ 'name' | translate }}</label>
-                    <input id="nombre" type="text" placeholder="{{ 'txt_ingrese_el_nombre_producto' | translate }}" 
+                    <input id="nombre" type="text" placeholder="{{ 'txt_ingrese_el_nombre_producto' | translate }}"
                           class="form-input" formControlName="nombre" />
-                    <div *ngIf="formularioProducto.get('nombre')?.touched && formularioProducto.get('nombre')?.errors?.['required']" 
+                    <div *ngIf="formularioProducto.get('nombre')?.touched && formularioProducto.get('nombre')?.errors?.['required']"
                           class="rounded bg-danger py-1 px-2 text-white mt-1">
                           {{ 'txt_por_favor_ingrese_el_nombre_producto' | translate }}
                     </div>
@@ -122,40 +122,40 @@
                          {{ 'txt_nombre_producto_maximo_50' | translate }}
                     </div>
                 </div>
-                
+
                 <div>
                     <label for="proveedor" class="block text-sm font-medium mb-1">{{ 'txt_proveedor' | translate }}</label>
                     <select id="proveedor" class="form-select" formControlName="proveedor">
                         <option value="">{{ 'txt_seleccione_proveedor' | translate }}</option>
-                        
+
                         <!-- Mostrar mensaje de carga -->
                         <option *ngIf="cargandoProveedores" value="" disabled>
                             {{ 'txt_cargando_proveedores' | translate }}
                         </option>
-                        
+
                         <!-- Mostrar proveedores desde el backend -->
-                        <option *ngFor="let proveedor of proveedores" [value]="proveedor.id">
+                        <option *ngFor="let proveedor of proveedores" [value]="proveedor.nombre">
                             {{ proveedor.nombre }}
                         </option>
-                        
+
                         <!-- Mostrar mensaje de error si ocurrió alguno -->
                         <option *ngIf="errorProveedores && !cargandoProveedores" value="" disabled>
                             {{ 'txt_error_cargar_proveedores' | translate }}
                         </option>
                     </select>
-                    <div *ngIf="formularioProducto.get('proveedor')?.touched && formularioProducto.get('proveedor')?.invalid" 
+                    <div *ngIf="formularioProducto.get('proveedor')?.touched && formularioProducto.get('proveedor')?.invalid"
                           class="rounded bg-danger py-1 px-2 text-white mt-1">
                           {{ 'txt_por_favor_seleccione_proveedor' | translate }}
                     </div>
                 </div>
             </div>
-            
+
             <!-- Fila 2: Descripción) -->
             <div class="mb-5">
                 <label for="descripcion" class="block text-sm font-medium mb-1">{{ 'txt_descripcion' | translate }}</label>
-                <textarea id="descripcion" rows="3" placeholder="{{ 'txt_ingrese_la_descripcion' | translate }}" 
+                <textarea id="descripcion" rows="3" placeholder="{{ 'txt_ingrese_la_descripcion' | translate }}"
                           class="form-textarea w-full" formControlName="descripcion"></textarea>
-                <div *ngIf="formularioProducto.get('descripcion')?.touched && formularioProducto.get('descripcion')?.errors?.['required']" 
+                <div *ngIf="formularioProducto.get('descripcion')?.touched && formularioProducto.get('descripcion')?.errors?.['required']"
                       class="rounded bg-danger py-1 px-2 text-white mt-1">
                       {{ 'txt_por_favor_ingrese_la_descripcion' | translate }}
                 </div>
@@ -168,23 +168,23 @@
                      {{ 'txt_descripcion_maximo_200' | translate }}
                 </div>
             </div>
-            
+
             <!-- Fila 3: Precio Unitario y Tiempo de Entrega -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
                 <div>
                     <label for="precioUnitario" class="block text-sm font-medium mb-1">{{ 'txt_precio_unitario' | translate }}</label>
-                    <input id="precioUnitario" type="text" placeholder="{{ 'txt_ingrese_el_precio_unitario' | translate }}" 
+                    <input id="precioUnitario" type="text" placeholder="{{ 'txt_ingrese_el_precio_unitario' | translate }}"
                           class="form-input" formControlName="precioUnitario" />
-                    <div *ngIf="formularioProducto.get('precioUnitario')?.touched && formularioProducto.get('precioUnitario')?.errors?.['required']" 
+                    <div *ngIf="formularioProducto.get('precioUnitario')?.touched && formularioProducto.get('precioUnitario')?.errors?.['required']"
                           class="rounded bg-danger py-1 px-2 text-white mt-1">
                           {{ 'txt_por_favor_ingrese_el_precio_unitario' | translate }}
                     </div>
-                    <div *ngIf="formularioProducto.get('precioUnitario')?.touched && formularioProducto.get('precioUnitario')?.errors?.['pattern']" 
+                    <div *ngIf="formularioProducto.get('precioUnitario')?.touched && formularioProducto.get('precioUnitario')?.errors?.['pattern']"
                          class="rounded bg-danger py-1 px-2 text-white mt-1">
                          {{ 'txt_precio_unitario_invalido' | translate }}
                     </div>
                 </div>
-                
+
                 <div>
                     <label for="tiempoEntrega" class="block text-sm font-medium mb-1">{{ 'txt_tiempo_entrega' | translate }}</label>
                     <select id="tiempoEntrega" class="form-select" formControlName="tiempoEntrega">
@@ -196,19 +196,19 @@
                         <option value="15-30 días">15-30 {{ 'txt_dias' | translate }}</option>
                         <option value="Más de 30 días">{{ 'txt_mas_de_30_dias' | translate }}</option>
                     </select>
-                    <div *ngIf="formularioProducto.get('tiempoEntrega')?.touched && formularioProducto.get('tiempoEntrega')?.invalid" 
+                    <div *ngIf="formularioProducto.get('tiempoEntrega')?.touched && formularioProducto.get('tiempoEntrega')?.invalid"
                           class="rounded bg-danger py-1 px-2 text-white mt-1">
                           {{ 'txt_por_favor_seleccione_tiempo_entrega' | translate }}
                     </div>
                 </div>
             </div>
-            
+
             <!-- Fila 4: Condiciones de almacenamiento -->
             <div class="mb-5">
                 <label for="condicionesAlmacenamiento" class="block text-sm font-medium mb-1">{{ 'txt_condiciones_almacenamiento' | translate }}</label>
-                <textarea id="condicionesAlmacenamiento" rows="3" placeholder="{{ 'txt_ingrese_condiciones_almacenamiento' | translate }}" 
+                <textarea id="condicionesAlmacenamiento" rows="3" placeholder="{{ 'txt_ingrese_condiciones_almacenamiento' | translate }}"
                           class="form-textarea w-full" formControlName="condicionesAlmacenamiento"></textarea>
-                <div *ngIf="formularioProducto.get('condicionesAlmacenamiento')?.touched && formularioProducto.get('condicionesAlmacenamiento')?.errors?.['required']" 
+                <div *ngIf="formularioProducto.get('condicionesAlmacenamiento')?.touched && formularioProducto.get('condicionesAlmacenamiento')?.errors?.['required']"
                       class="rounded bg-danger py-1 px-2 text-white mt-1">
                       {{ 'txt_por_favor_ingrese_condiciones_almacenamiento' | translate }}
                 </div>
@@ -221,59 +221,59 @@
                      {{ 'txt_condiciones_almacenamiento_maximo_200' | translate }}
                 </div>
             </div>
-            
+
             <!-- Fila 5: Fecha de vencimiento y Estado -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
                 <div>
                     <label for="fechaVencimiento" class="block text-sm font-medium mb-1">{{ 'txt_fecha_vencimiento' | translate }}</label>
                     <input id="fechaVencimiento" type="date" class="form-input" formControlName="fechaVencimiento" />
-                    <div *ngIf="formularioProducto.get('fechaVencimiento')?.touched && formularioProducto.get('fechaVencimiento')?.invalid" 
+                    <div *ngIf="formularioProducto.get('fechaVencimiento')?.touched && formularioProducto.get('fechaVencimiento')?.invalid"
                           class="rounded bg-danger py-1 px-2 text-white mt-1">
                           {{ 'txt_por_favor_ingrese_fecha_vencimiento' | translate }}
                     </div>
                 </div>
-                
+
                 <div>
                     <label for="estado" class="block text-sm font-medium mb-1">{{ 'txt_estado' | translate }}</label>
                     <select id="estado" class="form-select" formControlName="estado">
                         <option value="">{{ 'txt_seleccione_estado' | translate }}</option>
-                        <option value="en_stock">{{ 'txt_activo' | translate }}</option>
-                        <option value="Inactivo">{{ 'txt_inactivo' | translate }}</option>
-                        <option value="Agotado">{{ 'txt_agotado' | translate }}</option>
+                        <option value="en_stock">{{ 'txt_en_stock' | translate }}</option>
+                        <option value="agotado">{{ 'txt_agotado' | translate }}</option>
+                        <option value="en_produccion">{{ 'txt_en_produccion' | translate }}</option>
                     </select>
-                    <div *ngIf="formularioProducto.get('estado')?.touched && formularioProducto.get('estado')?.invalid" 
+                    <div *ngIf="formularioProducto.get('estado')?.touched && formularioProducto.get('estado')?.invalid"
                           class="rounded bg-danger py-1 px-2 text-white mt-1">
                           {{ 'txt_por_favor_seleccione_estado' | translate }}
                     </div>
                 </div>
             </div>
-            
+
             <!-- Fila 6: Inventario inicial -->
             <div class="mb-5">
                 <label for="inventarioInicial" class="block text-sm font-medium mb-1">{{ 'txt_inventario_inicial' | translate }}</label>
-                <input id="inventarioInicial" type="text" placeholder="{{ 'txt_ingrese_inventario_inicial' | translate }}" 
+                <input id="inventarioInicial" type="text" placeholder="{{ 'txt_ingrese_inventario_inicial' | translate }}"
                       class="form-input" formControlName="inventarioInicial" />
-                <div *ngIf="formularioProducto.get('inventarioInicial')?.touched && formularioProducto.get('inventarioInicial')?.errors?.['required']" 
+                <div *ngIf="formularioProducto.get('inventarioInicial')?.touched && formularioProducto.get('inventarioInicial')?.errors?.['required']"
                       class="rounded bg-danger py-1 px-2 text-white mt-1">
                       {{ 'txt_por_favor_ingrese_inventario_inicial' | translate }}
                 </div>
-                <div *ngIf="formularioProducto.get('inventarioInicial')?.touched && formularioProducto.get('inventarioInicial')?.errors?.['pattern']" 
+                <div *ngIf="formularioProducto.get('inventarioInicial')?.touched && formularioProducto.get('inventarioInicial')?.errors?.['pattern']"
                      class="rounded bg-danger py-1 px-2 text-white mt-1">
                      {{ 'txt_solo_numeros_enteros' | translate }}
                 </div>
             </div>
-            
+
             <!-- Fila 7: Imágenes del producto con previsualización -->
             <div class="mb-5">
                 <label for="imagenes" class="block text-sm font-medium mb-1">{{ 'txt_imagenes_producto' | translate }}</label>
                 <div class="flex items-center">
-                    <input 
-                        #fileInput 
-                        id="imagenes" 
-                        type="file" 
-                        class="hidden" 
-                        accept="image/jpeg,image/png,image/gif,image/webp" 
-                        multiple 
+                    <input
+                        #fileInput
+                        id="imagenes"
+                        type="file"
+                        class="hidden"
+                        accept="image/jpeg,image/png,image/gif,image/webp"
+                        multiple
                         (change)="onImagenSeleccionada($event)"
                     />
                     <label for="imagenes" class="btn btn-outline-primary cursor-pointer">
@@ -286,12 +286,12 @@
                         {{ imagenSeleccionada.length }} {{ 'txt_imagenes_seleccionadas' | translate }}
                     </span>
                 </div>
-                
+
                 <!-- Mensaje de error -->
                 <div *ngIf="errorImagen" class="rounded bg-danger py-1 px-2 text-white mt-1">
                     {{ errorImagen }}
                 </div>
-                
+
                 <!-- Previsualización de imágenes seleccionadas -->
                 <div *ngIf="imagenSeleccionada.length > 0" class="mt-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                     <div *ngFor="let imagen of imagenSeleccionada; let i = index" class="relative group">
@@ -299,7 +299,7 @@
                         <div class="w-full h-24 rounded-md overflow-hidden border border-gray-200 relative">
                             <!-- Imagen de previsualización -->
                             <img [src]="imagen.url" alt="Preview" class="w-full h-full object-cover">
-                            
+
                             <!-- Indicador de carga -->
                             <div *ngIf="imagen.uploading" class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white text-xs">
                                 <div class="mb-1">{{ 'txt_subiendo' | translate }}...</div>
@@ -307,26 +307,26 @@
                                     <div class="bg-primary h-full transition-all" [style.width.%]="imagen.uploadProgress || 0"></div>
                                 </div>
                             </div>
-                            
+
                             <!-- Indicador de error -->
                             <div *ngIf="imagen.uploadError" class="absolute inset-0 bg-red-500 bg-opacity-50 flex items-center justify-center">
                                 <span class="text-white text-xs px-2 text-center">{{ imagen.uploadError }}</span>
                             </div>
-                            
+
                             <!-- Indicador de éxito -->
                             <div *ngIf="imagen.publicUrl && !imagen.uploading" class="absolute top-1 left-1 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
                                 ✓
                             </div>
                         </div>
-                        
+
                         <!-- Información de tamaño -->
                         <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 px-2 py-1 text-xs text-white">
                             {{ imagen.tamanio }}
                         </div>
-                        
+
                         <!-- Botón de eliminar -->
-                        <button 
-                            type="button" 
+                        <button
+                            type="button"
                             class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                             (click)="eliminarImagen(i)"
                             [disabled]="imagen.uploading"
@@ -335,7 +335,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Información sobre formatos y tamaños permitidos -->
                 <div class="mt-2 text-xs text-gray-500">
                     {{ 'txt_formatos_permitidos' | translate }}: JPG, PNG, GIF, WEBP
@@ -343,7 +343,7 @@
                     {{ 'txt_tamanio_maximo' | translate }}: 5MB
                 </div>
             </div>
-            
+
             <div class="mt-8 flex items-center justify-end">
                 <button type="button" class="btn btn-outline-danger" (click)="modalProducto.close()">{{ 'btn_cancelar' | translate }}</button>
                 <button type="submit" class="btn btn-primary ml-4" [disabled]="formularioProducto.invalid || cargando">
