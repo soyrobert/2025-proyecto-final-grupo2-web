@@ -93,7 +93,7 @@ export class ImportarProductos implements OnInit {
   nombreArchivoExcel: string = '';
   tamanioArchivoExcel: string = '';
   errorArchivoExcel: string | null = null;
-  maxTamanioExcel: number = 5 * 1024 * 1024;
+  maxTamanioExcel: number = 1 * 1024 * 1024;
   formatosExcelPermitidos: string[] = [
     'text/csv',
     'application/csv',

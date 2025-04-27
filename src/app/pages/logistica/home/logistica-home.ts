@@ -15,39 +15,39 @@ export class LogisticaHome implements OnInit {
   searchCode = '';
   searchName = '';
   searchStatus = '';
-  
+
   // Estados disponibles para el filtro
   statusOptions = ['txt_todos', 'txt_en_stock', 'txt_agotado', 'txt_en_produccion'];
-  
+
   // Variables de paginación
   currentPage = 1;
   itemsPerPage = 10;
   totalItems = 0;
   totalPages = 0;
-  
+
   // Variables de estado
   isLoading = false;
   hasError = false;
   errorMessage = '';
-  
+
   products: Product[] = [];
-  
+
   constructor(
     private translate: TranslateService,
     private logisticaService: LogisticaService
   ) {}
-  
+
   ngOnInit(): void {
     this.loadProducts();
   }
-  
+
   /**
    * Carga los productos desde la API
    */
   loadProducts(): void {
     this.isLoading = true;
     this.hasError = false;
-    
+
     let apiStatus = '';
     if (this.searchStatus && this.searchStatus !== 'txt_todos') {
       switch (this.searchStatus) {
@@ -62,12 +62,15 @@ export class LogisticaHome implements OnInit {
           break;
       }
     }
-    
+
+    // Verificar si el código contiene letras
+    const codeParam = this.isNumericCode(this.searchCode) ? this.searchCode : '';
+
     this.logisticaService.getProducts(
       this.currentPage,
       this.itemsPerPage,
       this.searchName,
-      this.searchCode,
+      codeParam,
       apiStatus
     )
     .pipe(
@@ -87,7 +90,16 @@ export class LogisticaHome implements OnInit {
       }
     });
   }
-  
+
+  /**
+   * Verifica si el código contiene solo caracteres numéricos
+   * @param code Código a verificar
+   * @returns true si es numérico, false si contiene letras
+   */
+  isNumericCode(code: string): boolean {
+    return /^\d*$/.test(code);
+  }
+
   /**
    * Aplica los filtros y recarga los productos
    */
@@ -95,7 +107,28 @@ export class LogisticaHome implements OnInit {
     this.currentPage = 1;
     this.loadProducts();
   }
-  
+
+  /**
+   * Limpia todos los filtros y recarga los productos
+   */
+  clearFilters(): void {
+    this.searchCode = '';
+    this.searchName = '';
+    this.searchStatus = '';
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  /**
+   * Maneja el evento de presionar Enter en los campos de filtro
+   * @param event Evento del teclado
+   */
+  handleKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.applyFilters();
+    }
+  }
+
   /**
    * Cambia a la página especificada
    * @param page Número de página
@@ -106,7 +139,7 @@ export class LogisticaHome implements OnInit {
       this.loadProducts();
     }
   }
-  
+
   /**
    * Obtiene la clase CSS según el estado del producto
    * @param status Estado del producto
@@ -124,7 +157,7 @@ export class LogisticaHome implements OnInit {
         return 'bg-primary';
     }
   }
-  
+
   /**
    * Formatea un valor numérico como moneda
    * @param value Valor a formatear
@@ -133,7 +166,7 @@ export class LogisticaHome implements OnInit {
   formatCurrency(value: number): string {
     return '$' + value.toLocaleString('es-CO');
   }
-  
+
   /**
    * Formatea una fecha ISO a formato DD/MM/YYYY
    * @param dateString Fecha en formato ISO
@@ -141,12 +174,12 @@ export class LogisticaHome implements OnInit {
    */
   formatDate(dateString: string): string {
     if (!dateString) return '';
-    
+
     const date = new Date(`${dateString}T00:00:00`);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
-    
+
     return `${day}/${month}/${year}`;
   }
 
@@ -159,17 +192,17 @@ export class LogisticaHome implements OnInit {
     if (this.totalPages <= 5) {
       return index + 1;
     }
-    
+
     // Si estamos en las primeras 3 páginas
     if (this.currentPage <= 3) {
       return index + 1;
     }
-    
+
     // Si estamos en las últimas 3 páginas
     if (this.currentPage >= this.totalPages - 2) {
       return this.totalPages - 4 + index;
     }
-    
+
     // Si estamos en medio, mostrar 2 páginas antes y 2 después
     return this.currentPage - 2 + index;
   }
