@@ -278,5 +278,6 @@
     "txt_productos_importados_sin_exitosos": "No se pudo importar ningún producto. Revise el archivo CSV.",
     "txt_resultado_importacion": "Resultado de la importación",
     "btn_aceptar": "Aceptar",
-    "txt_productos_con_errores": "Productos con errores"
+    "txt_productos_con_errores": "Productos con errores",
+    "txt_limpiar_filtros": "Limpiar filtros"
 }
