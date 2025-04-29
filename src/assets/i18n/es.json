@@ -279,5 +279,8 @@
     "txt_resultado_importacion": "Resultado de la importación",
     "btn_aceptar": "Aceptar",
     "txt_productos_con_errores": "Productos con errores",
-    "txt_limpiar_filtros": "Limpiar filtros"
+    "txt_limpiar_filtros": "Limpiar filtros",
+    "txt_importacion_masiva_proveedores": "Importación masiva de proveedores",
+    "txt_importacion_masiva_proveedores_descripcion": "Desde aquí puedes importar múltiples proveedores utilizando un archivo CSV. Asegúrate de seguir el formato correcto.",
+    "txt_proveedores_importados_resumen": "Se importaron {{exitosos}} de {{total}} proveedores. {{fallidos}} fallidos."
 }

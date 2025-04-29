@@ -3,6 +3,34 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+/**
+ * Interfaz para el resultado de un proveedor individual en la importación
+ */
+interface ResultadoProveedor {
+  indice: number;
+  status: 'success' | 'error';
+  proveedor: {
+    id?: number;
+    nombre: string;
+    email: string;
+    numero_contacto: string;
+    pais: string;
+    caracteristicas: string;
+    condiciones_comerciales_tributarias: string;
+  };
+  error?: string;
+}
+
+/**
+ * Interfaz para la respuesta de importación masiva
+ */
+interface RespuestaImportacion {
+  exitosos: number;
+  fallidos: number;
+  resultados: ResultadoProveedor[];
+  total: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -44,6 +72,20 @@ export class ProveedoresService {
     };
 
     return this.http.post(this.apiUrl, proveedorData, { headers: this.getHeaders() });
+  }
+
+  /**
+   * Importa proveedores masivamente desde un archivo CSV
+   * @param csvUrl URL del archivo CSV subido al Storage
+   */
+  importarProveedoresMasivamente(csvUrl: string): Observable<RespuestaImportacion> {
+    const data = {
+      filepath: csvUrl
+    };
+
+    return this.http.post<RespuestaImportacion>(`${this.apiUrl}/importar-masivamente`, data, {
+      headers: this.getHeaders()
+    });
   }
 
   /**

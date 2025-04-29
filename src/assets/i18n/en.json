@@ -304,6 +304,8 @@
     "txt_resultado_importacion": "Import Result",
     "btn_aceptar": "Accept",
     "txt_productos_con_errores": "Products with errors",
-    "txt_limpiar_filtros": "Clear filters"
-
+    "txt_limpiar_filtros": "Clear filters",
+    "txt_importacion_masiva_proveedores": "Bulk Supplier Import",
+    "txt_importacion_masiva_proveedores_descripcion": "From here you can import multiple suppliers using a CSV file. Make sure to follow the correct format.",
+    "txt_proveedores_importados_resumen": "{{exitosos}} out of {{total}} suppliers were imported. {{fallidos}} failed."
 }
