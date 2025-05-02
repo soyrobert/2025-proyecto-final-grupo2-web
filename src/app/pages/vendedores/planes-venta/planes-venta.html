@@ -1,0 +1,162 @@
+<div>
+    <!-- Breadcrumb -->
+    <ul class="flex space-x-2 rtl:space-x-reverse">
+        <li>
+            <a href="javascript:;" class="text-primary hover:underline">{{ 'dashboard' | translate }}</a>
+        </li>
+        <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+            <span>{{ 'txt_planes_venta' | translate }}</span>
+        </li>
+    </ul>
+
+    <!-- Título y descripción -->
+    <div class="py-5">
+        <h2 class="text-xl font-bold">{{ 'txt_planes_venta' | translate }}</h2>
+        <p class="mt-1 text-gray-600 dark:text-gray-400">{{ 'txt_descripcion_planes_venta' | translate }}</p>
+    </div>
+
+    <!-- Tabla de vendedores y metas -->
+    <div class="panel">
+        <div class="flex items-center justify-between mb-5">
+            <h5 class="font-semibold text-lg dark:text-white-light">{{ 'txt_metas_vendedor' | translate }}</h5>
+            <div class="flex items-center space-x-3 rtl:space-x-reverse">
+                <button
+                    *ngIf="hayVendedoresEditados()"
+                    type="button"
+                    class="btn btn-success btn-sm"
+                    [disabled]="guardandoCambios"
+                    (click)="guardarCambiosEnLinea()">
+                    <svg *ngIf="guardandoCambios" class="animate-spin h-4 w-4 ltr:mr-2 rtl:ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {{ guardandoCambios ? ('txt_guardando' | translate) : ('btn_guardar_cambios' | translate) }}
+                    <span class="ltr:ml-1 rtl:mr-1 bg-white bg-opacity-30 rounded-full px-2 py-1 text-xs" *ngIf="contarVendedoresEditados() > 0">
+                        {{ contarVendedoresEditados() }}
+                    </span>
+                </button>
+                <button
+                    *ngIf="hayVendedoresEditados()"
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    (click)="cancelarCambiosEnLinea()">
+                    {{ 'btn_cancelar' | translate }}
+                </button>
+            </div>
+        </div>
+
+        <div class="mb-3 text-sm text-gray-600 dark:text-gray-400">
+            <p>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block mr-1">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                {{ 'txt_instruccion_edicion' | translate }}
+            </p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'txt_nombre_vendedor' | translate }}</th>
+                        <th *ngFor="let mes of mesesMostrados">{{ mes | translate }}</th>
+                        <th class="text-center">{{ 'txt_acciones' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let vendedor of vendedores; let i = index"
+                        [ngClass]="{'bg-primary bg-opacity-10': esVendedorEditado(vendedor.id)}"
+                        (click)="habilitarEdicionEnLinea(vendedor)">
+                        <td>
+                            <div class="flex items-center">
+                                <img *ngIf="vendedor.avatar" [src]="vendedor.avatar" class="w-8 h-8 rounded-full ltr:mr-3 rtl:ml-3 object-cover" />
+                                <div *ngIf="!vendedor.avatar" class="w-8 h-8 rounded-full ltr:mr-3 rtl:ml-3 flex items-center justify-center bg-primary text-white">
+                                    {{ vendedor.nombre.charAt(0) }}
+                                </div>
+                                <span class="font-medium hover:text-primary cursor-pointer">
+                                    {{ vendedor.nombre }}
+                                    <span *ngIf="esVendedorEditado(vendedor.id)" class="ml-2 text-xs text-primary">({{ 'txt_editando' | translate }})</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td *ngFor="let mes of mesesMostrados">
+                            <!-- Celda en modo edición -->
+                            <div *ngIf="esVendedorEditado(vendedor.id)" class="relative">
+                                <input
+                                    type="number"
+                                    class="form-input py-1 px-2 w-full text-right"
+                                    [ngClass]="{'border-danger': esCeldaInvalida(vendedor.id, mes)}"
+                                    [value]="obtenerValorEditado(vendedor.id, mes)"
+                                    (input)="actualizarValorEditado(vendedor.id, mes, $event)"
+                                    (focus)="onInputFocus($event)"
+                                    step="1000"
+                                    min="0"
+                                />
+                                <div *ngIf="esCeldaInvalida(vendedor.id, mes)" class="text-danger text-xs absolute top-full left-0 right-0">
+                                    {{ 'txt_valor_invalido' | translate }}
+                                </div>
+                            </div>
+
+                            <!-- Celda en modo visualización -->
+                            <div *ngIf="!esVendedorEditado(vendedor.id)"
+                                [ngClass]="{'font-semibold text-primary': esCeldaModificada(vendedor.id, mes)}">
+                                {{ obtenerMetaPorMes(vendedor, mes) | currency:'USD':'symbol':'1.0-0' }}
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-outline-primary" (click)="abrirModalEditarMetas(vendedor); $event.stopPropagation();">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para editar metas -->
+    <app-modal #modalMetas [title]="'txt_editar_metas' | translate">
+        <div *ngIf="vendedorSeleccionado">
+            <div class="mb-5">
+                <h3 class="text-lg font-medium">{{ vendedorSeleccionado.nombre }}</h3>
+                <p class="text-gray-500">{{ 'txt_editar_metas_descripcion' | translate }}</p>
+            </div>
+
+            <form [formGroup]="formularioMetas" (ngSubmit)="guardarMetas()">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div *ngFor="let control of obtenerControlesMetas()">
+                        <label [for]="control.key" class="block text-sm font-medium mb-1">{{ control.label | translate }}</label>
+                        <input
+                            [id]="control.key"
+                            type="number"
+                            class="form-input"
+                            [formControlName]="control.key"
+                            min="0"
+                            step="1000"
+                        />
+                        <div *ngIf="formularioMetas.get(control.key)?.invalid && formularioMetas.get(control.key)?.touched" class="text-danger mt-1 text-xs">
+                            {{ 'txt_meta_invalida' | translate }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex items-center justify-end">
+                    <button type="button" class="btn btn-outline-danger" (click)="modalMetas.close()">
+                        {{ 'btn_cancelar' | translate }}
+                    </button>
+                    <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4" [disabled]="formularioMetas.invalid || guardando">
+                        <svg *ngIf="guardando" class="animate-spin h-4 w-4 ltr:mr-2 rtl:ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {{ guardando ? ('txt_guardando' | translate) : ('btn_guardar' | translate) }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </app-modal>
+</div>
