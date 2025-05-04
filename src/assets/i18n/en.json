@@ -332,5 +332,7 @@
     "sep/2025": "Sep/2025",
     "oct/2025": "Oct/2025",
     "nov/2025": "Nov/2025",
-    "dic/2025": "Dec/2025"
+    "dic/2025": "Dec/2025",
+    "txt_proveedores_importados_exitosamente": "Suppliers have been successfully imported",
+    "txt_columnas_requeridas_faltantes": "The CSV file doesn't have the correct format. Required columns are missing."
 }

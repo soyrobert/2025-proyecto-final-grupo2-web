@@ -250,11 +250,24 @@ export class ProveedoresHome implements OnInit {
     this.progresoSubidaExcel = 50;
 
     this.proveedoresService.importarProveedoresMasivamente(csvUrl).subscribe({
-      next: (respuesta: RespuestaImportacion) => {
+      next: (respuesta: any) => {
         this.subiendoExcel = false;
         this.progresoSubidaExcel = 100;
+        // Verificar si es una respuesta de éxito sin resultados detallados
+        if (respuesta.message && respuesta.message.includes("exitosamente")) {
+          this.showMessage(
+            this.translate.instant('txt_proveedores_importados_exitosamente'),
+            'success'
+          );
 
-        // Extraer información de la respuesta
+          setTimeout(() => {
+            this.limpiarSeleccionExcel();
+            this.progresoSubidaExcel = 0;
+          }, 3000);
+
+          return;
+        }
+
         const exitosos = respuesta.exitosos || 0;
         const fallidos = respuesta.fallidos || 0;
         const total = respuesta.total || 0;
@@ -304,7 +317,9 @@ export class ProveedoresHome implements OnInit {
 
         let errorMsg = this.translate.instant('txt_error_desconocido');
 
-        if (error.status === 400 && error.error.detalles) {
+        if (error.error && error.error.message && error.error.message.includes("Faltan columnas requeridas")) {
+          errorMsg = this.translate.instant('txt_columnas_requeridas_faltantes');
+        } else if (error.status === 400 && error.error.detalles) {
           errorMsg = Object.values(error.error.detalles).join(', ');
         } else if (error.status === 413) {
           errorMsg = this.translate.instant('msg_archivo_muy_grande');
