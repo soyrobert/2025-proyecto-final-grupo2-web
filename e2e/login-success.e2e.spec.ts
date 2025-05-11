@@ -32,8 +32,8 @@ test.describe('Login exitoso', () => {
       });
     });
 
-    await page.getByLabel('Correo electrónico').fill(testUser.email);
-    await page.getByLabel('Contraseña').fill(testUser.password);
+    await page.locator('#Email').fill(testUser.email);
+    await page.locator('#Password').fill(testUser.password);
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();
 
     await expect(page).toHaveURL('/vendedores');
@@ -64,8 +64,8 @@ test.describe('Login exitoso', () => {
       });
     });
 
-    await page.getByLabel('Correo electrónico').fill(testUser.email);
-    await page.getByLabel('Contraseña').fill(testUser.password);
+    await page.locator('#Email').fill(testUser.email);
+    await page.locator('#Password').fill(testUser.password);
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();
 
     await expect(page).toHaveURL('/logistica');
@@ -96,8 +96,8 @@ test.describe('Login exitoso', () => {
       });
     });
 
-    await page.getByLabel('Correo electrónico').fill(testUser.email);
-    await page.getByLabel('Contraseña').fill(testUser.password);
+    await page.locator('#Email').fill(testUser.email);
+    await page.locator('#Password').fill(testUser.password);
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();
 
     await expect(page).toHaveURL('/proveedores');

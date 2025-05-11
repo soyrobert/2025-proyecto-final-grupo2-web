@@ -13,53 +13,60 @@ test.describe('Validación del formulario de login', () => {
 
   // Prueba de validación de formato de correo electrónico
   test('debería validar el formato del correo electrónico', async ({ page }) => {
-    await page.getByLabel('Correo electrónico').fill('correo-invalido');
-    await page.getByLabel('Correo electrónico').blur();
+    await page.locator('#Email').fill('correo-invalido');
+    await page.locator('#Email').blur();
 
     await expect(page.getByText('Ingrese un email válido')).toBeVisible();
+    await expect(page.locator('#email-error')).toBeVisible();
 
-    await page.getByLabel('Correo electrónico').fill('usuario@ejemplo.com');
-    await page.getByLabel('Correo electrónico').blur();
+    await page.locator('#Email').fill('usuario@ejemplo.com');
+    await page.locator('#Email').blur();
 
     await expect(page.getByText('Luce bien')).toBeVisible();
+    await expect(page.locator('#email-valid')).toBeVisible();
   });
 
   // Prueba de validación de contraseña
   test('debería validar que la contraseña no esté vacía', async ({ page }) => {
-    await page.getByLabel('Contraseña').click();
-    await page.getByLabel('Contraseña').blur();
+    await page.locator('#Password').click();
+    await page.locator('#Password').blur();
 
     await expect(page.getByText('La contraseña es obligatoria')).toBeVisible();
+    await expect(page.locator('#password-error')).toBeVisible();
 
-    await page.getByLabel('Contraseña').fill('password123');
-    await page.getByLabel('Contraseña').blur();
+    await page.locator('#Password').fill('password123');
+    await page.locator('#Password').blur();
 
     await expect(page.getByText('Luce bien')).toBeVisible();
+    await expect(page.locator('#password-valid')).toBeVisible();
   });
 
   // Prueba de habilitación/deshabilitación del botón de login
   test('debería habilitar el botón solo cuando el formulario sea válido', async ({ page }) => {
-
     await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeDisabled();
 
-    await page.getByLabel('Correo electrónico').fill('usuario@ejemplo.com');
-    await page.getByLabel('Correo electrónico').blur();
+    // Validación con correo electrónico válido pero sin contraseña
+    await page.locator('#Email').fill('usuario@ejemplo.com');
+    await page.locator('#Email').blur();
     await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeDisabled();
 
-    await page.getByLabel('Correo electrónico').clear();
-    await page.getByLabel('Contraseña').fill('password123');
-    await page.getByLabel('Contraseña').blur();
+    // Validación con contraseña pero sin correo electrónico
+    await page.locator('#Email').clear();
+    await page.locator('#Password').fill('password123');
+    await page.locator('#Password').blur();
     await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeDisabled();
 
-    await page.getByLabel('Correo electrónico').fill('usuario@ejemplo.com');
-    await page.getByLabel('Correo electrónico').blur();
-    await page.getByLabel('Contraseña').fill('password123');
-    await page.getByLabel('Contraseña').blur();
+    // Validación con ambos campos correctos
+    await page.locator('#Email').fill('usuario@ejemplo.com');
+    await page.locator('#Email').blur();
+    await page.locator('#Password').fill('password123');
+    await page.locator('#Password').blur();
     await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeEnabled();
 
-    await page.getByLabel('Correo electrónico').clear();
-    await page.getByLabel('Correo electrónico').fill('correo-invalido');
-    await page.getByLabel('Correo electrónico').blur();
+    // Validación con correo inválido y contraseña válida
+    await page.locator('#Email').clear();
+    await page.locator('#Email').fill('correo-invalido');
+    await page.locator('#Email').blur();
     await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeDisabled();
   });
 });

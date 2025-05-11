@@ -1,36 +1,43 @@
 <div>
-    <ul class="flex space-x-2 rtl:space-x-reverse">
-        <li>
-            <a href="javascript:;" class="text-primary hover:underline">{{ 'dashboard' | translate }}</a>
-        </li>
-        <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-            <span>{{ 'txt_title_proveedores' | translate }}</span>
-        </li>
-    </ul>
+    <nav aria-label="Navegación de migas de pan">
+        <ul class="flex space-x-2 rtl:space-x-reverse">
+            <li>
+                <a href="javascript:;" class="text-primary hover:underline">{{ 'dashboard' | translate }}</a>
+            </li>
+            <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                <span>{{ 'txt_title_proveedores' | translate }}</span>
+            </li>
+        </ul>
+    </nav>
 
     <div class="flex items-center justify-start py-7">
-        <button type="button" class="btn btn-primary btn-lg" (click)="abrirModalProveedor()">
-            <icon-plus class="text-white mr-2" />
+        <button type="button" class="btn btn-primary btn-lg" (click)="abrirModalProveedor()" attr.aria-label="{{ 'btn_agregar_proveedor' | translate }}">
+            <icon-plus class="text-white mr-2" aria-hidden="true" />
             {{ 'btn_agregar_proveedor' | translate }}
         </button>
     </div>
 
     <div class="animation pt-6">
         <div class="panel min-h-[600px] ">
-            <img src="/assets/images/logo.svg" alt="logo">
+            <img src="/assets/images/logo.svg" alt="Logo de la empresa">
             <div class="flex flex-col my-5">
-                <h3 class="text-lg font-semibold dark:text-white-light">{{ 'txt_importacion_masiva_proveedores' | translate }}</h3>
+                <h2 class="text-lg font-semibold dark:text-white-light">{{ 'txt_importacion_masiva_proveedores' | translate }}</h2>
                 <p>{{ 'txt_importacion_masiva_proveedores_descripcion' | translate }}</p>
 
                 <!-- Área para importación masiva -->
                 <div class="mt-6 flex justify-center flex-col mt-16">
 
-                    <!-- Añadir mensajes claros sobre los formatos aceptados -->
-                    <div #dropZone class="w-3/5 mx-auto border-2 bg-gray-100 border-dashed border-gray-400 rounded-lg p-14 text-center cursor-pointer hover:border-primary transition-colors duration-300 mb-4">
-                        <input #excelFileInput type="file" class="hidden" accept=".csv" (change)="onExcelSeleccionado($event)" />
+                    <!-- Reemplazar div con button para mejor accesibilidad -->
+                    <button #dropZone
+                         type="button"
+                         class="w-3/5 mx-auto border-2 bg-gray-100 border-dashed border-gray-400 rounded-lg p-14 text-center hover:border-primary transition-colors duration-300 mb-4"
+                         (click)="excelFileInput.click()"
+                         (keydown.space)="excelFileInput.click()">
+                        <!-- Usar atributo normal para aria-label en el input -->
+                        <input #excelFileInput type="file" class="hidden" accept=".csv" (change)="onExcelSeleccionado($event)" aria-label="Seleccionar archivo CSV"/>
 
                         <div *ngIf="!archivoExcelSeleccionado">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
                             <p class="mt-3 text-gray-700">{{ 'txt_arrastrar_archivo_csv' | translate }}</p>
@@ -46,7 +53,7 @@
 
                         <!-- Información del archivo seleccionado -->
                         <div *ngIf="archivoExcelSeleccionado" class="flex flex-col items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <p class="font-medium text-gray-800 mt-2">{{ nombreArchivoExcel }}</p>
@@ -58,11 +65,11 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </button>
 
                     <!-- Mensaje de error más visible -->
-                    <div *ngIf="errorArchivoExcel" class="w-3/5 mx-auto rounded bg-danger py-2 px-3 text-white mb-4 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div *ngIf="errorArchivoExcel" class="w-3/5 mx-auto rounded bg-danger py-2 px-3 text-white mb-4 flex items-center" role="alert">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                         {{ errorArchivoExcel }}
@@ -72,8 +79,9 @@
                     <div class="flex justify-center">
                         <button type="button" class="btn btn-primary"
                                 [disabled]="!archivoExcelSeleccionado || subiendoExcel"
-                                (click)="subirArchivoExcel()">
-                            <svg *ngIf="subiendoExcel" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                (click)="subirArchivoExcel()"
+                                attr.aria-busy="{{ subiendoExcel ? 'true' : 'false' }}">
+                            <svg *ngIf="subiendoExcel" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -83,7 +91,7 @@
 
                     <!-- Barra de progreso -->
                     <div *ngIf="subiendoExcel || progresoSubidaExcel > 0" class="mt-4">
-                        <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden" role="progressbar" attr.aria-valuenow="{{ progresoSubidaExcel }}" aria-valuemin="0" aria-valuemax="100">
                             <div class="bg-primary h-2.5 rounded-full transition-all" [style.width.%]="progresoSubidaExcel"></div>
                         </div>
                         <div class="flex justify-between mt-1 text-xs text-gray-500">
@@ -100,66 +108,80 @@
 
     <!-- Modal para agregar proveedor -->
     <app-modal #modalProveedor title="{{ 'btn_agregar_proveedor' | translate }}">
-        <form [formGroup]="formularioProveedor" class="text-sm" (ngSubmit)="guardarProveedor()">
+        <form [formGroup]="formularioProveedor" class="text-sm" (ngSubmit)="guardarProveedor()" novalidate>
             <div class="mb-5">
-                <label for="nombre" class="block text-sm font-medium mb-1">{{ 'name' | translate }}</label>
+                <label for="nombre" id="nombre-label" class="block text-sm font-medium mb-1">{{ 'name' | translate }}</label>
                 <input id="nombre" type="text" placeholder="{{ 'txt_ingrese_el_nombre' | translate }}"
-                       class="form-input" formControlName="nombre" />
+                       class="form-input" formControlName="nombre"
+                       aria-labelledby="nombre-label"
+                       aria-required="true"
+                       [attr.aria-invalid]="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.invalid ? 'true' : 'false'"
+                       [attr.aria-describedby]="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.invalid ? 'nombre-error' : null" />
                 <div *ngIf="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.invalid"
-                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     id="nombre-error" class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                      {{ 'txt_por_favor_ingrese_el_nombre' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.errors?.['minlength']"
-                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                     {{ 'txt_nombre_minimo_3' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('nombre')?.touched && formularioProveedor.get('nombre')?.errors?.['maxlength']"
-                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                     {{ 'txt_nombre_maximo_50' | translate }}
                 </div>
-
             </div>
 
             <div class="mb-5">
-                <label for="email" class="block text-sm font-medium mb-1">{{ 'email' | translate }}</label>
+                <label for="email" id="email-label" class="block text-sm font-medium mb-1">{{ 'email' | translate }}</label>
                 <input id="email" type="email" placeholder="{{ 'txt_ingrese_el_email' | translate }}"
-                       class="form-input" formControlName="email" />
+                       class="form-input" formControlName="email"
+                       aria-labelledby="email-label"
+                       aria-required="true"
+                       [attr.aria-invalid]="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.invalid ? 'true' : 'false'"
+                       [attr.aria-describedby]="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.invalid ? 'email-error' : null" />
                 <div *ngIf="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.errors?.['required']"
-                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     id="email-error" class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                      {{ 'txt_por_favor_ingrese_el_email' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('email')?.touched && formularioProveedor.get('email')?.errors?.['email']"
-                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                      {{ 'txt_email_invalido' | translate }}
                 </div>
             </div>
 
             <div class="mb-5">
-                <label for="numeroContacto" class="block text-sm font-medium mb-1">{{ 'txt_numero_de_contacto' | translate }}</label>
+                <label for="numeroContacto" id="numeroContacto-label" class="block text-sm font-medium mb-1">{{ 'txt_numero_de_contacto' | translate }}</label>
                 <input id="numeroContacto" type="text" placeholder="{{ 'txt_ingrese_el_numero_de_contacto' | translate }}"
-                       class="form-input" formControlName="numeroContacto" />
+                       class="form-input" formControlName="numeroContacto"
+                       aria-labelledby="numeroContacto-label"
+                       aria-required="true"
+                       [attr.aria-invalid]="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.invalid ? 'true' : 'false'"
+                       [attr.aria-describedby]="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.invalid ? 'numeroContacto-error' : null" />
                 <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.errors?.['required']"
-                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     id="numeroContacto-error" class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                      {{ 'txt_por_favor_ingrese_el_numero_de_contacto' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.errors?.['pattern']"
-                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                     {{ 'txt_solo_numeros' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.errors?.['minlength']"
-                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                     {{ 'txt_numero_contacto_minimo_7' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('numeroContacto')?.touched && formularioProveedor.get('numeroContacto')?.errors?.['maxlength']"
-                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                     {{ 'txt_numero_contacto_maximo_15' | translate }}
                 </div>
-
             </div>
 
             <div class="mb-5">
-                <label for="pais" class="block text-sm font-medium mb-1">{{ 'pais' | translate }}</label>
-                <select id="pais" class="form-select" formControlName="pais">
+                <label for="pais" id="pais-label" class="block text-sm font-medium mb-1">{{ 'pais' | translate }}</label>
+                <select id="pais" class="form-select" formControlName="pais"
+                        aria-labelledby="pais-label"
+                        aria-required="true"
+                        [attr.aria-invalid]="formularioProveedor.get('pais')?.touched && formularioProveedor.get('pais')?.invalid ? 'true' : 'false'"
+                        [attr.aria-describedby]="formularioProveedor.get('pais')?.touched && formularioProveedor.get('pais')?.invalid ? 'pais-error' : null">
                     <option value="">{{ 'txt_seleccione_el_pais' | translate }}</option>
                     <option value="Argentina">Argentina</option>
                     <option value="Brasil">Brasil</option>
@@ -172,54 +194,60 @@
                     <option value="España">España</option>
                 </select>
                 <div *ngIf="formularioProveedor.get('pais')?.touched && formularioProveedor.get('pais')?.invalid"
-                     class="rounded bg-danger py-1 px-2 text-white mt-1">
+                     id="pais-error" class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                      {{ 'txt_por_favor_seleccione_el_pais' | translate }}
                 </div>
             </div>
 
             <div class="mb-5">
-                <label for="caracteristicas" class="block text-sm font-medium mb-1">{{ 'caracteristicas' | translate }}</label>
+                <label for="caracteristicas" id="caracteristicas-label" class="block text-sm font-medium mb-1">{{ 'caracteristicas' | translate }}</label>
                 <textarea id="caracteristicas" rows="3" placeholder="{{ 'txt_ingrese_las_caracteristicas' | translate }}"
-                          class="form-textarea" formControlName="caracteristicas"></textarea>
+                          class="form-textarea" formControlName="caracteristicas"
+                          aria-labelledby="caracteristicas-label"
+                          aria-required="true"
+                          [attr.aria-invalid]="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.invalid ? 'true' : 'false'"
+                          [attr.aria-describedby]="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.invalid ? 'caracteristicas-error' : null"></textarea>
                 <div *ngIf="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.invalid"
-                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          id="caracteristicas-error" class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                           {{ 'txt_por_favor_ingrese_las_caracteristicas' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.errors?.['minlength']"
-                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                     {{ 'txt_caracteristicas_minimo_10' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('caracteristicas')?.touched && formularioProveedor.get('caracteristicas')?.errors?.['maxlength']"
-                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                     {{ 'txt_caracteristicas_maximo_200' | translate }}
                 </div>
-
-
             </div>
 
             <div class="mb-5">
-                <label for="condiciones" class="block text-sm font-medium mb-1">{{ 'txt_condiciones_comerciales' | translate }}</label>
+                <label for="condiciones" id="condiciones-label" class="block text-sm font-medium mb-1">{{ 'txt_condiciones_comerciales' | translate }}</label>
                 <textarea id="condiciones" rows="3" placeholder="{{ 'txt_ingrese_las_condiciones' | translate }}"
-                          class="form-textarea" formControlName="condiciones"></textarea>
+                          class="form-textarea" formControlName="condiciones"
+                          aria-labelledby="condiciones-label"
+                          aria-required="true"
+                          [attr.aria-invalid]="formularioProveedor.get('condiciones')?.touched && formularioProveedor.get('condiciones')?.invalid ? 'true' : 'false'"
+                          [attr.aria-describedby]="formularioProveedor.get('condiciones')?.touched && formularioProveedor.get('condiciones')?.invalid ? 'condiciones-error' : null"></textarea>
                 <div *ngIf="formularioProveedor.get('condiciones')?.touched && formularioProveedor.get('condiciones')?.invalid"
-                          class="rounded bg-danger py-1 px-2 text-white mt-1">
+                          id="condiciones-error" class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                           {{ 'txt_por_favor_ingrese_las_condiciones' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('condiciones')?.touched && formularioProveedor.get('condiciones')?.errors?.['minlength']"
-                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                     {{ 'txt_condiciones_minimo_10' | translate }}
                 </div>
                 <div *ngIf="formularioProveedor.get('condiciones')?.touched && formularioProveedor.get('condiciones')?.errors?.['maxlength']"
-                    class="rounded bg-danger py-1 px-2 text-white mt-1">
+                    class="rounded bg-danger py-1 px-2 text-white mt-1" role="alert">
                     {{ 'txt_condiciones_maximo_200' | translate }}
                 </div>
-
             </div>
 
             <div class="mt-8 flex items-center justify-end">
                 <button type="button" class="btn btn-outline-danger" (click)="modalProveedor.close()">{{ 'btn_cancelar' | translate }}</button>
-                <button type="submit" class="btn btn-primary ml-4" [disabled]="formularioProveedor.invalid || cargando">
-                    <svg *ngIf="cargando" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <button type="submit" class="btn btn-primary ml-4" [disabled]="formularioProveedor.invalid || cargando"
+                        attr.aria-busy="{{ cargando ? 'true' : 'false' }}">
+                    <svg *ngIf="cargando" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
