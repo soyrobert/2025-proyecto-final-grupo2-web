@@ -29,8 +29,8 @@ test.describe('Login fallido', () => {
       });
     });
 
-    await page.getByLabel('Correo electrónico').fill(invalidCredentials.email);
-    await page.getByLabel('Contraseña').fill(invalidCredentials.password);
+    await page.locator('#Email').fill(invalidCredentials.email);
+    await page.locator('#Password').fill(invalidCredentials.password);
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();
 
     await expect(page.getByText('Credenciales incorrectas o error de autenticación')).toBeVisible();
@@ -59,8 +59,8 @@ test.describe('Login fallido', () => {
       });
     });
 
-    await page.getByLabel('Correo electrónico').fill(testUser.email);
-    await page.getByLabel('Contraseña').fill(testUser.password);
+    await page.locator('#Email').fill(testUser.email);
+    await page.locator('#Password').fill(testUser.password);
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();
 
     await expect(page.getByText('Credenciales incorrectas o error de autenticación')).toBeVisible();
@@ -78,8 +78,8 @@ test.describe('Login fallido', () => {
       await route.abort('failed');
     });
 
-    await page.getByLabel('Correo electrónico').fill(testUser.email);
-    await page.getByLabel('Contraseña').fill(testUser.password);
+    await page.locator('#Email').fill(testUser.email);
+    await page.locator('#Password').fill(testUser.password);
     await page.getByRole('button', { name: 'Iniciar sesión' }).click();
 
     await expect(page.getByText('Credenciales incorrectas o error de autenticación')).toBeVisible();
