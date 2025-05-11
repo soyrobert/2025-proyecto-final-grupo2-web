@@ -309,5 +309,12 @@
     "nov/2025": "Nov/2025",
     "dic/2025": "Dic/2025",
     "txt_proveedores_importados_exitosamente": "Los proveedores se han importado exitosamente",
-    "txt_columnas_requeridas_faltantes": "El archivo CSV no tiene el formato correcto. Faltan columnas requeridas."
+    "txt_columnas_requeridas_faltantes": "El archivo CSV no tiene el formato correcto. Faltan columnas requeridas.",
+    "txt_metas_actualizadas_exito": "Metas actualizadas correctamente",
+    "txt_metas_vendedores_actualizadas": "Las metas de los vendedores han sido actualizadas correctamente",
+    "txt_error_guardar_metas": "Error al guardar las metas",
+    "txt_error_cargar_vendedores": "Error al cargar los vendedores",
+    "txt_hay_valores_invalidos": "Hay valores inválidos, corrija los errores antes de guardar",
+    "txt_no_tiene_permisos": "No tiene permisos para realizar esta operación",
+    "txt_error_conexion": "Error de conexión con el servidor"
 }
