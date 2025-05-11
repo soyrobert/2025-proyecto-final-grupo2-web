@@ -334,5 +334,12 @@
     "nov/2025": "Nov/2025",
     "dic/2025": "Dec/2025",
     "txt_proveedores_importados_exitosamente": "Suppliers have been successfully imported",
-    "txt_columnas_requeridas_faltantes": "The CSV file doesn't have the correct format. Required columns are missing."
+    "txt_columnas_requeridas_faltantes": "The CSV file doesn't have the correct format. Required columns are missing.",
+    "txt_metas_actualizadas_exito": "Goals successfully updated",
+    "txt_metas_vendedores_actualizadas": "The goals for the salespeople have been successfully updated",
+    "txt_error_guardar_metas": "Error saving goals",
+    "txt_error_cargar_vendedores": "Error loading salespeople",
+    "txt_hay_valores_invalidos": "There are invalid values, please correct the errors before saving",
+    "txt_no_tiene_permisos": "You do not have permission to perform this operation",
+    "txt_error_conexion": "Connection error with the server"
 }

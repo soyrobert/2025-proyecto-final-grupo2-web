@@ -9,5 +9,6 @@ export const environment = {
     usuariosApiUrl: 'http://localhost:3011/api/v1/seguridad/gestor_usuarios/w',
     productosApiUrl: 'http://localhost:3001/api/v1/inventario/gestor_productos',
     busquedaProductosApiUrl: 'http://localhost:3001/api/v2/inventario/gestor_productos',
+    ventasApiUrl: 'http://localhost:3008/api/v1/ventas/gestor_ventas/vendedores/planes-venta',
     storageSignedUrlEndpoint: 'https://service-signed-urls-224260405910.us-central1.run.app'
 };
