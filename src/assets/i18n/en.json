@@ -341,5 +341,15 @@
     "txt_error_cargar_vendedores": "Error loading salespeople",
     "txt_hay_valores_invalidos": "There are invalid values, please correct the errors before saving",
     "txt_no_tiene_permisos": "You do not have permission to perform this operation",
-    "txt_error_conexion": "Connection error with the server"
+    "txt_error_conexion": "Connection error with the server",
+    "txt_title_planificacion_rutas": "Route Planning",
+    "txt_planificacion_rutas": "Route Planning",
+    "txt_nota_planificacion_rutas": "Remember that this process routes trucks from an origin point to a destination. Orders will be assigned to trucks according to the best route for each one.",
+    "txt_fecha_entrega": "Delivery date",
+    "btn_asignar_ruta": "Assign route",
+    "txt_asignando": "Assigning...",
+    "txt_ruta_asignada": "Route assigned",
+    "txt_no_hay_camiones_disponibles": "No trucks available for the selected date",
+    "txt_mensajes_sistema": "System messages",
+    "txt_error_cargar_camiones": "Error loading trucks. Please try again."
 }
