@@ -1,0 +1,113 @@
+<div class="p-4">
+    <nav aria-label="Navegación de migas de pan">
+        <ul class="flex space-x-2 rtl:space-x-reverse">
+            <li>
+                <a href="javascript:;" class="text-primary hover:underline">{{ 'dashboard' | translate }}</a>
+            </li>
+            <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                <span>{{ 'txt_title_planificacion_rutas' | translate }}</span>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="flex items-center justify-between py-7">
+        <h2 class="text-xl font-bold">{{ 'txt_title_planificacion_rutas' | translate }}</h2>
+        <div class="flex items-center">
+            <label for="fechaEntrega" class="mr-2">{{ 'txt_fecha_entrega' | translate }}:</label>
+            <input
+                id="fechaEntrega"
+                type="date"
+                class="form-input max-w-xs"
+                [(ngModel)]="fechaSeleccionada"
+                (change)="cargarCamiones()"
+                [attr.aria-label]="'txt_fecha_entrega' | translate"
+            />
+        </div>
+    </div>
+
+    <div class="animation pt-6">
+        <div class="panel">
+            <div class="flex items-start mb-5">
+                <img src="/assets/images/logo.svg" alt="Logo de la empresa" class="mr-4 w-10 h-10">
+                <div>
+                    <h3 class="text-lg font-semibold dark:text-white-light">{{ 'txt_planificacion_rutas' | translate }}</h3>
+                    <p class="text-gray-500">{{ 'txt_nota_planificacion_rutas' | translate }}</p>
+                </div>
+            </div>
+
+            <div *ngIf="cargando" class="flex justify-center items-center py-8">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+            </div>
+
+            <div *ngIf="!cargando && errorCarga" class="bg-danger/20 text-danger p-4 rounded mb-4" role="alert">
+                <div class="flex items-center">
+                    <!-- <icon-warning class="h-5 w-5 mr-2" aria-hidden="true" /> -->
+                    {{ errorMensaje }}
+                </div>
+            </div>
+
+            <div *ngIf="!cargando && !errorCarga" class="min-h-[400px]">
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-3 text-left border-b">ID</th>
+                                <th class="px-4 py-3 text-left border-b">Placa</th>
+                                <th class="px-4 py-3 text-left border-b">Marca</th>
+                                <th class="px-4 py-3 text-left border-b">Modelo</th>
+                                <th class="px-4 py-3 text-left border-b">Capacidad carga (toneladas)</th>
+                                <th class="px-4 py-3 text-left border-b">Volumen de carga (metros cúbicos)</th>
+                                <th class="px-4 py-3 text-left border-b">Estado Enrutamiento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let camion of camiones" class="border-b hover:bg-gray-100 dark:hover:bg-gray-900">
+                                <td class="px-4 py-3">{{ camion.id }}</td>
+                                <td class="px-4 py-3">{{ camion.placa }}</td>
+                                <td class="px-4 py-3">{{ camion.marca }}</td>
+                                <td class="px-4 py-3">{{ camion.modelo }}</td>
+                                <td class="px-4 py-3">{{ camion.capacidad_carga_toneladas }}</td>
+                                <td class="px-4 py-3">{{ camion.volumen_carga_metros_cubicos }}</td>
+                                <td class="px-4 py-3">
+                                    <span
+                                        [ngClass]="{
+                                            'bg-success/20 text-success px-2 py-1 rounded': camion.estado_enrutamiento === 'Enrutado',
+                                            'bg-danger/20 text-danger px-2 py-1 rounded': camion.estado_enrutamiento === 'Sin ruta',
+                                            'bg-warning/20 text-warning px-2 py-1 rounded': camion.estado_enrutamiento === 'Sin entregas programadas'
+                                        }"
+                                    >
+                                        {{ camion.estado_enrutamiento }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="camiones.length === 0">
+                                <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                                    {{ 'txt_no_hay_camiones_disponibles' | translate }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Botón para enrutar camiones sin ruta -->
+                <div class="flex justify-center mt-8">
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="enrutarCamionesSinRuta()"
+                        [disabled]="procesandoEnrutamiento"
+                    >
+                        {{ procesandoEnrutamiento ? 'ENRUTANDO...' : 'ENRUTAR CAMIONES SIN RUTA' }}
+                    </button>
+                </div>
+
+                <div *ngIf="mensajes.length > 0" class="mt-6">
+                    <h4 class="font-medium mb-2">{{ 'txt_mensajes_sistema' | translate }}:</h4>
+                    <ul class="list-disc list-inside bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+                        <li *ngFor="let mensaje of mensajes" class="mb-1 last:mb-0">{{ mensaje }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -10,5 +10,7 @@ export const environment = {
     productosApiUrl: 'http://localhost:3001/api/v1/inventario/gestor_productos',
     busquedaProductosApiUrl: 'http://localhost:3001/api/v2/inventario/gestor_productos',
     ventasApiUrl: 'http://localhost:3008/api/v1/ventas/gestor_ventas/vendedores/planes-venta',
+    obtenerRutasApiUrl: 'http://localhost:3006/api/v1/logistica/gestor_entregas/ruta_camiones',
+    asignarRutasApiUrl: 'http://localhost:3006/api/v1/logistica/gestor_entregas/asignar_ruta',
     storageSignedUrlEndpoint: 'https://service-signed-urls-224260405910.us-central1.run.app'
 };
