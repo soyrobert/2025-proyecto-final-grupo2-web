@@ -51,13 +51,13 @@
                     <table class="w-full table-auto">
                         <thead>
                             <tr>
-                                <th class="px-4 py-3 text-left border-b">ID</th>
-                                <th class="px-4 py-3 text-left border-b">Placa</th>
-                                <th class="px-4 py-3 text-left border-b">Marca</th>
-                                <th class="px-4 py-3 text-left border-b">Modelo</th>
-                                <th class="px-4 py-3 text-left border-b">Capacidad carga (toneladas)</th>
-                                <th class="px-4 py-3 text-left border-b">Volumen de carga (metros cúbicos)</th>
-                                <th class="px-4 py-3 text-left border-b">Estado Enrutamiento</th>
+                                <th class="px-4 py-3 text-left border-b">{{ 'txt_id' | translate }}</th>
+                                <th class="px-4 py-3 text-left border-b">{{ 'txt_placa' | translate }}</th>
+                                <th class="px-4 py-3 text-left border-b">{{ 'txt_marca' | translate }}</th>
+                                <th class="px-4 py-3 text-left border-b">{{ 'txt_modelo' | translate }}</th>
+                                <th class="px-4 py-3 text-left border-b">{{ 'txt_capacidad_carga' | translate }}</th>
+                                <th class="px-4 py-3 text-left border-b">{{ 'txt_volumen_carga' | translate }}</th>
+                                <th class="px-4 py-3 text-left border-b">{{ 'txt_estado_enrutamiento' | translate }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,13 +70,9 @@
                                 <td class="px-4 py-3">{{ camion.volumen_carga_metros_cubicos }}</td>
                                 <td class="px-4 py-3">
                                     <span
-                                        [ngClass]="{
-                                            'bg-success/20 text-success px-2 py-1 rounded': camion.estado_enrutamiento === 'Enrutado',
-                                            'bg-danger/20 text-danger px-2 py-1 rounded': camion.estado_enrutamiento === 'Sin ruta',
-                                            'bg-warning/20 text-warning px-2 py-1 rounded': camion.estado_enrutamiento === 'Sin entregas programadas'
-                                        }"
+                                        [ngClass]="getBadgeClass(camion.estado_enrutamiento)"
                                     >
-                                        {{ camion.estado_enrutamiento }}
+                                        {{ getEstadoTraducido(camion.estado_enrutamiento) }}
                                     </span>
                                 </td>
                             </tr>
@@ -89,15 +85,15 @@
                     </table>
                 </div>
 
-                <!-- Botón para enrutar camiones sin ruta -->
-                <div class="flex justify-center mt-8">
+                <!-- Botón para enrutar camiones sin ruta - solo se muestra si hay camiones específicamente con estado "Sin ruta" -->
+                <div *ngIf="hayCamionesSinRuta()" class="flex justify-center mt-8">
                     <button
                         type="button"
                         class="btn btn-primary"
                         (click)="enrutarCamionesSinRuta()"
                         [disabled]="procesandoEnrutamiento"
                     >
-                        {{ procesandoEnrutamiento ? 'ENRUTANDO...' : 'ENRUTAR CAMIONES SIN RUTA' }}
+                        {{ procesandoEnrutamiento ? ('txt_enrutando_camiones' | translate) : ('txt_enrutar_camiones_sin_ruta' | translate) }}
                     </button>
                 </div>
 

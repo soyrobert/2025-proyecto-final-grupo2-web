@@ -349,7 +349,23 @@
     "btn_asignar_ruta": "Assign route",
     "txt_asignando": "Assigning...",
     "txt_ruta_asignada": "Route assigned",
+    "txt_camiones_enrutados_exitosamente": "Trucks successfully routed",
+    "txt_enrutando_camiones": "Routing trucks...",
+    "btn_enrutando": "ROUTING...",
+    "btn_enrutar_camiones": "ROUTING TRUCKS WITHOUT A ROUTE",
     "txt_no_hay_camiones_disponibles": "No trucks available for the selected date",
     "txt_mensajes_sistema": "System messages",
-    "txt_error_cargar_camiones": "Error loading trucks. Please try again."
+    "txt_error_cargar_camiones": "Error loading trucks. Please try again.",
+    "txt_enrutar_camiones_sin_ruta": "ROUTE TRUCKS WITHOUT ROUTE",
+    "txt_id": "ID",
+    "txt_placa": "License Plate",
+    "txt_marca": "Brand",
+    "txt_modelo": "Model",
+    "txt_capacidad_carga": "Load capacity (tons)",
+    "txt_volumen_carga": "Load volume (cubic meters)",
+    "txt_estado_enrutamiento": "Routing Status",
+    "txt_estado_enrutado": "Routed",
+    "txt_estado_sin_ruta": "Without route",
+    "txt_estado_sin_entregas_programadas": "No scheduled deliveries"
+
 }

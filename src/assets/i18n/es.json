@@ -324,7 +324,22 @@
     "btn_asignar_ruta": "Asignar ruta",
     "txt_asignando": "Asignando...",
     "txt_ruta_asignada": "Ruta asignada",
+    "txt_camiones_enrutados_exitosamente": "Camiones enrutados exitosamente",
+    "txt_enrutando_camiones": "Enrutando camiones...",
+    "btn_enrutando": "ENRUTANDO...",
+    "btn_enrutar_camiones": "ENRUTAR CAMIONES SIN RUTA",
     "txt_no_hay_camiones_disponibles": "No hay camiones disponibles para la fecha seleccionada",
     "txt_mensajes_sistema": "Mensajes del sistema",
-    "txt_error_cargar_camiones": "Error al cargar los camiones. Intente nuevamente."
+    "txt_error_cargar_camiones": "Error al cargar los camiones. Intente nuevamente.",
+    "txt_enrutar_camiones_sin_ruta": "ENRUTAR CAMIONES SIN RUTA",
+    "txt_id": "ID",
+    "txt_placa": "Placa",
+    "txt_marca": "Marca",
+    "txt_modelo": "Modelo",
+    "txt_capacidad_carga": "Capacidad carga (toneladas)",
+    "txt_volumen_carga": "Volumen de carga (metros cúbicos)",
+    "txt_estado_enrutamiento": "Estado Enrutamiento",
+    "txt_estado_enrutado": "En ruta",
+    "txt_estado_sin_ruta": "Sin ruta",
+    "txt_estado_sin_entregas_programadas": "Sin entregas programadas"
 }

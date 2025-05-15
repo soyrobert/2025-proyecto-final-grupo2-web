@@ -183,7 +183,6 @@ export class VendedoresPlanesVentaService {
       }
     }
 
-    console.error('Error en VendedoresPlanesVentaService:', errorMessage, error);
     return throwError(() => new Error(errorMessage));
   }
 }
