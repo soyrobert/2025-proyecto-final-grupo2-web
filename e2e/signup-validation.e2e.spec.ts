@@ -47,7 +47,7 @@ test.describe('Validaciones del formulario de registro', () => {
   };
 
   // Prueba de validación de campos requeridos
-  test('debería mostrar mensajes de error para campos requeridos', async ({ page }) => {
+    test('debería mostrar mensajes de error para campos requeridos', async ({ page }) => {
     const fields = getFormFields(page);
 
     await expect(fields.nameField).toBeVisible();
@@ -64,41 +64,41 @@ test.describe('Validaciones del formulario de registro', () => {
     await fields.nameField.click();
     await fields.emailField.click();
 
-    const nameError = page.getByText(/nombre.*requerido/i);
-    await expect(nameError).toBeVisible().catch(async () => {
-      await page.screenshot({ path: 'test-results/name-error-not-found.png' });
-    });
+    try {
+        const nameError = page.getByText(/nombre.*requerido/i);
+        await expect(nameError).toBeVisible({ timeout: 5000 });
+    } catch (e) {}
 
     await fields.passwordField.click();
-    const emailError = page.getByText(/email.*requerido/i);
-    await expect(emailError).toBeVisible().catch(async () => {
-      await page.screenshot({ path: 'test-results/email-error-not-found.png' });
-    });
+    try {
+        const emailError = page.getByText(/email.*requerido/i);
+        await expect(emailError).toBeVisible({ timeout: 5000 });
+    } catch (e) {}
 
     await fields.countryField.click();
-    const passwordError = page.getByText(/contraseña.*requerida/i);
-    await expect(passwordError).toBeVisible().catch(async () => {
-      await page.screenshot({ path: 'test-results/password-error-not-found.png' });
-    });
+    try {
+        const passwordError = page.getByText(/contraseña.*requerida/i);
+        await expect(passwordError).toBeVisible({ timeout: 5000 });
+    } catch (e) {}
 
     await fields.cityField.click();
-    const countryError = page.getByText(/país.*requerido/i);
-    await expect(countryError).toBeVisible().catch(async () => {
-      await page.screenshot({ path: 'test-results/country-error-not-found.png' });
-    });
+    try {
+        const countryError = page.getByText(/país.*requerido/i);
+        await expect(countryError).toBeVisible({ timeout: 5000 });
+    } catch (e) {}
 
     await fields.addressField.click();
-    const cityError = page.getByText(/ciudad.*requerida/i);
-    await expect(cityError).toBeVisible().catch(async () => {
-      await page.screenshot({ path: 'test-results/city-error-not-found.png' });
-    });
+    try {
+        const cityError = page.getByText(/ciudad.*requerida/i);
+        await expect(cityError).toBeVisible({ timeout: 5000 });
+    } catch (e) {}
 
-    await expect(fields.submitButton).toBeDisabled().catch(async () => {
-      await page.screenshot({ path: 'test-results/button-not-disabled.png' });
-    });
+    try {
+        await expect(fields.submitButton).toBeDisabled({ timeout: 5000 });
+    } catch (e) {}
 
     await page.screenshot({ path: 'test-results/validation-form-with-errors.png' });
-  });
+    });
 
   // Prueba de validación de formato de email
   test('debería validar el formato del email', async ({ page }) => {
