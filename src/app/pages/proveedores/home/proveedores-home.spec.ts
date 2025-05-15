@@ -708,4 +708,356 @@ describe('ProveedoresHome', () => {
 
   });
 
+  // Test para verificar que se rechaza un archivo con extensión no CSV
+  it('debería rechazar un archivo con extensión no CSV', () => {
+    const invalidFile = new File(['data'], 'test.txt', { type: 'text/plain' });
+
+    component.errorArchivoExcel = null;
+    const spyShowMessage = jest.spyOn(component, 'showMessage').mockImplementation(() => {});
+    const spyLimpiar = jest.spyOn(component, 'limpiarSeleccionExcel').mockImplementation(() => {});
+
+  translateService.instant.mockImplementation((key: string): string => key);
+
+    component.procesarArchivoExcel(invalidFile);
+
+    expect(spyShowMessage).toHaveBeenCalled();
+    expect(spyLimpiar).toHaveBeenCalled();
+  });
+
+  // Test para verificar que se rechaza un archivo CSV demasiado grande
+  it('debería verificar el tamaño del archivo CSV', () => {
+    const mockFile = {
+      name: 'test.csv',
+      type: 'text/csv',
+      size: 2 * 1024 * 1024 // 2MB (superior al límite de 1MB)
+    };
+
+    const spyShowMessage = jest.spyOn(component, 'showMessage').mockImplementation(() => {});
+    const spyLimpiar = jest.spyOn(component, 'limpiarSeleccionExcel').mockImplementation(() => {});
+
+  translateService.instant.mockImplementation((key: string): string => key);
+
+    jest.spyOn(component, 'formatearTamanio').mockReturnValue('2 MB');
+    component.procesarArchivoExcel(mockFile as File);
+    expect(spyShowMessage).toHaveBeenCalled();
+    expect(spyLimpiar).toHaveBeenCalled();
+  });
+
+  // Test para verificar que un archivo CSV válido es aceptado
+  it('debería aceptar un archivo CSV válido', () => {
+    const validFile = new File(['data'], 'test.csv', { type: 'text/csv' });
+
+    jest.spyOn(component, 'formatearTamanio').mockReturnValue('10 KB');
+
+    component.procesarArchivoExcel(validFile);
+
+    expect(component.archivoExcelSeleccionado).toBe(validFile);
+    expect(component.nombreArchivoExcel).toBe('test.csv');
+    expect(component.tamanioArchivoExcel).toBe('10 KB');
+    expect(component.errorArchivoExcel).toBeNull();
+  });
+
+  // Prueba para el método limpiarSeleccionExcel
+  it('debería limpiar correctamente la selección del archivo', () => {
+    component.archivoExcelSeleccionado = new File(['data'], 'test.csv', { type: 'text/csv' });
+    component.nombreArchivoExcel = 'test.csv';
+    component.tamanioArchivoExcel = '10 KB';
+    component.errorArchivoExcel = 'error previo';
+    component.excelFileInput = {
+      nativeElement: {
+        value: 'test.csv'
+      }
+    };
+
+    component.limpiarSeleccionExcel();
+
+    expect(component.archivoExcelSeleccionado).toBeNull();
+    expect(component.nombreArchivoExcel).toBe('');
+    expect(component.tamanioArchivoExcel).toBe('');
+    expect(component.errorArchivoExcel).toBeNull();
+    expect(component.excelFileInput.nativeElement.value).toBe('');
+  });
+
+  // Prueba para verificar el manejo de errores sin archivo seleccionado al subir
+  it('debería mostrar advertencia cuando se intenta subir sin archivo seleccionado', () => {
+    component.archivoExcelSeleccionado = null;
+
+    const spyShowMessage = jest.spyOn(component, 'showMessage').mockImplementation(() => {});
+    translateService.instant.mockReturnValue('txt_seleccionar_archivo_csv');
+
+    component.subirArchivoExcel();
+
+    expect(spyShowMessage).toHaveBeenCalledWith('txt_seleccionar_archivo_csv', 'warning');
+    expect(storageService.uploadCsvFile).not.toHaveBeenCalled();
+  });
+
+  // Prueba para el método onExcelSeleccionado
+  it('debería procesar archivo cuando se selecciona mediante input', () => {
+    const testFile = new File(['data'], 'test.csv', { type: 'text/csv' });
+
+    const mockEvent = {
+      target: {
+        files: [testFile]
+      }
+    };
+
+    const spyProcesar = jest.spyOn(component, 'procesarArchivoExcel').mockImplementation(() => {});
+    component.onExcelSeleccionado(mockEvent);
+    expect(spyProcesar).toHaveBeenCalledWith(testFile);
+  });
+
+  it('should handle dragover event on dropzone correctly', () => {
+    const mockEvent = new Event('dragover');
+    Object.defineProperty(mockEvent, 'preventDefault', { value: jest.fn() });
+    Object.defineProperty(mockEvent, 'stopPropagation', { value: jest.fn() });
+
+    const dropZoneElement = component.dropZone.nativeElement;
+
+    const dragOverHandler = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZoneElement.classList.add('border-primary');
+    };
+
+    dragOverHandler(mockEvent);
+
+    expect(mockEvent.preventDefault).toHaveBeenCalled();
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+
+    expect(dropZoneElement.classList.contains('border-primary')).toBe(true);
+  });
+
+  it('should handle dragleave event on dropzone correctly', () => {
+    const mockEvent = new Event('dragleave');
+    Object.defineProperty(mockEvent, 'preventDefault', { value: jest.fn() });
+    Object.defineProperty(mockEvent, 'stopPropagation', { value: jest.fn() });
+
+    const dropZoneElement = component.dropZone.nativeElement;
+    dropZoneElement.classList.add('border-primary');
+
+    const dragLeaveHandler = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZoneElement.classList.remove('border-primary');
+    };
+
+    dragLeaveHandler(mockEvent);
+    expect(mockEvent.preventDefault).toHaveBeenCalled();
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+
+    expect(dropZoneElement.classList.contains('border-primary')).toBe(false);
+  });
+
+  it('should handle drop event on dropzone correctly with valid file', () => {
+    const spyProcesar = jest.spyOn(component, 'procesarArchivoExcel').mockImplementation(() => {});
+
+    const mockEvent = new CustomEvent('drop');
+    Object.defineProperty(mockEvent, 'preventDefault', { value: jest.fn() });
+    Object.defineProperty(mockEvent, 'stopPropagation', { value: jest.fn() });
+
+    const file = new File(['data'], 'test.csv', { type: 'text/csv' });
+    Object.defineProperty(mockEvent, 'dataTransfer', {
+      value: {
+        files: [file]
+      }
+    });
+
+    const dropZoneElement = component.dropZone.nativeElement;
+    dropZoneElement.classList.add('border-primary');
+
+    const dropHandler = (e: any) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZoneElement.classList.remove('border-primary');
+
+      if (e.dataTransfer.files.length) {
+        const droppedFile = e.dataTransfer.files[0];
+        const extension = droppedFile.name.split('.').pop()?.toLowerCase();
+        if (extension === 'csv') {
+          component.procesarArchivoExcel(droppedFile);
+        }
+      }
+    };
+
+    dropHandler(mockEvent);
+
+    expect(mockEvent.preventDefault).toHaveBeenCalled();
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+    expect(dropZoneElement.classList.contains('border-primary')).toBe(false);
+    expect(spyProcesar).toHaveBeenCalledWith(file);
+  });
+
+  it('should handle drop event on dropzone with non-CSV file', () => {
+    const spyShowMessage = jest.spyOn(component, 'showMessage').mockImplementation(() => {});
+    translateService.instant.mockReturnValue('txt_archivo_no_compatible');
+
+    const mockEvent = new CustomEvent('drop');
+    Object.defineProperty(mockEvent, 'preventDefault', { value: jest.fn() });
+    Object.defineProperty(mockEvent, 'stopPropagation', { value: jest.fn() });
+
+    const file = new File(['data'], 'test.txt', { type: 'text/plain' });
+    Object.defineProperty(mockEvent, 'dataTransfer', {
+      value: {
+        files: [file]
+      }
+    });
+
+    const dropZoneElement = component.dropZone.nativeElement;
+    dropZoneElement.classList.add('border-primary');
+
+    const dropHandler = (e: any) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZoneElement.classList.remove('border-primary');
+
+      if (e.dataTransfer.files.length) {
+        const droppedFile = e.dataTransfer.files[0];
+        const extension = droppedFile.name.split('.').pop()?.toLowerCase();
+        if (extension !== 'csv') {
+          component.showMessage(
+            translateService.instant('txt_archivo_no_compatible'),
+            'error'
+          );
+          return;
+        }
+      }
+    };
+
+    dropHandler(mockEvent);
+
+    expect(spyShowMessage).toHaveBeenCalledWith('txt_archivo_no_compatible', 'error');
+  });
+
+  it('should handle column validation errors during import', fakeAsync(() => {
+    const errorResponse = {
+      status: 400,
+      error: {
+        error: 'Error de validación',
+        detalles: {
+          csv: 'Faltan columnas requeridas en el archivo'
+        }
+      }
+    };
+
+    proveedoresService.importarProveedoresMasivamente.mockReturnValue(throwError(() => errorResponse));
+
+    jest.spyOn(component, 'showMessage');
+    translateService.instant.mockImplementation((key: string) => {
+      if (key === 'txt_columnas_requeridas_faltantes') {
+        return 'Faltan columnas requeridas en el archivo';
+      }
+      return key;
+    });
+
+    component.importarProveedoresMasivamente('https://storage.example.com/data.csv');
+    tick();
+
+    expect(component.subiendoExcel).toBe(false);
+    expect(component.showMessage).toHaveBeenCalledWith('Faltan columnas requeridas en el archivo', 'error');
+  }));
+
+  it('should display detailed error dialog for partial import success', fakeAsync(() => {
+    const partialSuccess = {
+      exitosos: 5,
+      fallidos: 3,
+      total: 8,
+      resultados: [
+        {
+          indice: 2,
+          status: 'error',
+          proveedor: { nombre: 'Proveedor 2' },
+          error: 'Email inválido'
+        },
+        {
+          indice: 4,
+          status: 'error',
+          proveedor: { nombre: 'Proveedor 4' },
+          error: 'País no válido'
+        },
+        {
+          indice: 7,
+          status: 'error',
+          proveedor: { nombre: 'Proveedor 7' },
+          error: 'Número de contacto inválido'
+        }
+      ]
+    };
+
+    proveedoresService.importarProveedoresMasivamente.mockReturnValue(of(partialSuccess));
+
+    const mockSwalFire = jest.fn();
+    Swal.fire = mockSwalFire;
+
+    jest.spyOn(component, 'showMessage');
+    translateService.instant.mockImplementation((key: string, params?: any) => {
+      if (key === 'txt_proveedores_importados_resumen' && params) {
+        return `Se importaron ${params.exitosos} de ${params.total} proveedores. ${params.fallidos} fallidos.`;
+      }
+      if (key === 'txt_resultado_importacion') {
+        return 'Resultado de la importación';
+      }
+      if (key === 'btn_aceptar') {
+        return 'Aceptar';
+      }
+      return key;
+    });
+
+    component.importarProveedoresMasivamente('https://storage.example.com/data.csv');
+    tick();
+
+    expect(component.subiendoExcel).toBe(false);
+    expect(component.progresoSubidaExcel).toBe(100);
+    expect(component.showMessage).toHaveBeenCalledWith('Se importaron 5 de 8 proveedores. 3 fallidos.', 'success');
+    expect(Swal.fire).toHaveBeenCalled();
+
+    const swalCallArg = mockSwalFire.mock.calls[0][0];
+    expect(swalCallArg.title).toBe('Resultado de la importación');
+    expect(swalCallArg.icon).toBe('info');
+    expect(swalCallArg.confirmButtonText).toContain('Aceptar');
+  }));
+
+  it('should handle specific HTTP error codes during import', fakeAsync(() => {
+    const largeFileError = { status: 413 };
+    proveedoresService.importarProveedoresMasivamente.mockReturnValue(throwError(() => largeFileError));
+
+    const spyShowMessage = jest.spyOn(component, 'showMessage');
+    translateService.instant.mockImplementation((key: string) => {
+      if (key === 'msg_archivo_muy_grande') return 'El archivo es demasiado grande';
+      return key;
+    });
+
+    component.importarProveedoresMasivamente('https://storage.example.com/data.csv');
+    tick();
+
+    expect(component.subiendoExcel).toBe(false);
+    expect(spyShowMessage).toHaveBeenCalledWith('El archivo es demasiado grande', 'error');
+
+    jest.clearAllMocks();
+
+    const permissionError = { status: 403 };
+    proveedoresService.importarProveedoresMasivamente.mockReturnValue(throwError(() => permissionError));
+
+    translateService.instant.mockImplementation((key: string) => {
+      if (key === 'msg_no_tiene_permisos') return 'No tiene permisos para realizar esta acción';
+      return key;
+    });
+
+    component.importarProveedoresMasivamente('https://storage.example.com/data.csv');
+    tick();
+
+    expect(component.subiendoExcel).toBe(false);
+    expect(spyShowMessage).toHaveBeenCalledWith('No tiene permisos para realizar esta acción', 'error');
+  }));
+
+  it('should format file sizes correctly', () => {
+    expect(component.formatearTamanio(0)).toBe('0 B');
+    expect(component.formatearTamanio(500)).toBe('500 B');
+    expect(component.formatearTamanio(1024)).toBe('1 KB');
+    expect(component.formatearTamanio(2048)).toBe('2 KB');
+    expect(component.formatearTamanio(1048576)).toBe('1 MB');
+    expect(component.formatearTamanio(1073741824)).toBe('1 GB');
+  });
+
+
+
 });
