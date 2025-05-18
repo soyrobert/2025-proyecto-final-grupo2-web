@@ -41,7 +41,7 @@ test.describe('Login exitoso', () => {
     const localStorageRole = await page.evaluate(() => localStorage.getItem('userRole'));
     expect(localStorageRole).toBe(testUser.role);
 
-    await expect(page.getByText('Home de Vendedores')).toBeVisible();
+    await expect(page.getByText('Histórico de ventas')).toBeVisible();
   });
 
   // Prueba de login exitoso para el rol de encargado de logística
