@@ -12,5 +12,11 @@ export const environment = {
     ventasApiUrl: 'http://localhost:3008/api/v1/ventas/gestor_ventas/vendedores/planes-venta',
     obtenerRutasApiUrl: 'http://localhost:3006/api/v1/logistica/gestor_entregas/ruta_camiones',
     asignarRutasApiUrl: 'http://localhost:3006/api/v1/logistica/gestor_entregas/asignar_ruta',
+    listaVendedoresApiUrl: 'http://localhost:3011/api/v1/seguridad/gestor_usuarios/r/vendedores',
+    listaProductosApiUrl: 'http://localhost:3011/api/v1/inventario/gestor_productos/productos',
+    listaZonasApiUrl: 'http://localhost:3011/api/v1/inventario/gestor_productos/zonas',
+    clientesVentasApiUrl: 'http://localhost:3008/api/v1/ventas/gestor_ventas/reporte/clientes-ventas',
+    historicoVentasApiUrl: 'http://localhost:3008/api/v1/ventas/gestor_ventas/reporte/historico-ventas',
+    planesMetaApiUrl: 'http://localhost:3008/api/v1/ventas/gestor_ventas/reporte/planes-y-metas',
     storageSignedUrlEndpoint: 'https://service-signed-urls-224260405910.us-central1.run.app'
 };
