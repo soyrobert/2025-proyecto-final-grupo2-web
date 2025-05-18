@@ -1,0 +1,195 @@
+<div class="grid grid-cols-12 gap-6">
+  <!-- Breadcrumb - Span completo -->
+  <div class="col-span-12">
+    <ul class="flex space-x-2 rtl:space-x-reverse">
+      <li>
+        <a href="javascript:;" class="text-primary hover:underline">{{ 'dashboard' | translate }}</a>
+      </li>
+      <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+        <span>{{ 'txt_reportes_informes' | translate }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Columna Izquierda -->
+  <div class="col-span-12 md:col-span-8">
+    <!-- Clientes -->
+    <div class="mb-6">
+      <div class="panel bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
+        <h2 class="text-lg font-semibold p-4 pb-0">{{ 'txt_clientes' | translate }}</h2>
+        <div class="table-responsive">
+          <table class="w-full">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="py-3 px-4 text-left font-medium text-gray-500">{{ 'txt_nombre' | translate }}</th>
+                <th class="py-3 px-4 text-left font-medium text-gray-500">{{ 'txt_direccion' | translate }}</th>
+                <th class="py-3 px-4 text-left font-medium text-gray-500">{{ 'txt_codigo' | translate }}</th>
+                <th class="py-3 px-4 text-left font-medium text-gray-500">{{ 'txt_promedio_ventas' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-200">
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center mr-3">
+                      LI
+                    </div>
+                    <span>Luke Ivory</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">CL 147 # 7-7, Bogotá</td>
+                <td class="py-3 px-4">#48094</td>
+                <td class="py-3 px-4">$58.07</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center mr-3">
+                      AK
+                    </div>
+                    <span>Andy King</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">CR 30 # 1-10, Cali</td>
+                <td class="py-3 px-4">#76934</td>
+                <td class="py-3 px-4">$88.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Histórico de Ventas -->
+    <div class="mb-6">
+      <div class="panel bg-white rounded-md shadow-sm border border-gray-200 p-4">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-lg font-semibold">{{ 'txt_historico_ventas' | translate }}</h2>
+          <div class="text-right text-blue-600">{{ 'txt_total' | translate }}: $10,840,000</div>
+        </div>
+        <div class="h-56 w-full border border-dashed border-gray-300 rounded-md flex items-center justify-center">
+          <!-- Espacio para el gráfico -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Metas y Planes - Grid de 2 columnas -->
+    <div class="grid grid-cols-2 gap-6 mb-6">
+      <!-- Metas -->
+      <div class="panel bg-white rounded-md shadow-sm border border-gray-200 p-4">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-base font-semibold">{{ 'txt_metas' | translate }}</h2>
+        </div>
+
+        <div class="p-3 mb-1 rounded-r-md">
+          <div class="flex items-start">
+            <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-medium text-sm">{{ 'txt_actualizar_server_logs' | translate }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-r-md">
+          <div class="flex items-start">
+            <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-medium text-sm">{{ 'txt_send_mail_hr_admin' | translate }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Planes -->
+      <div class="panel bg-white rounded-md shadow-sm border border-gray-200 p-4">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-base font-semibold">{{ 'txt_planes' | translate }}</h2>
+        </div>
+
+        <div class="p-3 mb-1 rounded-r-md">
+          <div class="flex items-start">
+            <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-medium text-sm">{{ 'txt_backup_files_eod' | translate }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-r-md">
+          <div class="flex items-start">
+            <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
+            <div>
+              <p class="font-medium text-sm">{{ 'txt_collect_documents_sara' | translate }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Columna Derecha -->
+  <div class="col-span-12 md:col-span-4">
+    <!-- Filtros y Botones -->
+    <div class="mb-6">
+      <!-- Vendedor -->
+      <div class="mb-6">
+        <div class="panel bg-white rounded-md shadow-sm border border-gray-200 p-4">
+
+          <!-- Vendedor -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'txt_vendedor' | translate }}</label>
+            <div class="relative">
+              <select class="block w-full border border-gray-300 rounded-md py-2 px-3 appearance-none pr-8 bg-white focus:outline-none focus:ring-primary focus:border-primary">
+                <option>{{ 'txt_seleccionar' | translate }}</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Producto -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'txt_producto' | translate }}</label>
+            <input type="text" placeholder="{{ 'txt_buscar_productos' | translate }}" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary" />
+          </div>
+
+          <!-- Zona -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'txt_zona' | translate }}</label>
+            <div class="relative">
+              <select class="block w-full border border-gray-300 rounded-md py-2 px-3 appearance-none pr-8 bg-white focus:outline-none focus:ring-primary focus:border-primary">
+                <option>{{ 'txt_seleccionar' | translate }}</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="panel bg-white rounded-md shadow-sm border border-gray-200 p-4">
+        <!-- Botones -->
+        <button type="button" class="w-full mb-2 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          {{ 'txt_filtrar' | translate }}
+        </button>
+
+        <button type="button" class="w-full py-2 px-4 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          {{ 'txt_exportar' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

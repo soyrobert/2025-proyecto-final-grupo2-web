@@ -135,11 +135,13 @@ describe('PlanificacionRutas', () => {
   });
 
   it('debe inicializar con la fecha actual', () => {
-    expect(component.fechaSeleccionada).toBe('2025-05-15');
+    const fechaActual = new Date().toISOString().substring(0, 10);
+    expect(component.fechaSeleccionada).toBe(fechaActual);
   });
 
   it('debe llamar a obtenerFechaActual al inicializar', () => {
-    expect(component.fechaSeleccionada).toBe('2025-05-15');
+    const fechaActual = new Date().toISOString().substring(0, 10);
+    expect(component.fechaSeleccionada).toBe(fechaActual);
     expect(typeof component.obtenerFechaActual).toBe('function');
   });
 
@@ -153,7 +155,8 @@ describe('PlanificacionRutas', () => {
   });
 
   it('debe cargar camiones al inicializar', () => {
-    expect(logisticaService.obtenerCamiones).toHaveBeenCalledWith('2025-05-15');
+    const fechaActual = new Date().toISOString().substring(0, 10);
+    expect(logisticaService.obtenerCamiones).toHaveBeenCalledWith(fechaActual);
     expect(component.camiones.length).toBe(2);
     expect(component.camiones[0].placa).toBe('ABC123');
     expect(component.camiones[1].placa).toBe('XYZ789');
@@ -226,7 +229,7 @@ describe('PlanificacionRutas', () => {
     component.mensajes = [];
     component.procesandoEnrutamiento = false;
     component.enrutarCamionesSinRuta();
-    expect(mockAsignarRuta).toHaveBeenCalledWith('2025-05-15');
+    expect(mockAsignarRuta).toHaveBeenCalledWith(component.fechaSeleccionada);
     expect(mockSubscribe).toHaveBeenCalled();
     expect(component.mensajes.length).toBe(2);
     expect(component.mensajes[0]).toBe('Camión ABC123 enrutado correctamente');

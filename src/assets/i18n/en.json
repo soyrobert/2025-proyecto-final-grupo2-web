@@ -366,6 +366,25 @@
     "txt_estado_enrutamiento": "Routing Status",
     "txt_estado_enrutado": "Routed",
     "txt_estado_sin_ruta": "Without route",
-    "txt_estado_sin_entregas_programadas": "No scheduled deliveries"
-
+    "txt_estado_sin_entregas_programadas": "No scheduled deliveries",
+    "txt_reportes_informes": "Reports and Information",
+    "txt_clientes": "Customers",
+    "txt_nombre": "Name",
+    "txt_direccion": "Address",
+    "txt_promedio_ventas": "Average Sales",
+    "txt_historico_ventas": "Sales History",
+    "txt_total": "Total",
+    "txt_metas": "Goals",
+    "txt_actualizar_server_logs": "Update Server Logs",
+    "txt_send_mail_hr_admin": "Send Mail to HR and Admin",
+    "txt_planes": "Plans",
+    "txt_backup_files_eod": "Backup Files EOD",
+    "txt_collect_documents_sara": "Collect documents from Sara",
+    "txt_vendedor": "Salesperson",
+    "txt_seleccionar": "Select",
+    "txt_producto": "Product",
+    "txt_buscar_productos": "Search products",
+    "txt_zona": "Zone",
+    "txt_filtrar": "Filter",
+    "txt_exportar": "Export"
 }
