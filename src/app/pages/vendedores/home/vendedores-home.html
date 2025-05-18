@@ -17,7 +17,14 @@
     <div class="mb-6">
       <div class="panel bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
         <h2 class="text-lg font-semibold p-4 pb-0">{{ 'txt_clientes' | translate }}</h2>
-        <div class="table-responsive">
+
+        <!-- Estado de carga -->
+        <div *ngIf="cargando.clientes" class="flex justify-center items-center p-6">
+          <div class="animate-spin w-8 h-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+        </div>
+
+        <!-- Tabla de clientes -->
+        <div class="table-responsive" *ngIf="!cargando.clientes">
           <table class="w-full">
             <thead class="bg-gray-50 border-b border-gray-200">
               <tr>
@@ -28,31 +35,23 @@
               </tr>
             </thead>
             <tbody>
-              <tr class="border-b border-gray-200">
-                <td class="py-3 px-4">
-                  <div class="flex items-center">
-                    <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center mr-3">
-                      LI
-                    </div>
-                    <span>Luke Ivory</span>
-                  </div>
+              <tr *ngIf="clientes.length === 0">
+                <td colspan="4" class="py-4 px-4 text-center text-gray-500">
+                  {{ 'txt_no_hay_clientes' | translate }}
                 </td>
-                <td class="py-3 px-4">CL 147 # 7-7, Bogotá</td>
-                <td class="py-3 px-4">#48094</td>
-                <td class="py-3 px-4">$58.07</td>
               </tr>
-              <tr>
+              <tr *ngFor="let cliente of clientes" class="border-b border-gray-200">
                 <td class="py-3 px-4">
                   <div class="flex items-center">
                     <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center mr-3">
-                      AK
+                      {{ cliente.nombre.charAt(0) }}{{ cliente.nombre.split(' ')[1].charAt(0) || '' }}
                     </div>
-                    <span>Andy King</span>
+                    <span>{{ cliente.nombre }}</span>
                   </div>
                 </td>
-                <td class="py-3 px-4">CR 30 # 1-10, Cali</td>
-                <td class="py-3 px-4">#76934</td>
-                <td class="py-3 px-4">$88.00</td>
+                <td class="py-3 px-4">{{ cliente.direccion }}</td>
+                <td class="py-3 px-4">{{ cliente.codigo }}</td>
+                <td class="py-3 px-4">${{ cliente.promedio_ventas | number:'1.2-2' }}</td>
               </tr>
             </tbody>
           </table>
@@ -65,10 +64,17 @@
       <div class="panel bg-white rounded-md shadow-sm border border-gray-200 p-4">
         <div class="flex justify-between items-center mb-3">
           <h2 class="text-lg font-semibold">{{ 'txt_historico_ventas' | translate }}</h2>
-          <div class="text-right text-blue-600">{{ 'txt_total' | translate }}: $10,840,000</div>
+          <div class="text-right text-blue-600">{{ 'txt_total' | translate }}: ${{ totalVentas | number:'1.2-2' }}</div>
         </div>
-        <div class="h-56 w-full border border-dashed border-gray-300 rounded-md flex items-center justify-center">
-          <!-- Espacio para el gráfico -->
+
+        <!-- Estado de carga del histórico -->
+        <div *ngIf="cargando.historico" class="flex justify-center items-center h-56">
+          <div class="animate-spin w-8 h-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+        </div>
+
+        <!-- Gráfico del histórico -->
+        <div *ngIf="!cargando.historico" class="h-56 w-full">
+          <canvas #historicoChart></canvas>
         </div>
       </div>
     </div>
@@ -81,20 +87,26 @@
           <h2 class="text-base font-semibold">{{ 'txt_metas' | translate }}</h2>
         </div>
 
-        <div class="p-3 mb-1 rounded-r-md">
-          <div class="flex items-start">
-            <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
-            <div>
-              <p class="font-medium text-sm">{{ 'txt_actualizar_server_logs' | translate }}</p>
-            </div>
-          </div>
+        <!-- Estado de carga de metas -->
+        <div *ngIf="cargando.planesMetas" class="flex justify-center items-center h-20">
+          <div class="animate-spin w-6 h-6 border-3 border-blue-500 rounded-full border-t-transparent"></div>
         </div>
 
-        <div class="p-3 rounded-r-md">
-          <div class="flex items-start">
-            <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
-            <div>
-              <p class="font-medium text-sm">{{ 'txt_send_mail_hr_admin' | translate }}</p>
+        <!-- Lista de metas -->
+        <div *ngIf="!cargando.planesMetas">
+          <div *ngIf="metas.length === 0" class="text-center text-gray-500 py-4">
+            {{ 'txt_no_hay_metas' | translate }}
+          </div>
+
+          <div *ngFor="let meta of metas; let i = index"
+               class="p-3 mb-1 rounded-r-md"
+               [class.mb-0]="i === metas.length - 1">
+            <div class="flex items-start">
+              <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
+              <div>
+                <p class="font-medium text-sm">{{ meta.meta }}</p>
+                <p class="text-xs text-gray-500">{{ meta.tiempo }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -106,20 +118,26 @@
           <h2 class="text-base font-semibold">{{ 'txt_planes' | translate }}</h2>
         </div>
 
-        <div class="p-3 mb-1 rounded-r-md">
-          <div class="flex items-start">
-            <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
-            <div>
-              <p class="font-medium text-sm">{{ 'txt_backup_files_eod' | translate }}</p>
-            </div>
-          </div>
+        <!-- Estado de carga de planes -->
+        <div *ngIf="cargando.planesMetas" class="flex justify-center items-center h-20">
+          <div class="animate-spin w-6 h-6 border-3 border-blue-500 rounded-full border-t-transparent"></div>
         </div>
 
-        <div class="p-3 rounded-r-md">
-          <div class="flex items-start">
-            <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
-            <div>
-              <p class="font-medium text-sm">{{ 'txt_collect_documents_sara' | translate }}</p>
+        <!-- Lista de planes -->
+        <div *ngIf="!cargando.planesMetas">
+          <div *ngIf="planes.length === 0" class="text-center text-gray-500 py-4">
+            {{ 'txt_no_hay_planes' | translate }}
+          </div>
+
+          <div *ngFor="let plan of planes; let i = index"
+               class="p-3 mb-1 rounded-r-md"
+               [class.mb-0]="i === planes.length - 1">
+            <div class="flex items-start">
+              <span class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></span>
+              <div>
+                <p class="font-medium text-sm">{{ plan.plan }}</p>
+                <p class="text-xs text-gray-500">{{ plan.tiempo }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -131,16 +149,19 @@
   <div class="col-span-12 md:col-span-4">
     <!-- Filtros y Botones -->
     <div class="mb-6">
-      <!-- Vendedor -->
+      <!-- Panel de filtros -->
       <div class="mb-6">
         <div class="panel bg-white rounded-md shadow-sm border border-gray-200 p-4">
-
           <!-- Vendedor -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'txt_vendedor' | translate }}</label>
             <div class="relative">
-              <select class="block w-full border border-gray-300 rounded-md py-2 px-3 appearance-none pr-8 bg-white focus:outline-none focus:ring-primary focus:border-primary">
-                <option>{{ 'txt_seleccionar' | translate }}</option>
+              <select
+                [(ngModel)]="vendedorSeleccionado"
+                (change)="onFiltroChange()"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 appearance-none pr-8 bg-white focus:outline-none focus:ring-primary focus:border-primary">
+                <option value="">{{ 'txt_seleccionar' | translate }}</option>
+                <option *ngFor="let vendedor of vendedores" [value]="vendedor.id">{{ vendedor.name }}</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -153,15 +174,24 @@
           <!-- Producto -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'txt_producto' | translate }}</label>
-            <input type="text" placeholder="{{ 'txt_buscar_productos' | translate }}" class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary" />
+            <input
+              type="text"
+              [(ngModel)]="productoSeleccionado"
+              (input)="onFiltroChange()"
+              placeholder="{{ 'txt_buscar_productos' | translate }}"
+              class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary" />
           </div>
 
           <!-- Zona -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'txt_zona' | translate }}</label>
             <div class="relative">
-              <select class="block w-full border border-gray-300 rounded-md py-2 px-3 appearance-none pr-8 bg-white focus:outline-none focus:ring-primary focus:border-primary">
-                <option>{{ 'txt_seleccionar' | translate }}</option>
+              <select
+                [(ngModel)]="zonaSeleccionada"
+                (change)="onFiltroChange()"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 appearance-none pr-8 bg-white focus:outline-none focus:ring-primary focus:border-primary">
+                <option value="">{{ 'txt_seleccionar' | translate }}</option>
+                <option *ngFor="let zona of zonas" [value]="zona.id">{{ zona.nombre }}</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -170,20 +200,26 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
+      <!-- Panel de botones -->
       <div class="panel bg-white rounded-md shadow-sm border border-gray-200 p-4">
         <!-- Botones -->
-        <button type="button" class="w-full mb-2 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center">
+        <button
+          type="button"
+          (click)="filtrar()"
+          class="w-full mb-2 py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           {{ 'txt_filtrar' | translate }}
         </button>
 
-        <button type="button" class="w-full py-2 px-4 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 flex items-center justify-center">
+        <button
+          type="button"
+          (click)="exportar()"
+          class="w-full py-2 px-4 bg-[#805DCA] text-white rounded-md flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
