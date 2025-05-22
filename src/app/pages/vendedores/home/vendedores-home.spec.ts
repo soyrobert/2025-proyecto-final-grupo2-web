@@ -356,7 +356,8 @@ describe('VendedoresHome', () => {
         });
 
         it('debería filtrar por producto', () => {
-            component.productoSeleccionado = 'P003';
+            component.productos = mockProductos;
+            component.productoSeleccionado = 'Tablet iPad Air';
             component.filtrar();
 
             expect(component.clientes.length).toBe(1);
@@ -459,16 +460,6 @@ describe('VendedoresHome', () => {
             component.inicializarGrafico();
 
             expect(chartJSMock).toHaveBeenCalled();
-        });
-    });
-
-    describe('onFiltroChange', () => {
-        it('debería llamar al método filtrar', () => {
-            const spy = jest.spyOn(component, 'filtrar');
-
-            component.onFiltroChange();
-
-            expect(spy).toHaveBeenCalled();
         });
     });
 
@@ -616,8 +607,9 @@ describe('VendedoresHome', () => {
         });
 
         it('debería filtrar por vendedor y producto', () => {
+            component.productos = mockProductos;
             component.vendedorSeleccionado = '1';
-            component.productoSeleccionado = 'P001';
+            component.productoSeleccionado = 'Laptop Pro X1';
             component.filtrar();
 
             expect(component.clientes.length).toBe(1);
@@ -634,7 +626,8 @@ describe('VendedoresHome', () => {
         });
 
         it('debería filtrar por producto y zona', () => {
-            component.productoSeleccionado = 'P001';
+            component.productos = mockProductos;
+            component.productoSeleccionado = 'Laptop Pro X1';
             component.zonaSeleccionada = 'Bogotá';
             component.filtrar();
 
@@ -643,8 +636,9 @@ describe('VendedoresHome', () => {
         });
 
         it('debería filtrar por los tres criterios', () => {
+            component.productos = mockProductos;
             component.vendedorSeleccionado = '1';
-            component.productoSeleccionado = 'P001';
+            component.productoSeleccionado = 'Laptop Pro X1';
             component.zonaSeleccionada = 'Bogotá';
             component.filtrar();
 
@@ -703,4 +697,175 @@ describe('VendedoresHome', () => {
             expect(spy).not.toHaveBeenCalled();
         }));
     });
+
+    // Test Filtro por producto cuando el cliente no tiene productos
+describe('filtrar - casos edge de productos', () => {
+    beforeEach(() => {
+        const clienteSinProductos = {
+            nombre: 'Cliente Sin Productos',
+            direccion: 'CL 100 # 1-1, Medellín',
+            codigo: '#99999',
+            promedio_ventas: 25.0,
+            vendedor_id: '3',
+            productos: []
+        };
+
+        const clienteProductosUndefined = {
+            nombre: 'Cliente Productos Undefined',
+            direccion: 'CR 50 # 2-2, Barranquilla',
+            codigo: '#88888',
+            promedio_ventas: 30.0,
+            vendedor_id: '4'
+        };
+
+        component.clientesCompletos = [...mockClientes, clienteSinProductos, clienteProductosUndefined];
+        component.clientes = [...component.clientesCompletos];
+        component.productos = mockProductos;
+    });
+
+    it('debería excluir clientes sin productos cuando se filtra por producto', () => {
+        component.productoSeleccionado = 'Laptop Pro X1';
+        component.filtrar();
+
+        expect(component.clientes.length).toBe(1);
+        expect(component.clientes[0].nombre).toBe('Luke Ivory');
+    });
+
+    it('debería excluir clientes con productos undefined cuando se filtra por producto', () => {
+        component.productoSeleccionado = 'Monitor 27" 4K';
+        component.filtrar();
+
+        expect(component.clientes.length).toBe(1);
+        expect(component.clientes[0].nombre).toBe('Andy King');
+    });
+
+    it('debería retornar todos los clientes cuando no hay filtro de producto', () => {
+        component.productoSeleccionado = '';
+        component.filtrar();
+
+        expect(component.clientes.length).toBe(4);
+    });
+});
+
+// Tests onProductoInputChange y seleccionarProducto
+describe('onProductoInputChange', () => {
+    beforeEach(() => {
+        component.productos = mockProductos;
+    });
+
+    it('debería filtrar productos que contienen la búsqueda (case insensitive)', () => {
+        component.productoSeleccionado = 'lap';
+        component.onProductoInputChange();
+
+        expect(component.productosFiltrados.length).toBe(1);
+        expect(component.productosFiltrados[0].nombre).toBe('Laptop Pro X1');
+    });
+
+    it('debería filtrar productos con búsqueda en mayúsculas', () => {
+        component.productoSeleccionado = 'MONITOR';
+        component.onProductoInputChange();
+
+        expect(component.productosFiltrados.length).toBe(1);
+        expect(component.productosFiltrados[0].nombre).toBe('Monitor 27" 4K');
+    });
+
+    it('debería filtrar múltiples productos que coincidan', () => {
+        component.productos = [
+            ...mockProductos,
+            { id: 'P005', nombre: 'Smart TV Samsung' },
+            { id: 'P006', nombre: 'Smartphone iPhone' }
+        ];
+
+        component.productoSeleccionado = 'smart';
+        component.onProductoInputChange();
+
+        expect(component.productosFiltrados.length).toBe(3);
+        expect(component.productosFiltrados.some(p => p.nombre.includes('Smart'))).toBe(true);
+        expect(component.productosFiltrados.some(p => p.nombre.includes('Smartphone'))).toBe(true);
+    });
+
+    it('debería limpiar productos filtrados cuando búsqueda está vacía', () => {
+        component.productoSeleccionado = 'laptop';
+        component.onProductoInputChange();
+        expect(component.productosFiltrados.length).toBe(1);
+
+        component.productoSeleccionado = '';
+        component.onProductoInputChange();
+
+        expect(component.productosFiltrados.length).toBe(0);
+    });
+
+    it('debería limpiar productos filtrados cuando búsqueda es solo espacios', () => {
+        component.productoSeleccionado = '   ';
+        component.onProductoInputChange();
+
+        expect(component.productosFiltrados.length).toBe(0);
+    });
+});
+
+describe('seleccionarProducto', () => {
+    beforeEach(() => {
+        component.productos = mockProductos;
+        component.productosFiltrados = [...mockProductos];
+    });
+
+    it('debería seleccionar el producto y cerrar el dropdown', () => {
+        const productoSeleccionado = mockProductos[0];
+
+        component.seleccionarProducto(productoSeleccionado);
+
+        expect(component.productoSeleccionado).toBe('Laptop Pro X1');
+        expect(component.productosFiltrados.length).toBe(0);
+    });
+
+    it('debería funcionar con diferentes productos', () => {
+        const productoSeleccionado = mockProductos[2];
+
+        component.seleccionarProducto(productoSeleccionado);
+
+        expect(component.productoSeleccionado).toBe('Tablet iPad Air');
+        expect(component.productosFiltrados.length).toBe(0);
+    });
+
+    it('debería manejar productos con nombres que contienen caracteres especiales', () => {
+        const productoEspecial = { id: 'P999', nombre: 'Monitor 27" 4K Ultra-HD' };
+
+        component.seleccionarProducto(productoEspecial);
+
+        expect(component.productoSeleccionado).toBe('Monitor 27" 4K Ultra-HD');
+        expect(component.productosFiltrados.length).toBe(0);
+    });
+});
+
+// Test cobertura del método filtrar con productos
+describe('filtrar - cobertura completa del filtro de productos', () => {
+    beforeEach(() => {
+        component.clientesCompletos = [...mockClientes];
+        component.clientes = [...mockClientes];
+        component.productos = mockProductos;
+    });
+
+    it('debería encontrar clientes por búsqueda parcial de producto', () => {
+        component.productoSeleccionado = 'Laptop';
+        component.filtrar();
+
+        expect(component.clientes.length).toBe(1);
+        expect(component.clientes[0].nombre).toBe('Luke Ivory');
+    });
+
+    it('debería ser case-insensitive en la búsqueda de productos', () => {
+        component.productoSeleccionado = 'tablet ipad air';
+        component.filtrar();
+
+        expect(component.clientes.length).toBe(1);
+        expect(component.clientes[0].nombre).toBe('Andy King');
+    });
+
+    it('debería manejar búsquedas que no coinciden con ningún producto', () => {
+        component.productoSeleccionado = 'Producto Inexistente';
+        component.filtrar();
+
+        expect(component.clientes.length).toBe(0);
+    });
+});
 });
