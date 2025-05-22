@@ -41,6 +41,7 @@ export class VendedoresHome implements OnInit, AfterViewInit {
     clientesCompletos: Cliente[] = [];
     vendedores: any[] = [];
     productos: any[] = [];
+    productosFiltrados: any[] = [];
     zonas: any[] = [];
     metas: Meta[] = [];
     planes: Plan[] = [];
@@ -127,6 +128,7 @@ export class VendedoresHome implements OnInit, AfterViewInit {
         this.vendedoresService.getProductos().subscribe({
             next: (data) => {
                 this.productos = data;
+                this.productosFiltrados = [];
                 this.cargando.productos = false;
             },
             error: (error) => {
@@ -189,7 +191,22 @@ export class VendedoresHome implements OnInit, AfterViewInit {
         });
     }
 
-    // Método para filtrar los datos
+    onProductoInputChange() {
+        if (!this.productoSeleccionado || this.productoSeleccionado.trim() === '') {
+            this.productosFiltrados = [];
+        } else {
+            const busqueda = this.productoSeleccionado.toLowerCase();
+            this.productosFiltrados = this.productos.filter(producto =>
+                producto.nombre.toLowerCase().includes(busqueda)
+            );
+        }
+    }
+
+    seleccionarProducto(producto: any) {
+        this.productoSeleccionado = producto.nombre;
+        this.productosFiltrados = [];
+    }
+
     filtrar() {
         this.clientes = this.clientesCompletos.filter((cliente) => {
             let cumpleFiltros = true;
@@ -198,8 +215,16 @@ export class VendedoresHome implements OnInit, AfterViewInit {
                 cumpleFiltros = cumpleFiltros && cliente.vendedor_id === this.vendedorSeleccionado;
             }
 
-            if (this.productoSeleccionado && cliente.productos) {
-                cumpleFiltros = cumpleFiltros && cliente.productos.includes(this.productoSeleccionado);
+            if (this.productoSeleccionado && this.productoSeleccionado.trim() !== '') {
+                if (cliente.productos && cliente.productos.length > 0) {
+                    const productoEncontrado = cliente.productos.some(prodId => {
+                        const producto = this.productos.find(p => p.id === prodId);
+                        return producto && producto.nombre.toLowerCase().includes(this.productoSeleccionado.toLowerCase());
+                    });
+                    cumpleFiltros = cumpleFiltros && productoEncontrado;
+                } else {
+                    cumpleFiltros = false;
+                }
             }
 
             if (this.zonaSeleccionada && cliente.direccion) {
@@ -329,11 +354,6 @@ export class VendedoresHome implements OnInit, AfterViewInit {
                 },
             },
         });
-    }
-
-    // Manejador para el cambio en los selectores
-    onFiltroChange() {
-        this.filtrar();
     }
 
     /**

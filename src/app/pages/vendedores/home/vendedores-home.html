@@ -158,7 +158,6 @@
             <div class="relative">
               <select
                 [(ngModel)]="vendedorSeleccionado"
-                (change)="onFiltroChange()"
                 class="block w-full border border-gray-300 rounded-md py-2 px-3 appearance-none pr-8 bg-white focus:outline-none focus:ring-primary focus:border-primary">
                 <option value="">{{ 'txt_seleccionar' | translate }}</option>
                 <option *ngFor="let vendedor of vendedores" [value]="vendedor.id">{{ vendedor.name }}</option>
@@ -171,15 +170,28 @@
             </div>
           </div>
 
-          <!-- Producto -->
+          <!-- Producto con búsqueda -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-1">{{ 'txt_producto' | translate }}</label>
-            <input
-              type="text"
-              [(ngModel)]="productoSeleccionado"
-              (input)="onFiltroChange()"
-              placeholder="{{ 'txt_buscar_productos' | translate }}"
-              class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary" />
+            <div class="relative">
+              <input
+                type="text"
+                [(ngModel)]="productoSeleccionado"
+                (input)="onProductoInputChange()"
+                placeholder="{{ 'txt_buscar_productos' | translate }}"
+                class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-primary focus:border-primary" />
+
+              <!-- Dropdown de productos filtrados -->
+              <div *ngIf="productosFiltrados.length > 0 && productoSeleccionado && productoSeleccionado.trim() !== ''"
+                   class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                <div *ngFor="let producto of productosFiltrados"
+                     (click)="seleccionarProducto(producto)"
+                     class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm border-b border-gray-100 last:border-b-0">
+                  <div class="font-medium">{{ producto.nombre }}</div>
+                  <div class="text-xs text-gray-500">{{ producto.proveedor }} - ${{ producto.precio | number:'1.0-0' }}</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Zona -->
@@ -188,10 +200,9 @@
             <div class="relative">
               <select
                 [(ngModel)]="zonaSeleccionada"
-                (change)="onFiltroChange()"
                 class="block w-full border border-gray-300 rounded-md py-2 px-3 appearance-none pr-8 bg-white focus:outline-none focus:ring-primary focus:border-primary">
                 <option value="">{{ 'txt_seleccionar' | translate }}</option>
-                <option *ngFor="let zona of zonas" [value]="zona.id">{{ zona.nombre }}</option>
+                <option *ngFor="let zona of zonas" [value]="zona">{{ zona }}</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

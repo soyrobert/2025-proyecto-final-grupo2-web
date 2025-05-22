@@ -89,9 +89,18 @@ export class VendedoresService {
     getProductos(): Observable<any[]> {
         return this.http.get<any>(environment.listaProductosApiUrl, { headers: this.getHeaders() }).pipe(
             map((response) => {
-                if (response && response.productos && Array.isArray(response.productos)) {
+                console.log('Respuesta completa del API de productos:', response);
+
+                if (response && response.products && Array.isArray(response.products)) {
+                    console.log('Usando productos del API:', response.products);
+                    return response.products;
+                }
+                else if (response && response.productos && Array.isArray(response.productos)) {
+                    console.log('Usando productos del API (estructura en español):', response.productos);
                     return response.productos;
-                } else if (response && Array.isArray(response)) {
+                }
+                else if (response && Array.isArray(response)) {
+                    console.log('Usando productos del API (array directo):', response);
                     return response;
                 } else {
                     console.warn('Estructura de respuesta de productos inesperada, usando fallback:', response);
